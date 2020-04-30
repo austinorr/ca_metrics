@@ -11,8 +11,12 @@ CA_TOPO_URL = "https://raw.githubusercontent.com/scottpham/california-counties/m
 county_region_map = (
     pandas.read_csv(DATAPATH / "regions.csv", index_col=0)
     .assign(region=lambda df: df["region"].str.strip())
+    .assign(region_index=lambda df: df.index.astype(int))
     .set_index("name")["region"]
 )
+
+regions = county_region_map.unique()
+region_ids = {r:ix for r, ix in zip(regions, range(len(regions)))}
 
 
 def _fetch_ca_counties_gdf():
@@ -30,16 +34,20 @@ def _fetch_ca_counties_gdf():
 
 
 def _join_regions(gdf):
-    return gdf.merge(county_region_map, on="name")
+    return (
+        gdf.merge(county_region_map, on="name")
+        .assign(region_id=lambda df: df['region'].replace(region_ids))
+        )
 
 
 def _make_topology(
-    gdf, presimplify=False, topoquantize=True, toposimplify=True, **kwargs
+    gdf, presimplify=False, prequantize=False, topoquantize=True, toposimplify=True, **kwargs
 ):
 
     topo = topojson.Topology(
         gdf,
         presimplify=presimplify,
+        prequantize=prequantize,
         topoquantize=topoquantize,
         toposimplify=toposimplify,
         **kwargs
