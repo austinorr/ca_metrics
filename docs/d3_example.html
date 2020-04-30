@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<head>
+</head>
 <style>
 
 .counties {
@@ -11,39 +13,61 @@
   stroke-linecap: round;
 }
 
-/*.counties :hover {
-  fill: red;
-  stroke: red;
-  stroke-width:10;
-  
-}*/
-
-/*.counties .active {
-  fill: orange;
-  fill-opacity:1;
-}*/
-
-.county-borders {
-  fill: none;
-  stroke: black;
-  stroke-width: 0.5px;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-  pointer-events: none;
-}
-
 #_viz_map_container {
-  
+  display: inline-block;
 }
 
 </style>
-<div id="_viz_map_container">
-  <svg width="600" height="600" id="_viz_ca_map"></svg>
-</div>
+<body>
+  <div id="_viz_map_container"></div>
+</body>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://d3js.org/topojson.v2.min.js"></script>
 <script>
 
+// ---- Utility Functions ----
+
+function addDropShadowFilter(svg, stddev=3, xoffset=5, yoffset=5) {
+  // adapted from http://bl.ocks.org/cpbotha/5200394
+
+  // filters go in defs element
+  var defs = svg.append("defs");
+
+  // create filter with id #drop-shadow
+  // height=130% so that the shadow is not clipped
+  var filter = defs.append("filter")
+      .attr("id", "drop-shadow")
+      .attr('y', '-40%')
+      .attr('x', '-40%')
+      .attr("height", "200%")
+      .attr("width", "200%");
+
+  // SourceAlpha refers to opacity of graphic that this filter will be applied to
+  // convolve that with a Gaussian with standard deviation 3 and store result
+  // in blur
+  filter.append("feGaussianBlur")
+      .attr("in", "SourceAlpha")
+      .attr("stdDeviation", stddev)
+      .attr("result", "blur");
+
+  // translate output of Gaussian blur to the right and downwards with 2px
+  // store result in offsetBlur
+  filter.append("feOffset")
+      .attr("in", "blur")
+      .attr("dx", xoffset)
+      .attr("dy", yoffset)
+      .attr("result", "offsetBlur");
+
+  // overlay original SourceGraphic over translated blurred opacity by using
+  // feMerge filter. Order of specifying inputs is important!
+  var feMerge = filter.append("feMerge");
+
+  feMerge.append("feMergeNode")
+      .attr("in", "offsetBlur")
+  feMerge.append("feMergeNode")
+      .attr("in", "SourceGraphic");
+
+}
 
 // ----- Map Constants -------
 
@@ -70,58 +94,24 @@ const REGION_COLORS = [
 ];
 
 // increases size of region on click/hover/whatever
-const REGION_POP_SCALER = 1.05;
+const REGION_POP_SCALER = 1.01;
 
 const CA_COUNTIES_REGIONS_TOPOJSON_URL = "https://raw.githubusercontent.com/austinorr/ca_metrics/master/data/ca-counties.json"
-// const CA_COUNTIES_REGIONS_TOPOJSON_URL = "/data/ca-counties.json"
 
 // ------------
 
-var ca_svg = d3.select("#_viz_ca_map"),
+var ca_svg = d3.select("#_viz_map_container")
+      .append('svg')
+      .attr('width', 600)
+      .attr('height', 600),
+
   width = ca_svg.attr('width'),
   height = ca_svg.attr('height');
-
-// filters go in defs element
-var defs = ca_svg.append("defs");
-
-// create filter with id #drop-shadow
-// height=130% so that the shadow is not clipped
-var filter = defs.append("filter")
-    .attr("id", "drop-shadow")
-    .attr("height", "130%");
-
-// SourceAlpha refers to opacity of graphic that this filter will be applied to
-// convolve that with a Gaussian with standard deviation 3 and store result
-// in blur
-filter.append("feGaussianBlur")
-    .attr("in", "SourceAlpha")
-    .attr("stdDeviation", 5)
-    .attr("result", "blur");
-
-// translate output of Gaussian blur to the right and downwards with 2px
-// store result in offsetBlur
-filter.append("feOffset")
-    .attr("in", "blur")
-    .attr("dx", 5)
-    .attr("dy", 5)
-    .attr("result", "offsetBlur");
-
-// overlay original SourceGraphic over translated blurred opacity by using
-// feMerge filter. Order of specifying inputs is important!
-var feMerge = filter.append("feMerge");
-
-feMerge.append("feMergeNode")
-    .attr("in", "offsetBlur")
-feMerge.append("feMergeNode")
-    .attr("in", "SourceGraphic");
-
 
 
 var projection = d3.geoConicEqualArea()
   .parallels([34, 40.5])
   .rotate([120, 0])
-
-// var projection = d3.geoMercator()
 
 var path = d3.geoPath()
   .projection(projection);
@@ -131,7 +121,6 @@ function sortSvgGroupElements(svg, property) {
     if (a.properties[property] != b.properties[property]) return -1;
       else return 1;
   })
-
 }
 
 function equalToEventTarget() {
@@ -156,96 +145,32 @@ function region_clicked() {
   clear_selection()
 
   var bbox = d3.select(this).node().getBBox(),
-      region_id = d3.select(this).data()[0].properties.region_id
-
-
+      region_id = d3.select(this).data()[0].properties.region_id,
       cx = bbox.x + bbox.width / 2,
       cy = bbox.y + bbox.height / 2,
       scaler = REGION_POP_SCALER,
       color = d3.select(this).style('fill'),
-      selected_region = ca_svg.select(".counties.region_"+region_id).clone(true)
+      selected_region = ca_svg.select(".counties.region_"+region_id);
 
-  selected_region
-    .attr('id', 'countySelected')
-    .style("filter", "url(#drop-shadow)")
-    .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+  shadow = selected_region.clone(true)
+  pop_region = selected_region.clone(true)
+  addDropShadowFilter(shadow, 5, 0, 0)
 
-  selected_region.clone(true)
-    .classed("active", true)
+  shadow
     .attr('id', 'countySelected')
     .raise()
+    .style('color', color)
+    .style('opacity', .8)
+    .style("filter", "url(#drop-shadow)");
+
+
+  pop_region
+    .attr('id', 'countySelected')
+    .raise()
+    .style('fill', color)
+    .style('fill-opacity', 1)
     .transition()
-      .duration(200)
-      .style('fill', color)
-      .style('fill-opacity', 1)
-      .attr(
-        "transform", 
-        "translate(" + (1-scaler) * cx + ", " + (1-scaler) * cy + ") scale(" + scaler + ")");
-  
-  // this.parentNode.parentNode.appendChild(selected_region)
-
-  // sortSvgGroupElements(ca_svg, 'region_id')
-
-  // console.log(selected_region.select('g').select('path'))
-  // clear_selection()
-
-  // ca_svg.append('g')
-  //   .attr("id", "countySelected")
-  //   .attr("class", "counties region_"+region_id)
-  //   .classed("active", true)
-  //   .selectAll("path")
-  //   .data(selected_region.data())
-  //   .enter()
-  //     .append("path")
-  //     .attr("d", path)
-
-
-    // .attr("class", "counties region_"+region_id)
-    // .classed("active", true)
-    // .data(selected_region.node())
-    // .selectAll('path')
-    // .enter().append("path")
-    //   .attr("d", selected_region.node())
-      
-    //   .transition()
-    //     .duration(200)
-    //     .style('fill', color)
-    //     .style('fill-opacity', 1)
-    //     .attr(
-    //       "transform", 
-    //       "translate(" + (1-scaler) * cx + ", " + (1-scaler) * cy + ") scale(" + scaler + ")");
-
-  // ca_svg.append('g')
-  //   .attr("id", "countySelected")
-  //   .classed("active", true)
-  //   .transition()
-  //     .duration(200)
-  //     .style('fill', color)
-  //     .style('fill-opacity', 1)
-  //     .attr(
-  //       "transform", 
-  //       "translate(" + (1-scaler) * cx + ", " + (1-scaler) * cy + ") scale(" + scaler + ")");
-
-}
-
-function clicked() {
-
-  var bbox = d3.select(this).node().getBBox(),
-      cx = bbox.x + bbox.width / 2,
-      cy = bbox.y + bbox.height / 2,
-      scaler = REGION_POP_SCALER,
-      color = d3.select(this).style('fill');
-
-  clear_selection()
-
-  svg.select(".counties").append("path")
-    .attr("d", d3.select(this).attr("d"))
-    .attr("id", "countySelected")
-    .classed("active", true)
-    .transition()
-      .duration(200)
-      .style('fill', color)
-      .style('fill-opacity', 1)
+      .duration(50)
       .attr(
         "transform", 
         "translate(" + (1-scaler) * cx + ", " + (1-scaler) * cy + ") scale(" + scaler + ")");
@@ -254,7 +179,6 @@ function clicked() {
 
 function getMaxProperty(features_array, property) {
   var max_prop = null;
-
   for (var i=0; i<features_array.length; i++) {
     var f = features_array[i].properties
     if (f[property] > max_prop) {
@@ -268,12 +192,9 @@ d3.json(CA_COUNTIES_REGIONS_TOPOJSON_URL, function(error, ca) {
   if (error) throw error;
 
   var feature_obj = topojson.feature(ca, ca.objects.data)
+  var pad = 20
 
-  projection.fitSize([width, height], feature_obj)
-
-  // svg.append("path")
-  //     .attr("class", "county-borders")
-  //     .attr("d", path(topojson.mesh(ca, ca.objects.subunits, function(a, b) { return a !== b; })));
+  projection.fitExtent([[pad, pad], [width-pad, height-pad]], feature_obj)
 
   var nRegions = getMaxProperty(feature_obj.features, 'region_id');
 
@@ -289,16 +210,6 @@ d3.json(CA_COUNTIES_REGIONS_TOPOJSON_URL, function(error, ca) {
         .on("click", region_clicked);
   }
 
-  // svg.append("g")
-  //   .attr("class", "counties")
-  //   .selectAll("path")
-  //   .data(feature_obj.features)
-  //   .enter().append("path")
-  //     .attr("d", path)
-  //     .style("fill", (d) => REGION_COLORS[d.properties.region_id])
-  //     .on("click", clicked);
-
-   // the following block is new, adding JS events
   let hoverEnabled = false;
   ca_svg.on('mousedown', x => hoverEnabled = true)
     .on('mouseup', x => hoverEnabled = false)
