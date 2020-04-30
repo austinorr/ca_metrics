@@ -1,9 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-
 </head>
+<style>
+body {
+  margin: 50px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: auto;
+  grid-gap: 10px;
+  background-color: #fff;
+  color: #444;
+}
+
+.button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  border-radius: 10px;
+  color: white;
+  padding: 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+</style>
 <body>
-  <a href="vega_example.html">Vega Example</a>
+  <div class='grid'>
+    <a class="button" href="vega_example.html">Vega Example</a>
+    <a class="button" href="d3_example.html">D3 Example</a>
+  </div>
 </body>
 </html>
