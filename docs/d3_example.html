@@ -3,6 +3,16 @@
 </head>
 <style>
 
+.region_label {
+  font-weight: 500;
+    text-transform: uppercase;
+    text-anchor: middle;
+    opacity: 0.8;
+    color: #000;
+    font-family: arial, helvetica, sans-serif;
+    font-size: 13px;
+}
+
 .counties {
   fill: none;
   fill-opacity:.5;
@@ -15,6 +25,7 @@
 
 #_viz_map_container {
   display: inline-block;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
 </style>
@@ -67,6 +78,8 @@ function addDropShadowFilter(svg, stddev=3, xoffset=5, yoffset=5) {
   feMerge.append("feMergeNode")
       .attr("in", "SourceGraphic");
 
+  return svg
+
 }
 
 // ----- Map Constants -------
@@ -116,13 +129,6 @@ var projection = d3.geoConicEqualArea()
 var path = d3.geoPath()
   .projection(projection);
 
-function sortSvgGroupElements(svg, property) {
-  svg.selectAll('g').sort(function(a, b) {
-    if (a.properties[property] != b.properties[property]) return -1;
-      else return 1;
-  })
-}
-
 function equalToEventTarget() {
   // console.log(d3.event.target)
   return this == d3.event.target;
@@ -152,11 +158,7 @@ function region_clicked() {
       color = d3.select(this).style('fill'),
       selected_region = ca_svg.select(".counties.region_"+region_id);
 
-  shadow = selected_region.clone(true)
-  pop_region = selected_region.clone(true)
-  addDropShadowFilter(shadow, 5, 0, 0)
-
-  shadow
+  var shadow = addDropShadowFilter(selected_region.clone(true), 5, 0, 0)
     .attr('id', 'countySelected')
     .raise()
     .style('color', color)
@@ -164,7 +166,7 @@ function region_clicked() {
     .style("filter", "url(#drop-shadow)");
 
 
-  pop_region
+  var pop_region = selected_region.clone(true)
     .attr('id', 'countySelected')
     .raise()
     .style('fill', color)
@@ -172,8 +174,8 @@ function region_clicked() {
     .transition()
       .duration(50)
       .attr(
-        "transform", 
-        "translate(" + (1-scaler) * cx + ", " + (1-scaler) * cy + ") scale(" + scaler + ")");
+          "transform", 
+          "translate(" + (1-scaler) * cx + ", " + (1-scaler) * cy + ") scale(" + scaler + ")");
 
 }
 
@@ -198,8 +200,8 @@ d3.json(CA_COUNTIES_REGIONS_TOPOJSON_URL, function(error, ca) {
 
   var nRegions = getMaxProperty(feature_obj.features, 'region_id');
 
-  for (var i=0; i<nRegions; i++) {
-    region_features = feature_obj.features.filter(d => d.properties.region_id == i);
+  for (var i=0; i<nRegions+1; i++) {
+    var region_features = feature_obj.features.filter(d => d.properties.region_id == i);
     ca_svg.append("g")
       .attr("class", "counties region_"+i)
       .selectAll("path")
