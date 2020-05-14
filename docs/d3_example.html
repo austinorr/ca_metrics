@@ -3,14 +3,22 @@
 </head>
 <style>
 
+body {
+  display: grid;
+  margin: 10px;
+  width: calc(100vw - 20px);
+  height: 500px;
+
+}
+
 .region_label {
   font-weight: 500;
-    text-transform: uppercase;
-    text-anchor: middle;
-    opacity: 0.8;
-    color: #000;
-    font-family: arial, helvetica, sans-serif;
-    font-size: 13px;
+  text-transform: uppercase;
+  text-anchor: middle;
+  opacity: 0.8;
+  color: #000;
+  font-family: arial, helvetica, sans-serif;
+  font-size: 13px;
 }
 
 .counties {
@@ -24,13 +32,24 @@
 }
 
 #_viz_map_container {
-  display: inline-block;
+  position: relative;
+  display: flex;
+}
+
+.map-svg {
   -webkit-tap-highlight-color: rgba(0,0,0,0);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 100%;
+  max-height: 100%;
 }
 
 </style>
 <body>
   <div id="_viz_map_container"></div>
+  <div id="_viz_bar_container"></div>
 </body>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://d3js.org/topojson.v2.min.js"></script>
@@ -74,7 +93,7 @@ function addDropShadowFilter(svg, stddev=3, xoffset=5, yoffset=5) {
   var feMerge = filter.append("feMerge");
 
   feMerge.append("feMergeNode")
-      .attr("in", "offsetBlur")
+      .attr("in", "offsetBlur");
   feMerge.append("feMergeNode")
       .attr("in", "SourceGraphic");
 
@@ -113,24 +132,25 @@ const CA_COUNTIES_REGIONS_TOPOJSON_URL = "https://raw.githubusercontent.com/aust
 
 // ------------
 
-var ca_svg = d3.select("#_viz_map_container")
+var width = 600,
+  height = 600,
+  ca_svg = d3.select("#_viz_map_container")
       .append('svg')
-      .attr('width', 600)
-      .attr('height', 600),
-
-  width = ca_svg.attr('width'),
-  height = ca_svg.attr('height');
+      .attr('viewBox', "0 0" + " " + width + " " + height)
+      .attr('preserveAspectRatio', 'xMidYMid meet')
+      .classed('map-svg', true);
+      // .attr('width', width)
+      // .attr('height', height)
 
 
 var projection = d3.geoConicEqualArea()
   .parallels([34, 40.5])
-  .rotate([120, 0])
+  .rotate([120, 0]);
 
 var path = d3.geoPath()
   .projection(projection);
 
 function equalToEventTarget() {
-  // console.log(d3.event.target)
   return this == d3.event.target;
 }
 
@@ -176,7 +196,6 @@ function region_clicked() {
       .attr(
           "transform", 
           "translate(" + (1-scaler) * cx + ", " + (1-scaler) * cy + ") scale(" + scaler + ")");
-
 }
 
 function getMaxProperty(features_array, property) {
