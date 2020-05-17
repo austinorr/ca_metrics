@@ -30,3 +30,23 @@ const REGION_POP_SCALER = 1.01;
 const CA_COUNTIES_REGIONS_TOPOJSON_URL = "./data/ca-counties.json"
 
 const UNITS = ["units=percent", "units=count", "units=usd"]
+
+var CHARTS = []
+
+function onLoad() {
+
+    d3.select("._navbar").text(REGION).classed('region_label', true);
+
+    var region_map = new RegionMap("#_viz_map_container1", CA_COUNTIES_REGIONS_TOPOJSON_URL);
+    region_map.init();
+
+
+    var bar_chart = new RegionBarChart("#_viz_bar_container1", "./data/employment2col.csv");
+    bar_chart.init();
+    CHARTS.push(bar_chart);
+
+    var bar_chart = new RegionBarChart("#_viz_bar_container2", "./data/employment.csv");
+    bar_chart.init();
+    CHARTS.push(bar_chart);
+
+}

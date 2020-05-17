@@ -1,4 +1,4 @@
-﻿region,supergroup,subgroup,values
+﻿region,supergroup,subgroup,How many people are employed?
 Bay Area,All,,0.842933
 Bay Area,American Indian/Alaska Native,,0.656117
 Bay Area,Asian,,0.8398916
@@ -22,6 +22,7 @@ Bay Area,Economic,Middle Income,0.8778358
 Bay Area,Economic,Poor,0.6056203
 Bay Area,Economic,Rich,0.8951682
 Bay Area,Economic,Upper Income,0.9325542
+Bay Area,Gender,,
 Bay Area,Gender,Female,0.7846385
 Bay Area,Gender,Male,0.9004772
 Central Coast,All,,0.8211619

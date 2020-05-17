@@ -20,6 +20,7 @@ function RegionBarChart(container_id, url, ) {
             "translate(" + this.margin.left + "," + this.margin.top + ")");
 
     this.view = "top";
+    this.selected_bar = null;
 }
 
 RegionBarChart.prototype.init = function() {
@@ -27,23 +28,26 @@ RegionBarChart.prototype.init = function() {
 }
 
 RegionBarChart.prototype.update = function() {
-    if (this.view == "top") {
-        this.allDemographicsChart();
-    } else {
-        this.demographicBreakDownChart();
-    };
+    // if (this.view == "top") {
+    //     this.allDemographicsChart();
+    // } else {
+    //     this.demographicBreakDownChart();
+    // };
+    this.gotoAllDemo()
 }
 
 RegionBarChart.prototype.gotoAllDemo = function() {
     this.view = "top";
-    this.svg.selectAll(".demo").remove()
-    this.update()
+    this.svg.selectAll(".demo").remove();
+    // this.update();
+    this.allDemographicsChart();
 }
 
 RegionBarChart.prototype.gotoDemoBreakDown = function() {
     this.view = "breakdown";
-    this.svg.selectAll(".top").remove()
-    this.update()
+    this.svg.selectAll(".top").remove();
+    // this.update();
+    this.demographicBreakDownChart();
 }
 
 RegionBarChart.prototype.resize = function() {
@@ -65,13 +69,14 @@ RegionBarChart.prototype.resize = function() {
 
 RegionBarChart.prototype.allDemographicsChart = function() {
 
-    let data = this.dataset.filter(d => d.region == REGION && d.supergroup == "All");
+    let data = this.dataAllLong.filter(d => d.region == REGION);
+    let that = this;
 
     // set the ranges
     // set the ranges
     this.y = d3.scaleBand()
         .range([0, this.height])
-        .padding(0.2);
+        .padding(0.6);
 
     this.x = d3.scaleLinear()
         .range([0, this.width]);
@@ -80,10 +85,9 @@ RegionBarChart.prototype.allDemographicsChart = function() {
         this.x.domain([0, 1]); //d3.max(data, function(d){ return d.values; })])
     } else {
         this.x.domain([0, Math.max([
-            d3.max(this.dataset, d => d["values"]),
+            d3.max(this.dataset, d => d["values"]), // use the max from the whole dataset
         ])])
     }
-    // this.y.domain(data.map(function(d) { return d.region; })); // for top level region
     this.y.domain(data.map(function(d) { return d.label; })); // for demographics
 
     // append the svg object to the body of the page
@@ -117,15 +121,20 @@ RegionBarChart.prototype.allDemographicsChart = function() {
     var goto = this.gotoDemoBreakDown.bind(this)
 
     bar.enter().append("rect")
-        .on("click", goto)
+        .on("click", function(d) {
+            that.selected_bar = d3.select(this).attr('data_label');
+            return goto();
+        })
         .classed('top', true)
         .classed('bar', true)
         .attr("x", function(d) { return 0; })
         .attr("y", function(d) { return y(d.label); })
+        .attr("data_label", d => d.label)
         .attr("height", y.bandwidth())
-        .merge(bar).transition(t)
+        .merge(bar)
+        .transition(t)
         .ease(d3.easeExp)
-        .attr("width", function(d) { return x(d.values); })
+        .attr("width", function(d) { return x(d.value); })
         .delay(delay);
 
     let value_labels = bars.selectAll(".value")
@@ -141,51 +150,70 @@ RegionBarChart.prototype.allDemographicsChart = function() {
         .attr("y", function(d) { return y(d.label) + y.bandwidth() / 2; })
         .attr("dy", "0.35em") //vertical align middle
         .attr("text-anchor", "end")
-        .merge(value_labels).transition(t)
+        .merge(value_labels)
+        .transition(t)
         .attr("opacity", 1)
-        .text(d => this.labelFormatter(d.values))
-        .attr("x", d => x(d.values) - 7)
+        .text(d => this.labelFormatter(d.value))
+        .attr("x", d => x(d.value) - 7)
         .delay(delay);
 
-    if (this.svg.selectAll(".axis").empty()) {
-        // only add if it's missing
+    this.svg.selectAll(".x--axis").remove()
+    // add the x Axis
+    this.svg.append("g")
+        .attr("transform", "translate(0," + this.height + ")")
+        .classed('axis', true)
+        .classed('x--axis', true)
+        .classed('top', true)
+        .call(d3.axisBottom(this.x).tickFormat(this.unitFormatter));
 
-        // add the x Axis
-        this.svg.append("g")
-            .attr("transform", "translate(0," + this.height + ")")
-            .classed('axis', true)
-            .classed('top', true)
-            .call(d3.axisBottom(this.x).tickFormat(this.unitFormatter));
 
-        // add the y Axis
-        this.svg.append("g")
-            .classed('axis', true)
-            .classed('top', true)
-            .call(d3.axisLeft(this.y));
-    }
+    // this.svg.selectAll(".y--axis").remove()
+    // // add the y Axis
+    // this.svg.append("g")
+    //     .classed('axis', true)
+    //     .classed('y--axis', true)
+    //     .classed('top', true)
+    //     .call(d3.axisLeft(this.y));
+
+    let titles = bars.selectAll(".title")
+        .data(data);
+
+    titles.exit().remove();
+
+    titles.enter().append("text")
+        .classed("title", true)
+        .classed('top', true)
+        .attr("fill", "rgb(51, 51, 51)")
+        .attr("y", function(d) { return y(d.label) - y.bandwidth()/2; })
+        .attr("dy", "0.35em") //vertical align middle
+        .attr("text-anchor", "start")
+        .merge(titles)
+        .attr("opacity", 1)
+        .text(d => d.label)
+        .attr("x", d => 0)
+
 }
 
 RegionBarChart.prototype.demographicBreakDownChart = function() {
 
-    let data = this.dataset.filter(d => d.region == REGION && d.supergroup != "All");
+    let data = this.dataset.filter(d => d.region == REGION);
+    let value = this.selected_bar
 
     // set the ranges
-    // set the ranges
     this.y = d3.scaleBand()
-        .range([0, this.height])
+        .range([10, this.height])
         .padding(0.2);
 
     this.x = d3.scaleLinear()
         .range([0, this.width]);
 
     if (this.units == "percent") {
-        this.x.domain([0, 1]); //d3.max(data, function(d){ return d.values; })])
+        this.x.domain([0, 1]); 
     } else {
         this.x.domain([0, Math.max([
-            d3.max(this.dataset, d => d["values"]),
+            d3.max(this.dataset, d => d[values]),
         ])])
     }
-    // this.y.domain(data.map(function(d) { return d.region; })); // for top level region
     this.y.domain(data.map(function(d) { return d.label; })); // for demographics
 
     // append the svg object to the body of the page
@@ -203,13 +231,11 @@ RegionBarChart.prototype.demographicBreakDownChart = function() {
         return i * 10;
     };
 
-    let bars = this.svg.selectAll(".bar-g")
+    this.svg.selectAll(".bar-g").remove()
+    let bars = this.svg.append('g')
+        .classed('bar-g', true)
+        .classed('demo', true);
 
-    if (bars.empty()) {
-        bars = this.svg.append('g')
-            .classed('bar-g', true)
-            .classed('demo', true);
-    }
 
     let bar = bars.selectAll('.bar')
         .data(data)
@@ -222,9 +248,10 @@ RegionBarChart.prototype.demographicBreakDownChart = function() {
         .attr("x", function(d) { return 0; })
         .attr("y", function(d) { return y(d.label); })
         .attr("height", y.bandwidth())
-        .merge(bar).transition(t)
+        .merge(bar)
+        .transition(t)
         .ease(d3.easeExp)
-        .attr("width", function(d) { return x(d.values); })
+        .attr("width", function(d) { return x(d[value]); })
         .delay(delay);
 
     let value_labels = bars.selectAll(".value")
@@ -240,28 +267,33 @@ RegionBarChart.prototype.demographicBreakDownChart = function() {
         .attr("y", function(d) { return y(d.label) + y.bandwidth() / 2; })
         .attr("dy", "0.35em") //vertical align middle
         .attr("text-anchor", "end")
-        .merge(value_labels).transition(t)
+        .merge(value_labels)
+        .transition(t)
         .attr("opacity", 1)
-        .text(d => this.labelFormatter(d.values))
-        .attr("x", d => x(d.values) - 7)
+        .text(d => this.labelFormatter(d[value]))
+        .attr("x", d => x(d[value]) - 7)
         .delay(delay);
 
-    if (this.svg.selectAll(".axis").empty()) {
-        // only add if it's missing
 
-        // add the x Axis
-        this.svg.append("g")
-            .attr("transform", "translate(0," + this.height + ")")
-            .classed('axis', true)
-            .classed('demo', true)
-            .call(d3.axisBottom(this.x).tickFormat(this.unitFormatter));
+    this.svg.selectAll(".x--axis").remove()
+    // add the x Axis
+    this.svg.append("g")
+        .attr("transform", "translate(0," + this.height + ")")
+        .classed('axis', true)
+        .classed('x--axis', true)
+        .classed('demo', true)
+        .call(d3.axisBottom(this.x).tickFormat(this.unitFormatter));
 
-        // add the y Axis
-        this.svg.append("g")
-            .classed('axis', true)
-            .classed('demo', true)
-            .call(d3.axisLeft(this.y));
-    }
+
+    this.svg.selectAll(".y--axis").remove()
+    // add the y Axis
+    this.svg.append("g")
+        .classed('axis', true)
+        .classed('y--axis', true)
+        .classed('demo', true)
+        .call(d3.axisLeft(this.y));
+
+
     let goto = this.gotoAllDemo.bind(this)
     let backbutton = this.svg.selectAll('.backbutton');
     if (backbutton.empty()) {
@@ -274,8 +306,23 @@ RegionBarChart.prototype.demographicBreakDownChart = function() {
         .attr('fill', "rgb(51, 51, 51)")
         .text("\u276E back")
         .attr("x", 0)
-        .attr("y", -5)
+        .attr("y", 0)
         .on("click", goto)
+
+
+    this.svg.selectAll('.demoTitle').remove();
+    let title = this.svg.append('g')
+    title.exit().remove();
+    title.append('text')
+        .classed('demo', true)
+        .classed('.demoTitle', true)
+        .attr('fill', "rgb(51, 51, 51)")
+        .attr("text-anchor", "end")
+        .text(value)
+        .attr("x", width)
+        .attr("y", 0);
+
+
 }
 
 
@@ -285,11 +332,40 @@ RegionBarChart.prototype.loadCSV = async function() {
 
     d3.csv(this.url, function(error, data) {
         if (error) throw error;
+
+
+        var labels = Object.keys(data[0]).slice(3); // keys after region, supergroup, and subgroup are values 
+
         data.forEach(function(d) {
-            d.values = +d.values;
-            d['label'] = d.supergroup + "-" + d.subgroup;
+            for (label of labels) {
+                d[label] = +d[label];
+            }
+
+            d['concat_label'] = d.supergroup + "-" + d.subgroup;
+            if (!d.subgroup) {
+                d['width'] = "large";
+                d['label'] = d.supergroup;
+            } else {
+                d['width'] = "normal";
+                d['label'] = d.subgroup;
+            }
         });
-        that.dataset = data;
+
+        var dataAllLong = [];
+        data.filter(d => d.supergroup == "All")
+            .forEach(function(d) {
+                for (label of labels) {
+                    var obj = {};
+                    obj['region'] = d['region']
+                    obj['label'] = label;
+                    obj['value'] = d[label];
+                    dataAllLong.push(obj)
+                }
+            })
+
+        that.dataset = data.filter(d => d.supergroup != "All");
+        that.labels = labels;
+        that.dataAllLong = dataAllLong
         that.resize()
         that.update()
     });
