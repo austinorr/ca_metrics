@@ -1,3 +1,5 @@
+var DEBUG = false;
+
 var REGION = "Statewide"
 
 // ----- Map Constants -------
@@ -29,7 +31,7 @@ const REGION_POP_SCALER = 1.01;
 
 const CA_COUNTIES_REGIONS_TOPOJSON_URL = "./data/ca-counties.json"
 
-const UNITS = ["units=percent", "units=count", "units=usd"]
+const UNITS = ["percent", "count", "usd"]
 
 var CHARTS = []
 
@@ -41,11 +43,11 @@ function onLoad() {
     region_map.init();
 
 
-    var bar_chart = new RegionBarChart("#_viz_bar_container1", "./data/employment2col.csv");
+    var bar_chart = new RegionBarChart("#_viz_bar_container1", );
     bar_chart.init();
     CHARTS.push(bar_chart);
 
-    var bar_chart = new RegionBarChart("#_viz_bar_container2", "./data/employment.csv");
+    var bar_chart = new RegionBarChart("#_viz_bar_container2", );
     bar_chart.init();
     CHARTS.push(bar_chart);
 

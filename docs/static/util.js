@@ -74,3 +74,6 @@ function getMaxProperty(features_array, property) {
     }
     return max_prop
 }
+
+//    this.units = UNITS.filter(d => this.container.node().classList.contains(d))[0].split("=")[1];
+
