@@ -105,13 +105,11 @@ RegionBarChart.prototype.allDemographicsChart = function() {
         return i * 10;
     };
 
-    let bars = this.svg.selectAll(".bar-g")
-
-    if (bars.empty()) {
-        bars = this.svg.append('g')
-            .classed('bar-g', true)
-            .classed('top', true);
-    }
+    
+    this.svg.selectAll(".bar-g").remove()
+    let bars = this.svg.append('g')
+        .classed('bar-g', true)
+        .classed('top', true);
 
     let bar = bars.selectAll('.bar')
         .data(data)
