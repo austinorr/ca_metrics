@@ -27,6 +27,6 @@ const REGION_COLORS = [
 // increases size of region on click/hover/whatever
 const REGION_POP_SCALER = 1.01;
 
-const CA_COUNTIES_REGIONS_TOPOJSON_URL = "https://raw.githubusercontent.com/austinorr/ca_metrics/master/data/ca-counties.json"
+const CA_COUNTIES_REGIONS_TOPOJSON_URL = "./data/ca-counties.json"
 
 const UNITS = ["units=percent", "units=count", "units=usd"]

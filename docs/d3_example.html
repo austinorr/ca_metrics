@@ -83,10 +83,10 @@
 </body>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://d3js.org/topojson.v2.min.js"></script>
-<script type="text/javascript" src="/static/init.js"></script>
-<script type="text/javascript" src="/static/util.js"></script>
-<script type="text/javascript" src="/static/map.js"></script>
-<script type="text/javascript" src="/static/bar_chart.js"></script>
+<script type="text/javascript" src="./static/init.js"></script>
+<script type="text/javascript" src="./static/util.js"></script>
+<script type="text/javascript" src="./static/map.js"></script>
+<script type="text/javascript" src="./static/bar_chart.js"></script>
 <script>
 var CHARTS = []
 
@@ -95,7 +95,7 @@ function onLoad() {
   var region_map = new RegionMap("#_viz_map_container", CA_COUNTIES_REGIONS_TOPOJSON_URL);
   region_map.init()
 
-  var bar_chart = new RegionBarChart("#_viz_bar_container", "/data/employment.csv")
+  var bar_chart = new RegionBarChart("#_viz_bar_container", "./data/employment.csv")
   bar_chart.init()
 
   CHARTS.push(bar_chart)
