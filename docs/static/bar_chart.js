@@ -47,7 +47,7 @@ RegionBarChart.prototype.gotoDemoBreakDown = function() {
 }
 
 RegionBarChart.prototype.resize = function() {
-    console.log('resized!')
+    // console.log('resized!')
 
     // this.container.selectAll("svg").remove()
 

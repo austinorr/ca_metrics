@@ -1,6 +1,6 @@
 function RegionMap(container_id, url, ) {
 
-    console.log('initializing map...')
+    // console.log('initializing map...')
 
     this.container_id = container_id;
     this.url = url;
@@ -28,7 +28,7 @@ function RegionMap(container_id, url, ) {
 
 RegionMap.prototype.init = function() {
     this.loadJson();
-    console.log('map initialized')
+    // console.log('map initialized')
 }
 
 RegionMap.prototype.loadJson = async function() {
