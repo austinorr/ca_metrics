@@ -1,0 +1,8 @@
+source,target,value
+hs,ag,.8
+hs,non-ag,.2
+non-ag,other,.2
+ag,uc,.2
+ag,csu,.2
+ag,cc,.2
+ag,other,.2
