@@ -35,20 +35,57 @@ const UNITS = ["percent", "count", "usd"]
 
 var CHARTS = []
 
+var REGION_MAP
+
 function onLoad() {
 
     d3.select("._navbar").text(REGION).classed('region_label', true);
 
-    var region_map = new RegionMap("#_viz_map_container1", CA_COUNTIES_REGIONS_TOPOJSON_URL);
-    region_map.init();
+    // REGION_MAP= new RegionMap("#_viz_map_container1", CA_COUNTIES_REGIONS_TOPOJSON_URL);
+    // REGION_MAP.init();
+
+    d3.selectAll(".chart-wrapper-map").each( function (d) {
+        let divId = "#" + this.getAttribute("id");
+        
+        REGION_MAP = new RegionMap(divId);
+        REGION_MAP.init();
+
+    })
+
+    d3.selectAll(".chart-wrapper-bar").each( function (d) {
+        let divId = "#" + this.getAttribute("id");
+        
+        var bar_chart = new RegionBarChart(divId);
+        bar_chart.init();
+        CHARTS.push(bar_chart);
+
+    })
+
+    d3.selectAll(".chart-wrapper-stacked-bar").each( function (d) {
+        let divId = "#" + this.getAttribute("id");
+        
+        var bar_chart = new StackedBarChart(divId);
+        bar_chart.init();
+        CHARTS.push(bar_chart);
+
+    })
 
 
-    var bar_chart = new RegionBarChart("#_viz_bar_container1", );
-    bar_chart.init();
-    CHARTS.push(bar_chart);
+    // var bar_chart = new StackedBarChart("#_viz_edubar_container1", );
+    // bar_chart.init();
+    // CHARTS.push(bar_chart);
 
-    var bar_chart = new RegionBarChart("#_viz_bar_container2", );
-    bar_chart.init();
-    CHARTS.push(bar_chart);
+}
 
+function mapDataToggle(id) {
+    let elem = '#' + id
+    let state = d3.select(elem).classed('active')
+    if (state) {
+        REGION_MAP.baseColors()
+        d3.select(elem).classed('active', false)
+    } else {
+        REGION_MAP.choroplethColors(elem);
+        d3.select(elem).classed('active', true)
+    }
+    
 }

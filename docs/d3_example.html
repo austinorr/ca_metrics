@@ -3,7 +3,7 @@
 <head>
 </head>
 <style>
-  body {
+body {
   display: grid;
   margin: 10px;
   width: calc(100vw - 20px);
@@ -24,8 +24,6 @@
 }
 
 .counties {
-  fill: none;
-  fill-opacity:.5;
   stroke: #fff;
   stroke-width: 2px;
   stroke-miterlimit: 2;
@@ -36,13 +34,19 @@
   display: grid;
   height: calc(100vh - 150px);
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+}
+
+._viz_map_group {
+  display: grid;
+  grid-row: 1 / -1;
+  grid-template-rows: 8fr 1fr;
 }
 
 ._viz_map_container {
   position: relative;
   display: flex;
-  grid-row: 1 / -1;
+  grid-row: 1 ;
 }
 
 ._viz_bar_container {
@@ -71,18 +75,24 @@
 .backbutton:hover {
   fill: steelblue;
 }
-/*.value {
-  font-size: 9pt;
-}*/
+
+._viz_map_data_toggle.active{
+  background-color: green;
+}
+
 
 </style>
 
 <body>
   <div class='_navbar'></div>
   <div class="_viz_container">
-    <div id="_viz_map_container1" class="_viz_map_container"></div>
-    <div id="_viz_bar_container1" class="_viz_bar_container" _viz_units="percent" _viz_source="./data/employment2col.csv"></div>
-    <div id="_viz_bar_container2" class="_viz_bar_container" _viz_units="percent" _viz_source="./data/employment.csv"></div>
+    <div class="_viz_map_group">
+      <div id="_viz_map_container1" class="chart-wrapper-map" _viz_source="./data/ca-counties.json"></div>
+      <div id="uid-button-1" class="_viz_map_data_toggle" _viz_units="percent" _viz_source="./data/employment.csv" onclick="mapDataToggle(this.id)">Toggle Employment Choropleth</div>
+    </div>
+    <div id="_viz_bar_container1" class="chart-wrapper-bar" _viz_units="percent" _viz_source="./data/employment2col.csv"></div>
+    <div id="_viz_bar_container2" class="chart-wrapper-bar" _viz_units="percent" _viz_source="./data/employment.csv"></div>
+    <div id="_viz_edubar_container1" class="chart-wrapper-stacked-bar" _viz_units="count" _viz_source="./data/edu.csv"></div>
   </div>
   <div></div>
 </body>
@@ -93,10 +103,9 @@
 <script type="text/javascript" src="./static/map.js"></script>
 <script type="text/javascript" src="./static/bar_chart.js"></script>
 <script>
-
 onLoad();
 
-d3.select("#_viz_map_container1").on("click", function() {
+d3.select(".chart-wrapper-map").on("click", function() {
   d3.select("._navbar").text(REGION).classed('region_label', true)
 
   for (var i = 0; i < CHARTS.length; i++) {

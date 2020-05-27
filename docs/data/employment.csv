@@ -1,323 +1,320 @@
-﻿region,supergroup,subgroup,How many people are employed?
-Bay Area,All,,0.842933
-Bay Area,American Indian/Alaska Native,,0.656117
-Bay Area,Asian,,0.8398916
-Bay Area,Asian,Other Asian,0.8922345
-Bay Area,Asian,South Asian,0.8381305
-Bay Area,Asian,Southeast Asian,0.8722801
-Bay Area,Native Hawaiian and Other Pacific Islander alone,,0.8599589
-Bay Area,Some Other Race alone,,0.8677622
-Bay Area,Two or More Races,,0.8564283
-Bay Area,White alone,,0.8527458
-Bay Area,Black or African American alone,,0.803066
-Bay Area,Latinx,,0.838197
-Bay Area,Latinx,Central American,0.8574299
-Bay Area,Latinx,Cuban,0.8231587
-Bay Area,Latinx,Mexican,0.8388913
-Bay Area,Latinx,Other Hispanic,0.8045702
-Bay Area,Latinx,Puerto Rican,0.8154743
-Bay Area,Latinx,South American,0.8115528
-Bay Area,Economic,Lower Income,0.7984013
-Bay Area,Economic,Middle Income,0.8778358
-Bay Area,Economic,Poor,0.6056203
-Bay Area,Economic,Rich,0.8951682
-Bay Area,Economic,Upper Income,0.9325542
-Bay Area,Gender,,
-Bay Area,Gender,Female,0.7846385
-Bay Area,Gender,Male,0.9004772
-Central Coast,All,,0.8211619
-Central Coast,American Indian/Alaska Native,,0.6202278
-Central Coast,Asian,,0.8413736
-Central Coast,Asian,Other Asian,0.9506829
-Central Coast,Asian,South Asian,0.7617686
-Central Coast,Asian,Southeast Asian,0.8844272
-Central Coast,Native Hawaiian and Other Pacific Islander alone,,0.7390649
-Central Coast,Some Other Race alone,,0.7931873
-Central Coast,Two or More Races,,0.8378302
-Central Coast,White alone,,0.8202728
-Central Coast,Black or African American alone,,0.8365
-Central Coast,Latinx,,0.8193017
-Central Coast,Latinx,Central American,0.8619163
-Central Coast,Latinx,Cuban,0.800345
-Central Coast,Latinx,Mexican,0.8193612
-Central Coast,Latinx,Other Hispanic,0.7585661
-Central Coast,Latinx,Puerto Rican,0.8784361
-Central Coast,Latinx,South American,0.7723656
-Central Coast,Economic,Lower Income,0.7515
-Central Coast,Economic,Middle Income,0.8547858
-Central Coast,Economic,Poor,0.6112391
-Central Coast,Economic,Rich,0.8587289
-Central Coast,Economic,Upper Income,0.905728
-Central Coast,Gender,Female,0.7469411
-Central Coast,Gender,Male,0.8934985
-Central Sierra,All,,0.7731365
-Central Sierra,American Indian/Alaska Native,,0.8515737
-Central Sierra,Asian,,0.7987118
-Central Sierra,Asian,Southeast Asian,0.7767442
-Central Sierra,Native Hawaiian and Other Pacific Islander alone,,1
+﻿region,group,subgroup,Employment;What percent of residents are employed?
+Bay Area,All,,0.842932999
+Bay Area,Native American/Alaska Native,,0.656117022
+Bay Area,Asian,,0.839891613
+Bay Area,Asian,Other Asian,0.892234504
+Bay Area,Asian,South Asian,0.838130534
+Bay Area,Asian,Southeast Asian,0.872280121
+Bay Area,Native Hawaiian/Other Pacific Islander,,0.859958947
+Bay Area,Some Other Race alone,,0.867762208
+Bay Area,2 or more races,,0.856428266
+Bay Area,White,,0.852745831
+Bay Area,Black,,0.803065956
+Bay Area,Latino/Latina,,0.838196993
+Bay Area,Latino/Latina,Mexican,0.838891268
+Bay Area,Latino/Latina,Central American,0.857429862
+Bay Area,Latino/Latina,Cuban,0.823158741
+Bay Area,Latino/Latina,Puerto Rican,0.815474272
+Bay Area,Latino/Latina,South American,0.811552763
+Bay Area,Latino/Latina,Other Hispanic,0.804570198
+Bay Area,Female,,0.784638524
+Bay Area,Male,,0.900477231
+Bay Area,Very High Income,,0.895168245
+Bay Area,Higher Income,,0.932554245
+Bay Area,Middle Income,,0.87783581
+Bay Area,Lower Income,,0.798401296
+Bay Area,Very Low Income,,0.605620325
+Central Sierra,All,,0.773136497
+Central Sierra,Native American/Alaska Native,,0.851573706
+Central Sierra,Asian,,0.798711777
+Central Sierra,Asian,Southeast Asian,0.776744187
+Central Sierra,Native Hawaiian/Other Pacific Islander,,1
 Central Sierra,Some Other Race alone,,1
-Central Sierra,Two or More Races,,0.8407665
-Central Sierra,White alone,,0.7425882
-Central Sierra,Black or African American alone,,0.9336005
-Central Sierra,Latinx,,0.8806456
-Central Sierra,Latinx,Central American,0.8341709
-Central Sierra,Latinx,Mexican,0.9104171
-Central Sierra,Latinx,Other Hispanic,0.8677507
-Central Sierra,Latinx,Puerto Rican,0.6369771
-Central Sierra,Latinx,South American,0.4213198
-Central Sierra,Economic,Lower Income,0.714394
-Central Sierra,Economic,Middle Income,0.7937607
-Central Sierra,Economic,Poor,0.4507712
-Central Sierra,Economic,Rich,0.857886
-Central Sierra,Economic,Upper Income,0.8858981
-Central Sierra,Gender,Female,0.7444361
-Central Sierra,Gender,Male,0.7995716
-Greater Sacramento,All,,0.7841867
-Greater Sacramento,American Indian/Alaska Native,,0.606486
-Greater Sacramento,Asian,,0.8027871
-Greater Sacramento,Asian,Other Asian,0.8521257
-Greater Sacramento,Asian,South Asian,0.7904686
-Greater Sacramento,Asian,Southeast Asian,0.8186136
-Greater Sacramento,Native Hawaiian and Other Pacific Islander alone,,0.7133929
-Greater Sacramento,Some Other Race alone,,0.7613032
-Greater Sacramento,Two or More Races,,0.7497616
-Greater Sacramento,White alone,,0.7841624
-Greater Sacramento,Black or African American alone,,0.7694017
-Greater Sacramento,Latinx,,0.7907365
-Greater Sacramento,Latinx,Central American,0.7449081
-Greater Sacramento,Latinx,Cuban,0.6657842
-Greater Sacramento,Latinx,Mexican,0.7924563
-Greater Sacramento,Latinx,Other Hispanic,0.803787
-Greater Sacramento,Latinx,Puerto Rican,0.7827566
-Greater Sacramento,Latinx,South American,0.8893787
-Greater Sacramento,Economic,Lower Income,0.7020229
-Greater Sacramento,Economic,Middle Income,0.8259751
-Greater Sacramento,Economic,Poor,0.5348374
-Greater Sacramento,Economic,Rich,0.8697695
-Greater Sacramento,Economic,Upper Income,0.8846263
-Greater Sacramento,Gender,Female,0.7231222
-Greater Sacramento,Gender,Male,0.8473179
-Imperial,All,,0.7711793
-Imperial,American Indian/Alaska Native,,0.9031658
-Imperial,Asian,,0.7244275
-Imperial,Asian,Other Asian,1
-Imperial,Asian,South Asian,0.5283019
-Imperial,Asian,Southeast Asian,0.6625917
-Imperial,Native Hawaiian and Other Pacific Islander alone,,
-Imperial,Some Other Race alone,,
-Imperial,Two or More Races,,1
-Imperial,White alone,,0.8042237
-Imperial,Black or African American alone,,0.8329765
-Imperial,Latinx,,0.7683809
-Imperial,Latinx,Central American,1
-Imperial,Latinx,Mexican,0.764963
-Imperial,Latinx,Other Hispanic,1
-Imperial,Latinx,Puerto Rican,0.6175439
-Imperial,Latinx,South American,1
-Imperial,Economic,Lower Income,0.6296624
-Imperial,Economic,Middle Income,0.7640805
-Imperial,Economic,Poor,0.5648148
-Imperial,Economic,Rich,0.896615
-Imperial,Economic,Upper Income,0.8668807
-Imperial,Gender,Female,0.6540827
-Imperial,Gender,Male,0.878133
-Inland Empire,All,,0.7810531
-Inland Empire,American Indian/Alaska Native,,0.6696177
-Inland Empire,Asian,,0.7864752
-Inland Empire,Asian,Other Asian,0.7449059
-Inland Empire,Asian,South Asian,0.7838413
-Inland Empire,Asian,Southeast Asian,0.828113
-Inland Empire,Native Hawaiian and Other Pacific Islander alone,,0.7694291
-Inland Empire,Some Other Race alone,,0.7935923
-Inland Empire,Two or More Races,,0.7646833
-Inland Empire,White alone,,0.7649212
-Inland Empire,Black or African American alone,,0.8030097
-Inland Empire,Latinx,,0.7892722
-Inland Empire,Latinx,Central American,0.8633333
-Inland Empire,Latinx,Cuban,0.8213249
-Inland Empire,Latinx,Mexican,0.7797716
-Inland Empire,Latinx,Other Hispanic,0.8308418
-Inland Empire,Latinx,Puerto Rican,0.8250171
-Inland Empire,Latinx,South American,0.8573121
-Inland Empire,Economic,Lower Income,0.6849399
-Inland Empire,Economic,Middle Income,0.8159297
-Inland Empire,Economic,Poor,0.5214775
-Inland Empire,Economic,Rich,0.8778677
-Inland Empire,Economic,Upper Income,0.8911321
-Inland Empire,Gender,Female,0.7014802
-Inland Empire,Gender,Male,0.8608994
-Los Angeles,All,,0.8148813
-Los Angeles,American Indian/Alaska Native,,0.7168782
-Los Angeles,Asian,,0.8235558
-Los Angeles,Asian,Other Asian,0.8607212
-Los Angeles,Asian,South Asian,0.8093629
-Los Angeles,Asian,Southeast Asian,0.8593278
-Los Angeles,Native Hawaiian and Other Pacific Islander alone,,0.9106429
-Los Angeles,Some Other Race alone,,0.7927201
-Los Angeles,Two or More Races,,0.8649468
-Los Angeles,White alone,,0.8233832
-Los Angeles,Black or African American alone,,0.7623079
-Los Angeles,Latinx,,0.8141326
-Los Angeles,Latinx,Central American,0.8461738
-Los Angeles,Latinx,Cuban,0.820475
-Los Angeles,Latinx,Mexican,0.8025208
-Los Angeles,Latinx,Other Hispanic,0.8358124
-Los Angeles,Latinx,Puerto Rican,0.8429379
-Los Angeles,Latinx,South American,0.8649951
-Los Angeles,Economic,Lower Income,0.744089
-Los Angeles,Economic,Middle Income,0.8620226
-Los Angeles,Economic,Poor,0.5422941
-Los Angeles,Economic,Rich,0.9005888
-Los Angeles,Economic,Upper Income,0.9150641
-Los Angeles,Gender,Female,0.7497553
-Los Angeles,Gender,Male,0.8805512
-Northern California,All,,0.7648064
-Northern California,American Indian/Alaska Native,,0.7081794
-Northern California,Asian,,0.770714
+Central Sierra,2 or more races,,0.840766549
+Central Sierra,White,,0.742588222
+Central Sierra,Black,,0.933600485
+Central Sierra,Latino/Latina,,0.880645633
+Central Sierra,Latino/Latina,Mexican,0.91041708
+Central Sierra,Latino/Latina,Central American,0.834170878
+Central Sierra,Latino/Latina,Puerto Rican,0.636977077
+Central Sierra,Latino/Latina,South American,0.421319783
+Central Sierra,Latino/Latina,Other Hispanic,0.867750704
+Central Sierra,Female,,0.744436145
+Central Sierra,Male,,0.799571574
+Central Sierra,Very High Income,,0.857885957
+Central Sierra,Higher Income,,0.885898113
+Central Sierra,Middle Income,,0.793760657
+Central Sierra,Lower Income,,0.714393973
+Central Sierra,Very Low Income,,0.450771183
+Central Coast,All,,0.821161866
+Central Coast,Native American/Alaska Native,,0.620227754
+Central Coast,Asian,,0.841373622
+Central Coast,Asian,Other Asian,0.950682878
+Central Coast,Asian,South Asian,0.761768639
+Central Coast,Asian,Southeast Asian,0.88442719
+Central Coast,Native Hawaiian/Other Pacific Islander,,0.739064872
+Central Coast,Some Other Race alone,,0.79318732
+Central Coast,2 or more races,,0.837830245
+Central Coast,White,,0.820272803
+Central Coast,Black,,0.836500049
+Central Coast,Latino/Latina,,0.819301665
+Central Coast,Latino/Latina,Mexican,0.81936121
+Central Coast,Latino/Latina,Central American,0.861916304
+Central Coast,Latino/Latina,Cuban,0.800345004
+Central Coast,Latino/Latina,Puerto Rican,0.878436148
+Central Coast,Latino/Latina,South American,0.77236557
+Central Coast,Latino/Latina,Other Hispanic,0.758566082
+Central Coast,Female,,0.746941149
+Central Coast,Male,,0.89349848
+Central Coast,Very High Income,,0.858728945
+Central Coast,Higher Income,,0.905727983
+Central Coast,Middle Income,,0.8547858
+Central Coast,Lower Income,,0.75150001
+Central Coast,Very Low Income,,0.611239135
+Inland Empire,All,,0.781053066
+Inland Empire,Native American/Alaska Native,,0.669617712
+Inland Empire,Asian,,0.786475241
+Inland Empire,Asian,Other Asian,0.744905889
+Inland Empire,Asian,South Asian,0.783841252
+Inland Empire,Asian,Southeast Asian,0.828113019
+Inland Empire,Native Hawaiian/Other Pacific Islander,,0.769429147
+Inland Empire,Some Other Race alone,,0.793592334
+Inland Empire,2 or more races,,0.764683306
+Inland Empire,White,,0.764921248
+Inland Empire,Black,,0.803009689
+Inland Empire,Latino/Latina,,0.789272249
+Inland Empire,Latino/Latina,Mexican,0.779771626
+Inland Empire,Latino/Latina,Central American,0.863333285
+Inland Empire,Latino/Latina,Cuban,0.821324885
+Inland Empire,Latino/Latina,Puerto Rican,0.825017095
+Inland Empire,Latino/Latina,South American,0.857312143
+Inland Empire,Latino/Latina,Other Hispanic,0.830841839
+Inland Empire,Female,,0.70148015
+Inland Empire,Male,,0.860899389
+Inland Empire,Very High Income,,0.877867699
+Inland Empire,Higher Income,,0.891132116
+Inland Empire,Middle Income,,0.815929711
+Inland Empire,Lower Income,,0.684939861
+Inland Empire,Very Low Income,,0.521477461
+Los Angeles,All,,0.814881265
+Los Angeles,Native American/Alaska Native,,0.716878235
+Los Angeles,Asian,,0.823555827
+Los Angeles,Asian,Other Asian,0.860721171
+Los Angeles,Asian,South Asian,0.809362948
+Los Angeles,Asian,Southeast Asian,0.859327793
+Los Angeles,Native Hawaiian/Other Pacific Islander,,0.910642922
+Los Angeles,Some Other Race alone,,0.792720139
+Los Angeles,2 or more races,,0.864946783
+Los Angeles,White,,0.823383212
+Los Angeles,Black,,0.762307882
+Los Angeles,Latino/Latina,,0.814132631
+Los Angeles,Latino/Latina,Mexican,0.802520752
+Los Angeles,Latino/Latina,Central American,0.846173763
+Los Angeles,Latino/Latina,Cuban,0.820475042
+Los Angeles,Latino/Latina,Puerto Rican,0.842937946
+Los Angeles,Latino/Latina,South American,0.864995122
+Los Angeles,Latino/Latina,Other Hispanic,0.83581239
+Los Angeles,Female,,0.749755323
+Los Angeles,Male,,0.880551159
+Los Angeles,Very High Income,,0.90058881
+Los Angeles,Higher Income,,0.915064096
+Los Angeles,Middle Income,,0.862022638
+Los Angeles,Lower Income,,0.744089007
+Los Angeles,Very Low Income,,0.542294145
+Northern California,All,,0.76480639
+Northern California,Native American/Alaska Native,,0.708179414
+Northern California,Asian,,0.770713985
 Northern California,Asian,Other Asian,1
-Northern California,Asian,South Asian,0.8060747
-Northern California,Asian,Southeast Asian,0.723066
-Northern California,Native Hawaiian and Other Pacific Islander alone,,0.7439364
-Northern California,Some Other Race alone,,0.6892655
-Northern California,Two or More Races,,0.810427
-Northern California,White alone,,0.7600021
-Northern California,Black or African American alone,,0.7662085
-Northern California,Latinx,,0.7930716
-Northern California,Latinx,Central American,0.8130081
-Northern California,Latinx,Cuban,1
-Northern California,Latinx,Mexican,0.7856729
-Northern California,Latinx,Other Hispanic,0.8340715
-Northern California,Latinx,Puerto Rican,0.5021398
-Northern California,Latinx,South American,0.8704454
-Northern California,Economic,Lower Income,0.6797414
-Northern California,Economic,Middle Income,0.8135055
-Northern California,Economic,Poor,0.4542677
-Northern California,Economic,Rich,0.8903475
-Northern California,Economic,Upper Income,0.8638709
-Northern California,Gender,Female,0.7226
-Northern California,Gender,Male,0.8060614
-Northern Sacramento Valley,All,,0.7524677
-Northern Sacramento Valley,American Indian/Alaska Native,,0.6105578
-Northern Sacramento Valley,Asian,,0.8891699
+Northern California,Asian,South Asian,0.806074739
+Northern California,Asian,Southeast Asian,0.723065972
+Northern California,Native Hawaiian/Other Pacific Islander,,0.74393636
+Northern California,Some Other Race alone,,0.689265549
+Northern California,2 or more races,,0.81042695
+Northern California,White,,0.760002077
+Northern California,Black,,0.766208529
+Northern California,Latino/Latina,,0.793071568
+Northern California,Latino/Latina,Mexican,0.785672903
+Northern California,Latino/Latina,Central American,0.81300813
+Northern California,Latino/Latina,Cuban,1
+Northern California,Latino/Latina,Puerto Rican,0.502139807
+Northern California,Latino/Latina,South American,0.870445371
+Northern California,Latino/Latina,Other Hispanic,0.834071517
+Northern California,Female,,0.722599983
+Northern California,Male,,0.806061447
+Northern California,Very High Income,,0.89034754
+Northern California,Higher Income,,0.863870919
+Northern California,Middle Income,,0.81350553
+Northern California,Lower Income,,0.679741442
+Northern California,Very Low Income,,0.454267651
+Orange,All,,0.833031178
+Orange,Native American/Alaska Native,,0.81619072
+Orange,Asian,,0.808511078
+Orange,Asian,Other Asian,0.87226975
+Orange,Asian,South Asian,0.833806157
+Orange,Asian,Southeast Asian,0.837107241
+Orange,Native Hawaiian/Other Pacific Islander,,0.719001412
+Orange,Some Other Race alone,,0.957861185
+Orange,2 or more races,,0.829384387
+Orange,White,,0.833556592
+Orange,Black,,0.911026835
+Orange,Latino/Latina,,0.845362663
+Orange,Latino/Latina,Mexican,0.840383887
+Orange,Latino/Latina,Central American,0.902301252
+Orange,Latino/Latina,Cuban,0.828537703
+Orange,Latino/Latina,Puerto Rican,0.869390666
+Orange,Latino/Latina,South American,0.901123285
+Orange,Latino/Latina,Other Hispanic,0.811938286
+Orange,Female,,0.762541711
+Orange,Male,,0.904105067
+Orange,Very High Income,,0.845127821
+Orange,Higher Income,,0.908120632
+Orange,Middle Income,,0.874346733
+Orange,Lower Income,,0.780712128
+Orange,Very Low Income,,0.646782756
+Greater Sacramento,All,,0.784186721
+Greater Sacramento,Native American/Alaska Native,,0.606485963
+Greater Sacramento,Asian,,0.802787125
+Greater Sacramento,Asian,Other Asian,0.852125704
+Greater Sacramento,Asian,South Asian,0.790468574
+Greater Sacramento,Asian,Southeast Asian,0.818613648
+Greater Sacramento,Native Hawaiian/Other Pacific Islander,,0.713392854
+Greater Sacramento,Some Other Race alone,,0.761303186
+Greater Sacramento,2 or more races,,0.749761581
+Greater Sacramento,White,,0.784162402
+Greater Sacramento,Black,,0.769401729
+Greater Sacramento,Latino/Latina,,0.790736496
+Greater Sacramento,Latino/Latina,Mexican,0.792456329
+Greater Sacramento,Latino/Latina,Central American,0.744908094
+Greater Sacramento,Latino/Latina,Cuban,0.66578424
+Greater Sacramento,Latino/Latina,Puerto Rican,0.782756627
+Greater Sacramento,Latino/Latina,South American,0.889378726
+Greater Sacramento,Latino/Latina,Other Hispanic,0.803786993
+Greater Sacramento,Female,,0.72312218
+Greater Sacramento,Male,,0.847317874
+Greater Sacramento,Very High Income,,0.869769454
+Greater Sacramento,Higher Income,,0.884626269
+Greater Sacramento,Middle Income,,0.82597506
+Greater Sacramento,Lower Income,,0.702022851
+Greater Sacramento,Very Low Income,,0.534837425
+San Diego,All,,0.833725989
+San Diego,Native American/Alaska Native,,0.799869418
+San Diego,Asian,,0.832278728
+San Diego,Asian,Other Asian,0.783394754
+San Diego,Asian,South Asian,0.873488665
+San Diego,Asian,Southeast Asian,0.856850564
+San Diego,Native Hawaiian/Other Pacific Islander,,0.850559592
+San Diego,Some Other Race alone,,0.896574557
+San Diego,2 or more races,,0.857574224
+San Diego,White,,0.833004415
+San Diego,Black,,0.803331912
+San Diego,Latino/Latina,,0.837646425
+San Diego,Latino/Latina,Mexican,0.833112657
+San Diego,Latino/Latina,Central American,0.826751471
+San Diego,Latino/Latina,Cuban,0.905382693
+San Diego,Latino/Latina,Puerto Rican,0.879377425
+San Diego,Latino/Latina,South American,0.90075165
+San Diego,Latino/Latina,Other Hispanic,0.887899578
+San Diego,Female,,0.76711607
+San Diego,Male,,0.898979127
+San Diego,Very High Income,,0.878025949
+San Diego,Higher Income,,0.898712754
+San Diego,Middle Income,,0.883483291
+San Diego,Lower Income,,0.761080563
+San Diego,Very Low Income,,0.618889272
+Imperial,All,,0.771179259
+Imperial,Native American/Alaska Native,,0.903165758
+Imperial,Asian,,0.724427462
+Imperial,Asian,Other Asian,1
+Imperial,Asian,South Asian,0.528301895
+Imperial,Asian,Southeast Asian,0.662591696
+Imperial,2 or more races,,1
+Imperial,White,,0.804223657
+Imperial,Black,,0.83297646
+Imperial,Latino/Latina,,0.76838088
+Imperial,Latino/Latina,Mexican,0.764963031
+Imperial,Latino/Latina,Central American,1
+Imperial,Latino/Latina,Puerto Rican,0.617543876
+Imperial,Latino/Latina,South American,1
+Imperial,Latino/Latina,Other Hispanic,1
+Imperial,Female,,0.654082656
+Imperial,Male,,0.878132999
+Imperial,Very High Income,,0.896614969
+Imperial,Higher Income,,0.866880655
+Imperial,Middle Income,,0.764080465
+Imperial,Lower Income,,0.629662395
+Imperial,Very Low Income,,0.564814806
+San Joaquin Valley,All,,0.767986774
+San Joaquin Valley,Native American/Alaska Native,,0.682040632
+San Joaquin Valley,Asian,,0.732476115
+San Joaquin Valley,Asian,Other Asian,0.845618486
+San Joaquin Valley,Asian,South Asian,0.709986389
+San Joaquin Valley,Asian,Southeast Asian,0.732119262
+San Joaquin Valley,Native Hawaiian/Other Pacific Islander,,0.637128532
+San Joaquin Valley,Some Other Race alone,,0.846621394
+San Joaquin Valley,2 or more races,,0.75219965
+San Joaquin Valley,White,,0.76593107
+San Joaquin Valley,Black,,0.781949818
+San Joaquin Valley,Latino/Latina,,0.775997639
+San Joaquin Valley,Latino/Latina,Mexican,0.773397148
+San Joaquin Valley,Latino/Latina,Central American,0.854976058
+San Joaquin Valley,Latino/Latina,Cuban,0.830492854
+San Joaquin Valley,Latino/Latina,Puerto Rican,0.74708885
+San Joaquin Valley,Latino/Latina,South American,0.798961341
+San Joaquin Valley,Latino/Latina,Other Hispanic,0.773144424
+San Joaquin Valley,Female,,0.681910872
+San Joaquin Valley,Male,,0.851674676
+San Joaquin Valley,Very High Income,,0.884037971
+San Joaquin Valley,Higher Income,,0.882067263
+San Joaquin Valley,Middle Income,,0.80471158
+San Joaquin Valley,Lower Income,,0.66247052
+San Joaquin Valley,Very Low Income,,0.520483434
+Northern Sacramento Valley,All,,0.752467692
+Northern Sacramento Valley,Native American/Alaska Native,,0.610557795
+Northern Sacramento Valley,Asian,,0.889169931
 Northern Sacramento Valley,Asian,Other Asian,1
-Northern Sacramento Valley,Asian,South Asian,0.850365
-Northern Sacramento Valley,Asian,Southeast Asian,0.8718692
-Northern Sacramento Valley,Native Hawaiian and Other Pacific Islander alone,,1
-Northern Sacramento Valley,Some Other Race alone,,0.9021407
-Northern Sacramento Valley,Two or More Races,,0.6267843
-Northern Sacramento Valley,White alone,,0.7288398
-Northern Sacramento Valley,Black or African American alone,,0.8208916
-Northern Sacramento Valley,Latinx,,0.8204533
-Northern Sacramento Valley,Latinx,Central American,0.909732
-Northern Sacramento Valley,Latinx,Cuban,1
-Northern Sacramento Valley,Latinx,Mexican,0.8268762
-Northern Sacramento Valley,Latinx,Other Hispanic,0.7364467
-Northern Sacramento Valley,Latinx,Puerto Rican,0.7728055
-Northern Sacramento Valley,Latinx,South American,1
-Northern Sacramento Valley,Economic,Lower Income,0.5971668
-Northern Sacramento Valley,Economic,Middle Income,0.7801672
-Northern Sacramento Valley,Economic,Poor,0.5410548
-Northern Sacramento Valley,Economic,Rich,0.9293998
-Northern Sacramento Valley,Economic,Upper Income,0.865559
-Northern Sacramento Valley,Gender,Female,0.7080477
-Northern Sacramento Valley,Gender,Male,0.7977476
-Orange,All,,0.8330312
-Orange,American Indian/Alaska Native,,0.8161907
-Orange,Asian,,0.8085111
-Orange,Asian,Other Asian,0.8722697
-Orange,Asian,South Asian,0.8338062
-Orange,Asian,Southeast Asian,0.8371072
-Orange,Native Hawaiian and Other Pacific Islander alone,,0.7190014
-Orange,Some Other Race alone,,0.9578612
-Orange,Two or More Races,,0.8293844
-Orange,White alone,,0.8335566
-Orange,Black or African American alone,,0.9110268
-Orange,Latinx,,0.8453627
-Orange,Latinx,Central American,0.9023013
-Orange,Latinx,Cuban,0.8285377
-Orange,Latinx,Mexican,0.8403839
-Orange,Latinx,Other Hispanic,0.8119383
-Orange,Latinx,Puerto Rican,0.8693907
-Orange,Latinx,South American,0.9011233
-Orange,Economic,Lower Income,0.7807121
-Orange,Economic,Middle Income,0.8743467
-Orange,Economic,Poor,0.6467828
-Orange,Economic,Rich,0.8451278
-Orange,Economic,Upper Income,0.9081206
-Orange,Gender,Female,0.7625417
-Orange,Gender,Male,0.9041051
-San Diego,All,,0.833726
-San Diego,American Indian/Alaska Native,,0.7998694
-San Diego,Asian,,0.8322787
-San Diego,Asian,Other Asian,0.7833948
-San Diego,Asian,South Asian,0.8734887
-San Diego,Asian,Southeast Asian,0.8568506
-San Diego,Native Hawaiian and Other Pacific Islander alone,,0.8505596
-San Diego,Some Other Race alone,,0.8965746
-San Diego,Two or More Races,,0.8575742
-San Diego,White alone,,0.8330044
-San Diego,Black or African American alone,,0.8033319
-San Diego,Latinx,,0.8376464
-San Diego,Latinx,Central American,0.8267515
-San Diego,Latinx,Cuban,0.9053827
-San Diego,Latinx,Mexican,0.8331127
-San Diego,Latinx,Other Hispanic,0.8878996
-San Diego,Latinx,Puerto Rican,0.8793774
-San Diego,Latinx,South American,0.9007517
-San Diego,Economic,Lower Income,0.7610806
-San Diego,Economic,Middle Income,0.8834833
-San Diego,Economic,Poor,0.6188893
-San Diego,Economic,Rich,0.8780259
-San Diego,Economic,Upper Income,0.8987128
-San Diego,Gender,Female,0.7671161
-San Diego,Gender,Male,0.8989791
-San Joaquin Valley,All,,0.7679868
-San Joaquin Valley,American Indian/Alaska Native,,0.6820406
-San Joaquin Valley,Asian,,0.7324761
-San Joaquin Valley,Asian,Other Asian,0.8456185
-San Joaquin Valley,Asian,South Asian,0.7099864
-San Joaquin Valley,Asian,Southeast Asian,0.7321193
-San Joaquin Valley,Native Hawaiian and Other Pacific Islander alone,,0.6371285
-San Joaquin Valley,Some Other Race alone,,0.8466214
-San Joaquin Valley,Two or More Races,,0.7521996
-San Joaquin Valley,White alone,,0.7659311
-San Joaquin Valley,Black or African American alone,,0.7819498
-San Joaquin Valley,Latinx,,0.7759976
-San Joaquin Valley,Latinx,Central American,0.8549761
-San Joaquin Valley,Latinx,Cuban,0.8304929
-San Joaquin Valley,Latinx,Mexican,0.7733971
-San Joaquin Valley,Latinx,Other Hispanic,0.7731444
-San Joaquin Valley,Latinx,Puerto Rican,0.7470888
-San Joaquin Valley,Latinx,South American,0.7989613
-San Joaquin Valley,Economic,Lower Income,0.6624705
-San Joaquin Valley,Economic,Middle Income,0.8047116
-San Joaquin Valley,Economic,Poor,0.5204834
-San Joaquin Valley,Economic,Rich,0.884038
-San Joaquin Valley,Economic,Upper Income,0.8820673
-San Joaquin Valley,Gender,Female,0.6819109
-San Joaquin Valley,Gender,Male,0.8516747
-Statewide,All,,0.8122381
-Statewide,American Indian/Alaska Native,,0.698593
-Statewide,Asian,,0.820985
-Statewide,Asian,Other Asian,0.8634297
-Statewide,Asian,South Asian,0.818117
-Statewide,Asian,Southeast Asian,0.845414
-Statewide,Native Hawaiian and Other Pacific Islander alone,,0.8042303
-Statewide,Some Other Race alone,,0.834522
-Statewide,Two or More Races,,0.8260032
-Statewide,White alone,,0.8132414
-Statewide,Black or African American alone,,0.7870792
-Statewide,Latinx,,0.8115395
-Statewide,Latinx,Central American,0.8502696
-Statewide,Latinx,Cuban,0.8177443
-Statewide,Latinx,Mexican,0.8044466
-Statewide,Latinx,Other Hispanic,0.8207961
-Statewide,Latinx,Puerto Rican,0.82477
-Statewide,Latinx,South American,0.8533056
-Statewide,Economic,Lower Income,0.7397662
-Statewide,Economic,Middle Income,0.8529176
-Statewide,Economic,Poor,0.5679564
-Statewide,Economic,Rich,0.8863822
-Statewide,Economic,Upper Income,0.9065119
-Statewide,Gender,Female,0.7446454
-Statewide,Gender,Male,0.8795451
+Northern Sacramento Valley,Asian,South Asian,0.850364983
+Northern Sacramento Valley,Asian,Southeast Asian,0.871869206
+Northern Sacramento Valley,Native Hawaiian/Other Pacific Islander,,1
+Northern Sacramento Valley,Some Other Race alone,,0.902140677
+Northern Sacramento Valley,2 or more races,,0.626784325
+Northern Sacramento Valley,White,,0.728839755
+Northern Sacramento Valley,Black,,0.820891559
+Northern Sacramento Valley,Latino/Latina,,0.820453346
+Northern Sacramento Valley,Latino/Latina,Mexican,0.826876163
+Northern Sacramento Valley,Latino/Latina,Central American,0.909732044
+Northern Sacramento Valley,Latino/Latina,Cuban,1
+Northern Sacramento Valley,Latino/Latina,Puerto Rican,0.772805512
+Northern Sacramento Valley,Latino/Latina,South American,1
+Northern Sacramento Valley,Latino/Latina,Other Hispanic,0.736446738
+Northern Sacramento Valley,Female,,0.708047748
+Northern Sacramento Valley,Male,,0.797747552
+Northern Sacramento Valley,Very High Income,,0.929399848
+Northern Sacramento Valley,Higher Income,,0.865558982
+Northern Sacramento Valley,Middle Income,,0.780167162
+Northern Sacramento Valley,Lower Income,,0.597166777
+Northern Sacramento Valley,Very Low Income,,0.541054785
+Statewide,All,,0.812238097
+Statewide,Native American/Alaska Native,,0.698592961
+Statewide,Asian,,0.82098496
+Statewide,Asian,Other Asian,0.863429725
+Statewide,Asian,South Asian,0.818116963
+Statewide,Asian,Southeast Asian,0.845413983
+Statewide,Native Hawaiian/Other Pacific Islander,,0.804230332
+Statewide,Some Other Race alone,,0.834522009
+Statewide,2 or more races,,0.826003194
+Statewide,White,,0.813241422
+Statewide,Black,,0.787079215
+Statewide,Latino/Latina,,0.811539531
+Statewide,Latino/Latina,Mexican,0.804446638
+Statewide,Latino/Latina,Central American,0.850269616
+Statewide,Latino/Latina,Cuban,0.817744255
+Statewide,Latino/Latina,Puerto Rican,0.824769974
+Statewide,Latino/Latina,South American,0.853305578
+Statewide,Latino/Latina,Other Hispanic,0.820796132
+Statewide,Female,,0.744645417
+Statewide,Male,,0.879545093
+Statewide,Very High Income,,0.886382222
+Statewide,Higher Income,,0.906511903
+Statewide,Middle Income,,0.852917612
+Statewide,Lower Income,,0.739766181
+Statewide,Very Low Income,,0.567956388

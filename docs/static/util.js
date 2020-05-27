@@ -1,6 +1,6 @@
 // ---- Utility Functions ----
 
-function addDropShadowFilter(svg, stddev = 3, xoffset = 5, yoffset = 5) {
+function addDropShadowFilter(svg, id, stddev = 3, xoffset = 5, yoffset = 5) {
     // adapted from http://bl.ocks.org/cpbotha/5200394
 
     // filters go in defs element
@@ -9,7 +9,8 @@ function addDropShadowFilter(svg, stddev = 3, xoffset = 5, yoffset = 5) {
     // create filter with id #drop-shadow
     // height=130% so that the shadow is not clipped
     var filter = defs.append("filter")
-        .attr("id", "drop-shadow")
+        .attr("id", id)
+        .classed("drop-shadow", true)
         .attr('y', '-40%')
         .attr('x', '-40%')
         .attr("height", "200%")
@@ -48,7 +49,7 @@ function getAxisFormatter(units) {
     if (units == "percent") {
         return d3.format('.0%');
     } else if (units == "count") {
-        return d3.format(',')
+        return d3.format(',.0f')
     } else if (units == "usd") {
         return function(d) { return "$" + d3.format(",.0f")(d); }
     }
@@ -58,7 +59,7 @@ function getLabelFormatter(units) {
     if (units == "percent") {
         return d3.format('.1%');
     } else if (units == "count") {
-        return d3.format(',')
+        return d3.format(',.0f')
     } else if (units == "usd") {
         return function(d) { return "$" + d3.format(",.2f")(d); }
     }
