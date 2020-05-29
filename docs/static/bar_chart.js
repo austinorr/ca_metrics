@@ -1,75 +1,9 @@
-class BarChart {
-    constructor(container_id) {
-
-        this.container_id = container_id;
-        this.container = d3.select(container_id);
-        this.url = this.container.attr("_viz_source");
-        this.chart_uid = container_id + "-" + this.url;
-        this.units = UNITS.filter(d => d == this.container.attr('_viz_units'));
-        this.unitFormatter = getAxisFormatter(this.units);
-        this.labelFormatter = getLabelFormatter(this.units)
-
-        let margin = { top: 20, right: 20, bottom: 20, left: 20 };
-        let width = this.container_width - margin.left - margin.right;
-        let height = this.container_height - margin.top - margin.bottom;
-
-        this.svg = this.container.append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform",
-                "translate(" + margin.left + "," + margin.top + ")");
-    }
-
-    get container_width() {
-        return parseInt(d3.select(this.container_id).node().clientWidth);
-    }
-
-    get container_height() {
-        return parseInt(d3.select(this.container_id).node().clientHeight);
-    }
-
-    log(message) {
-        if (DEBUG || false) {
-            console.log(message + ": " + this.chart_uid)
-        }
-    }
-
-    init() {
-        this.log('initializing')
-        this.loadData();
-    }
-
-    update() {
-        this.log('updating bar chart')
-    }
-
-    resize() {
-        this.log('resizing bar chart')
-    }
-
-    loadData() {
-        this.log('loading data')
-    }
-
-    rescale(ax, data) {
-        // make this static?
-        this.log('rescaling data')
-
-        if (this.units == "percent") {
-            ax.domain([0, 1]);
-        } else {
-            ax.domain([0, d3.max(data, d => d.value)]).nice()
-        }
-    }
-}
-
-class RegionBarChart extends BarChart {
+class RegionStatsBarChart extends BaseChart {
     constructor(container_id) {
         super(container_id);
 
         this.selected_bar = null;
-        this.breakdown_data = null;
+        // this.breakdown_data = null;
     }
 
     loadData() {
@@ -406,7 +340,7 @@ class RegionBarChart extends BarChart {
     }
 }
 
-class StackedBarChart extends RegionBarChart {
+class StackedBarChart extends RegionStatsBarChart {
     constructor(container_id) {
         super(container_id);
 
@@ -544,8 +478,24 @@ class StackedBarChart extends RegionBarChart {
             .attr("transform",
                 "translate(" + that.margin.left + "," + that.margin.top + ")");
 
+        // set the y range
+        this.y = d3.scaleLinear().range([that.height, 0])
+        // this.y.domain([0, d3.max(data, d => d3.sum(that.labels, k => +d[k]))]).nice();
+        this.y.domain([0, d3.max(that.data, d => d.total)])
 
-        let z = d3.scaleOrdinal(d3.schemeCategory10);
+        // set the x range
+        this.x = d3.scaleBand()
+            .range([0, that.width])
+            .padding(0.6);
+
+        this.x.domain(that.layers[0].map(d => d.data.column))
+
+        this.z = d3.scaleOrdinal(d3.schemeCategory10);
+
+        let x = this.x;
+        let y = this.y;
+        let z = this.z;
+
         let n = Math.ceil(this.labels.length / 2)
         let size = 11;
         let padding = 6;
@@ -655,31 +605,15 @@ class StackedBarChart extends RegionBarChart {
             //     .style("alignment-baseline", "middle")
         }
 
-        let legend_width = -1
-        d3.selectAll('.legend-text text').nodes().forEach(
-            function(d) {
-                let bbox = d.getBBox()
-                legend_width = legend_width < bbox.width ? bbox.width : legend_width;
+        // let legend_width = -1
+        // d3.selectAll('.legend-text text').nodes().forEach(
+        //     function(d) {
+        //         let bbox = d.getBBox()
+        //         legend_width = legend_width < bbox.width ? bbox.width : legend_width;
 
-            }
-        )
-        legend_width += (size + padding + 5)
-
-        // set the y range
-        let y = d3.scaleLinear().range([that.height, 0])
-        // this.y.domain([0, d3.max(data, d => d3.sum(that.labels, k => +d[k]))]).nice();
-        y.domain([0, d3.max(that.data, d => d.total)])
-
-        // set the x range
-        let x = d3.scaleBand()
-            .range([0, that.width])
-            .padding(0.6);
-
-        x.domain(that.layers[0].map(d => d.data.column))
-
-        // let x = this.x;
-        // let y = this.y;
-        // let z = this.z;
+        //     }
+        // )
+        // legend_width += (size + padding + 5)
 
         this.bars = this.svg.selectAll(".bar-g")
 
@@ -713,19 +647,24 @@ class StackedBarChart extends RegionBarChart {
             .append('rect')
             .classed('stacked-bars', true)
             .classed('overview', true)
-            .attr('data-xloc-left', d => x(d.data.column))
-            .attr('data-xloc-right', d => x(d.data.column) + x.bandwidth())
-            .attr('data-yloc-top', d => that.height - y(d[1]))
-            .attr('data-yloc-bottom', d => that.height - y(d[0]))
             .attr('x', d => x(d.data.column))
             .attr('y', d => that.height)
             .attr('height', d => 0)
             .attr('width', x.bandwidth())
+            // .attr('data-xloc-left', d => x(d.data.column))
+            // .attr('data-xloc-right', d => x(d.data.column) + x.bandwidth())
+            // .attr('data-yloc-top', d => y(d[1]))
+            // .attr('data-yloc-bottom', d => y(d[0]))
             .merge(that.bar)
+            .attr('data-xloc-left', d => x(d.data.column))
+            .attr('data-xloc-right', d => x(d.data.column) + x.bandwidth())
+            .attr('data-yloc-top', d => y(d[1]))
+            .attr('data-yloc-bottom', d => y(d[0]))
             .transition(that.t)
             .ease(d3.easeExp)
             .attr('y', d => (y(d[1])))
             .attr("height", d => y(d[0]) - y(d[1]))
+
             .delay(that.delay);
 
         this.xAxis = d3.axisBottom()
@@ -740,8 +679,8 @@ class StackedBarChart extends RegionBarChart {
         // this.svg.append('g')
         //     .attr('class', 'axis axis--x')
         //     .classed('overview', true)
-        //     .attr('transform', `translate(0,${height})`)
-        //     .call(xAxis)
+        //     .attr('transform', `translate(0,${height/2})`)
+        //     .call(that.xAxis)
 
         this.svg.append('g')
             .attr('class', 'axis axis--y')
@@ -781,56 +720,127 @@ class EduStackedBarChart extends StackedBarChart {
     overview() {
         super.overview()
         let that = this
-        let x1 = this.svg.select("g[data_label='" + that.labels[0] + "']").select('.stacked-bars').attr('data-xloc-right')
-        let y1 = this.svg.select("g[data_label='" + that.labels[0] + "']").select('.stacked-bars').attr('data-yloc-top')
 
-        let x2 = this.svg.select("g[data_label='" + that.labels[1] + "']").select('.stacked-bars').attr('data-xloc-left')
-        let y2 = this.svg.select("g[data_label='" + that.labels[1] + "']").select('.stacked-bars').attr('data-yloc-top')
+        function cornerGetter(label, which) {
 
-        this.svg.append("line")
-            .classed('line-connector', true)
-            .classed('overview', true)
-            .attr("x1", x1)
-            .attr("y1", that.height - y1)
-            .attr("x2", x2)
-            .attr("y2", that.height - y2)
-            .attr("stroke-width", 2)
-            .attr("stroke", "black");
+            let corner = null;
+            switch (which) {
+                case "left":
+                    corner = 'data-xloc-left';
+                    break;
 
-        x1 = this.svg.select("g[data_label='" + that.labels[1] + "']").select('.stacked-bars').attr('data-xloc-right')
-        y1 = this.svg.select("g[data_label='" + that.labels[1] + "']").select('.stacked-bars').attr('data-yloc-bottom')
+                case "right":
+                    corner = 'data-xloc-right';
+                    break;
 
-        x2 = this.svg.select("g[data_label='" + that.labels[3] + "']").select('.stacked-bars').attr('data-xloc-left')
-        y2 = this.svg.select("g[data_label='" + that.labels[3] + "']").select('.stacked-bars').attr('data-yloc-bottom')
+                case "top":
+                    corner = 'data-yloc-top';
+                    break;
 
-        this.svg.append("line")
-            .classed('line-connector', true)
-            .classed('overview', true)
-
-            .attr("x1", x1)
-            .attr("y1", that.height - y1)
-            .attr("x2", x2)
-            .attr("y2", that.height - y2)
-            .attr("stroke-width", 2)
-            .attr("stroke", "black");
+                case "bottom":
+                    corner = 'data-yloc-bottom';
+                    break;
+            }
+            
+            return that.svg.select("g[data_label='" + label + "']").select('.stacked-bars').attr(corner) || null
 
 
-        x1 = this.svg.select("g[data_label='" + that.labels[1] + "']").select('.stacked-bars').attr('data-xloc-right')
-        y1 = this.svg.select("g[data_label='" + that.labels[1] + "']").select('.stacked-bars').attr('data-yloc-top')
+        }
 
-        x2 = this.svg.select("g[data_label='" + that.labels[4] + "']").select('.stacked-bars').attr('data-xloc-left')
-        y2 = this.svg.select("g[data_label='" + that.labels[4] + "']").select('.stacked-bars').attr('data-yloc-top')
+        let graph = [{
+                "source": {
+                    "top": that.labels[0], // HS
+                    "bottom": that.labels[0],
+                },
+                "target": {
+                    "top": that.labels[1], // AG
+                    "bottom": that.labels[1],
+                },
 
-        this.svg.append("line")
-            .classed('line-connector', true)
-            .classed('overview', true)
+            },
+            {
+                "source": {
+                    "top": that.labels[1], // AG
+                    "bottom": that.labels[1],
+                },
+                "target": {
+                    "top": that.labels[4], // UC
+                    "bottom": that.labels[3], // CSU
+                },
+            }
+        ]
 
-            .attr("x1", x1)
-            .attr("y1", that.height - y1)
-            .attr("x2", x2)
-            .attr("y2", that.height - y2)
-            .attr("stroke-width", 2)
-            .attr("stroke", "black");
 
+        var curvature = .5;
+
+        function link(d) {
+
+            console.log('callig link')
+            // source to target
+            var x0 = cornerGetter(d.source.top, 'right'),
+                x1 = cornerGetter(d.target.top, 'left'),
+                xi = d3.interpolateNumber(x0, x1),
+                x2 = xi(curvature),
+                x3 = xi(1 - curvature),
+                y0 = cornerGetter(d.source.top, 'top'),
+                y1 = cornerGetter(d.target.top, 'top'),
+                // return trip
+                x10 = cornerGetter(d.target.bottom, 'left'),
+                x11 = cornerGetter(d.source.bottom, 'right'),
+                x1i = d3.interpolateNumber(x10, x11),
+                x12 = x1i(curvature),
+                x13 = x1i(1 - curvature),
+                y10 = cornerGetter(d.target.bottom, 'bottom'),
+                y11 = cornerGetter(d.source.bottom, 'bottom');
+
+
+            return (
+                "M" + x0 + "," + y0 +
+                "C" + x2 + "," + y0 +
+                " " + x3 + "," + y1 +
+                " " + x1 + "," + y1 +
+                "L" + cornerGetter(d.target.bottom, 'left') + "," + cornerGetter(d.target.bottom, 'bottom') +
+                "C" + x12 + "," + y10 +
+                " " + x13 + "," + y11 +
+                " " + x11 + "," + y11 +
+                "L" + cornerGetter(d.source.bottom, 'right') + "," + cornerGetter(d.source.top, 'top')
+            );
+        }
+
+        var link_group = this.svg.selectAll(".link-group")
+
+        if (link_group.empty()) {
+            link_group = this.svg.append('g')
+                .classed('link-group', true)
+                .classed('overview', true);
+
+            var links = link_group.selectAll('.link')
+                
+            links.exit().remove()
+
+            links.data(graph).enter().append("path")
+                .classed("link", true)
+                .style("opacity", 0)
+                .attr("d", d => link(d))
+                .transition(that.t)
+                .ease(d3.easeExp)
+                .style('opacity', 0.5)
+                .delay(300);
+                
+        } else {
+            var links = link_group.selectAll('.link')
+
+            links.exit().remove()
+
+            links.data(graph).enter().append("path")
+            .classed("link", true)
+            .merge(links)
+            .transition(that.t)
+            .ease(d3.easeExp)
+            .attr("d", d => link(d))
+            .style('opacity', 0.5)
+            .delay(0);
+
+        }
     }
 }

@@ -1,6 +1,6 @@
 var DEBUG = false;
 
-var REGION = "Statewide"
+var REGION = "Bay Area"
 
 // ----- Map Constants -------
 
@@ -55,7 +55,7 @@ function onLoad() {
     d3.selectAll(".chart-wrapper-bar").each( function (d) {
         let divId = "#" + this.getAttribute("id");
         
-        var bar_chart = new RegionBarChart(divId);
+        var bar_chart = new RegionStatsBarChart(divId);
         bar_chart.init();
         CHARTS.push(bar_chart);
 

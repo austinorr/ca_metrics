@@ -45,7 +45,7 @@ function addDropShadowFilter(svg, id, stddev = 3, xoffset = 5, yoffset = 5) {
 
 }
 
-function getAxisFormatter(units) {
+function getAxisTickLabelFormatter(units) {
     if (units == "percent") {
         return d3.format('.0%');
     } else if (units == "count") {
