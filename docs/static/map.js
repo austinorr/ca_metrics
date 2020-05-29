@@ -168,7 +168,6 @@ class RegionMap extends BaseMap {
         let url = button_element.attr("_viz_source");
         let that = this;
 
-        let choropleth_data = [];
         let cmap = d3.scaleSequential(d3.interpolateViridis);
 
         d3.csv(url, function(error, data) {

@@ -8,8 +8,6 @@ class BarChart {
         this.units = UNITS.filter(d => d == this.container.attr('_viz_units'));
         this.unitFormatter = getAxisFormatter(this.units);
         this.labelFormatter = getLabelFormatter(this.units)
-        this.container_width = parseInt(d3.select(this.container_id).node().clientWidth)
-        this.container_height = parseInt(d3.select(this.container_id).node().clientHeight)
 
         let margin = { top: 20, right: 20, bottom: 20, left: 20 };
         let width = this.container_width - margin.left - margin.right;
@@ -21,6 +19,14 @@ class BarChart {
             .append("g")
             .attr("transform",
                 "translate(" + margin.left + "," + margin.top + ")");
+    }
+
+    get container_width() {
+        return parseInt(d3.select(this.container_id).node().clientWidth);
+    }
+
+    get container_height() {
+        return parseInt(d3.select(this.container_id).node().clientHeight);
     }
 
     log(message) {
@@ -226,7 +232,7 @@ class RegionBarChart extends BarChart {
             .attr("x", d => x(d.value) - 7)
             .delay(delay);
 
-        this.svg.selectAll(".x--axis").remove()
+        // this.svg.selectAll(".x--axis").remove()
         // add the x Axis
         // this.svg.append("g")
         //     .attr("transform", "translate(0," + this.height + ")")
@@ -264,6 +270,8 @@ class RegionBarChart extends BarChart {
     }
 
     breakdown() {
+        let new_container_height = 1900;
+        d3.select(this.container_id).style('height', new_container_height)
 
         let selected_bar = this.selected_bar,
             data = this.data_tidy
@@ -509,23 +517,20 @@ class StackedBarChart extends RegionBarChart {
     }
 
     overview() {
-        let data = this.dataGrouped.filter(d => d.region == REGION);
-        this.data = data
         let that = this;
+        this.data = this.dataGrouped.filter(d => d.region == REGION);
 
-        let margin = { top: 20, right: 70, bottom: 60, left: 20 };
-        let width = this.container_width - margin.left - margin.right;
-        let height = this.container_height - margin.top - margin.bottom;
 
-        let layers = d3.stack()
+        this.margin = { top: 20, right: 70, bottom: 60, left: 20 };
+        this.width = this.container_width - this.margin.left - this.margin.right;
+        this.height = this.container_height - this.margin.top - this.margin.bottom;
+        this.layers = d3.stack()
             .keys(that.labels)
-            (data)
+            (that.data)
 
-        that.layers = layers
+        this.t = d3.transition().duration(500);
 
-        const t = d3.transition().duration(500);
-
-        const delay = function(d, i) {
+        this.delay = function(d, i) {
             return i * 10;
         };
 
@@ -533,55 +538,121 @@ class StackedBarChart extends RegionBarChart {
         this.svg.selectAll(".breakdown").remove();
 
         this.svg = this.container.select("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
+            .attr("width", that.width + that.margin.left + that.margin.right)
+            .attr("height", that.height + that.margin.top + that.margin.bottom)
             .select("g")
             .attr("transform",
-                "translate(" + margin.left + "," + margin.top + ")");
+                "translate(" + that.margin.left + "," + that.margin.top + ")");
 
 
         let z = d3.scaleOrdinal(d3.schemeCategory10);
-        let size = 12;
-        let padding = 3;
-        let legend = this.svg.selectAll('.legend');
+        let n = Math.ceil(this.labels.length / 2)
+        let size = 11;
+        let padding = 6;
+        let text_width = this.width / n;
+        let itemWidth = size + padding + text_width + 5;
+        let itemHeight = size + padding;
 
-        if (legend.empty()) {
-            console.log('legend is empty!!')
+        this.legend = this.svg.selectAll('.legend');
 
-
-            legend = this.svg
-                .append('g')
+        if (this.legend.empty()) {
+            this.legend = this.svg
+                .append("g")
                 .classed('legend', 'true')
                 .classed('overview', 'true')
 
-            legend
-                .append('g')
-                .classed('legend-boxes', true)
-                .selectAll('rect')
+            var legend_items = this.legend.selectAll('g')
                 .data(that.labels)
                 .enter()
-                .append("rect")
-                .attr("x", (width) - 5)
-                .attr("y", function(d, i) { return 0 + i * (size + padding) }) // 100 is where the first dot appears. 25 is the distance between dots
+                .append("g")
+                .attr("transform", function(d, i) {
+                    let xoff = i % n * itemWidth;
+                    let yoff = ((Math.floor(i / n) * itemHeight) + that.height + 20);
+                    return "translate(" + xoff + "," + yoff + ")";
+                })
+
+            var rects = legend_items.append('rect')
+                .classed('legend-patch', true)
                 .attr("width", size)
                 .attr("height", size)
-                .style("fill", function(d, i) { return z(i) })
 
-            // Add one dot in the legend for each name.
-            legend
-                .append('g')
+                .attr("fill", function(d, i) { return z(i); });
+
+            var text = legend_items.append('text')
                 .classed('legend-text', true)
-                .selectAll('text')
-                .data(that.labels)
-                .enter()
-                .append("text")
-                .attr("x", width - 5 - padding)
-                .attr("y", function(d, i) { return 0 + i * (size + padding) }) // 100 is where the first dot appears. 25 is the distance between dots
-                .attr("dy", function(d, i) { return 0 + ((size + padding) / 2) })
-                .style("fill", function(d, i) { return z(i) })
-                .text(function(d) { return that.label_map[d].label_short })
-                .attr("text-anchor", "end")
-                .style("alignment-baseline", "middle")
+                .attr("x", size + padding)
+                .attr("y", size / 2)
+                .attr('dy', '0.35em')
+                .text(d => that.label_map[d].label_short);
+
+
+            // legend = this.svg
+            //     .append('g')
+            //     .classed('legend', 'true')
+            //     .classed('overview', 'true')
+
+
+
+            // legend
+            //     .append('g')
+            //     .classed('legend-boxes', true)
+            //     .selectAll('rect')
+            //     .data(that.labels)
+            //     .enter()
+            //     .append("rect")
+            //     .attr("x", function(d, i) { return i * (size + padding + text_width) })
+            //     .attr("y", height + 20) // 100 is where the first dot appears. 25 is the distance between dots
+            //     .attr("width", size)
+            //     .attr("height", size)
+            //     .style("fill", function(d, i) { return z(i) })
+
+            // // Add one dot in the legend for each name.
+            // legend
+            //     .append('g')
+            //     .classed('legend-text', true)
+            //     .selectAll('text')
+            //     .data(that.labels)
+            //     .enter()
+            //     .append("text")
+            //     // .style("alignment-baseline", "middle")
+            //     .attr("text-anchor", "start")
+            //     .attr("font-size", "12pt")
+            //     .attr("x", function(d, i) { return (size + padding) + i * (size + padding + text_width) })
+            //     .attr("y", height + 20 + size / 2) // 100 is where the first dot appears. 25 is the distance between dots
+            //     .attr("dy",  "0.35em" )
+            //     .style("fill", function(d, i) { return z(i) })
+            //     .text(function(d) { return that.label_map[d].label_short })
+
+
+            // // vertical legend orientation
+            // legend
+            //     .append('g')
+            //     .classed('legend-boxes', true)
+            //     .selectAll('rect')
+            //     .data(that.labels)
+            //     .enter()
+            //     .append("rect")
+            //     .attr("x", (width) - 5)
+            //     .attr("y", function(d, i) { return 0 + i * (size + padding) }) // 100 is where the first dot appears. 25 is the distance between dots
+            //     .attr("width", size)
+            //     .attr("height", size)
+            //     .style("fill", function(d, i) { return z(i) })
+
+            // // Add one dot in the legend for each name.
+            // legend
+            //     .append('g')
+            //     .classed('legend-text', true)
+            //     .selectAll('text')
+            //     .data(that.labels)
+            //     .enter()
+            //     .append("text")
+            //     .attr("x", width - 5 - padding)
+            //     .attr("y", function(d, i) { return 0 + i * (size + padding) }) // 100 is where the first dot appears. 25 is the distance between dots
+            //     .attr("dy", function(d, i) { return 0 + ((size + padding) / 2) })
+            //     .style("fill", function(d, i) { return z(i) })
+            //     .text(function(d) { return that.label_map[d].label_short })
+            //     .attr("text-anchor", "end")
+            //     .style("alignment-baseline", "middle")
         }
 
         let legend_width = -1
@@ -595,30 +666,26 @@ class StackedBarChart extends RegionBarChart {
         legend_width += (size + padding + 5)
 
         // set the y range
-        let y = d3.scaleLinear().range([height, 0])
+        let y = d3.scaleLinear().range([that.height, 0])
         // this.y.domain([0, d3.max(data, d => d3.sum(that.labels, k => +d[k]))]).nice();
-        y.domain([0, d3.max(data, d=>d.total)]).nice()
+        y.domain([0, d3.max(that.data, d => d.total)])
 
         // set the x range
         let x = d3.scaleBand()
-            .range([0, width - legend_width - 60])
+            .range([0, that.width])
             .padding(0.6);
 
-        x.domain(layers[0].map(d => d.data.column))
-
+        x.domain(that.layers[0].map(d => d.data.column))
 
         // let x = this.x;
         // let y = this.y;
         // let z = this.z;
 
+        this.bars = this.svg.selectAll(".bar-g")
 
-
-        let bars = this.svg.selectAll(".bar-g")
-
-        if (bars.empty()) {
-            console.log('bars empty')
-            bars = this.svg.selectAll(".bar-g")
-                .data(layers)
+        if (this.bars.empty()) {
+            this.bars = this.svg.selectAll(".bar-g")
+                .data(that.layers)
                 .enter()
                 .append('g')
                 .classed('bar-g', true)
@@ -626,44 +693,47 @@ class StackedBarChart extends RegionBarChart {
                 .style('fill', (d, i) => (z(i)))
                 .attr("data_label", (d, i) => d.key)
                 .on("click", function(d, i) {
-                    console.log(i)
                     that.selected_bar = d3.select(this).attr('data_label');
                     return goto();
                 })
 
         } else {
-            bars = this.svg.selectAll(".bar-g")
-                .data(layers);
+            this.bars = this.svg.selectAll(".bar-g")
+                .data(that.layers);
         }
 
         let goto = this.breakdown.bind(this);
 
-        let bar = bars.selectAll('rect')
+        this.bar = this.bars.selectAll('rect')
 
+        this.bar.exit().remove();
 
-        bar.exit().remove();
-
-        bar.data(d => d)
+        this.bar.data((d, i) => that.layers[i].filter(d => (d[1] - d[0] > 0)))
             .enter()
             .append('rect')
+            .classed('stacked-bars', true)
             .classed('overview', true)
+            .attr('data-xloc-left', d => x(d.data.column))
+            .attr('data-xloc-right', d => x(d.data.column) + x.bandwidth())
+            .attr('data-yloc-top', d => that.height - y(d[1]))
+            .attr('data-yloc-bottom', d => that.height - y(d[0]))
             .attr('x', d => x(d.data.column))
-            .attr('y', d => height)
+            .attr('y', d => that.height)
             .attr('height', d => 0)
             .attr('width', x.bandwidth())
-            .merge(bar)
-            .transition(t)
+            .merge(that.bar)
+            .transition(that.t)
             .ease(d3.easeExp)
             .attr('y', d => (y(d[1])))
             .attr("height", d => y(d[0]) - y(d[1]))
+            .delay(that.delay);
 
-            .delay(delay);
-
-        const xAxis = d3.axisBottom()
+        this.xAxis = d3.axisBottom()
             .scale(x)
 
-        const yAxis = d3.axisRight()
+        this.yAxis = d3.axisRight()
             .scale(y)
+            .ticks(5)
 
         this.svg.selectAll('.axis--y').remove()
 
@@ -676,8 +746,8 @@ class StackedBarChart extends RegionBarChart {
         this.svg.append('g')
             .attr('class', 'axis axis--y')
             .classed('overview', true)
-            .attr('transform', `translate(${width-legend_width-60},0)`)
-            .call(yAxis)
+            .attr('transform', `translate(${that.width},0)`)
+            .call(that.yAxis)
 
         // create a list of keys
         // console.log(keys)
@@ -690,10 +760,6 @@ class StackedBarChart extends RegionBarChart {
 
         // Add one dot in the legend for each name.
 
-
-
-
-
         // this.svg.append("g")
         //     .classed('axis', true)
         //     .classed('y--axis', true)
@@ -701,6 +767,70 @@ class StackedBarChart extends RegionBarChart {
         //     .call(d3.axisLeft(this.y));
 
 
+
+
     }
 
+}
+
+class EduStackedBarChart extends StackedBarChart {
+    constructor(container_id) {
+        super(container_id);
+    }
+
+    overview() {
+        super.overview()
+        let that = this
+        let x1 = this.svg.select("g[data_label='" + that.labels[0] + "']").select('.stacked-bars').attr('data-xloc-right')
+        let y1 = this.svg.select("g[data_label='" + that.labels[0] + "']").select('.stacked-bars').attr('data-yloc-top')
+
+        let x2 = this.svg.select("g[data_label='" + that.labels[1] + "']").select('.stacked-bars').attr('data-xloc-left')
+        let y2 = this.svg.select("g[data_label='" + that.labels[1] + "']").select('.stacked-bars').attr('data-yloc-top')
+
+        this.svg.append("line")
+            .classed('line-connector', true)
+            .classed('overview', true)
+            .attr("x1", x1)
+            .attr("y1", that.height - y1)
+            .attr("x2", x2)
+            .attr("y2", that.height - y2)
+            .attr("stroke-width", 2)
+            .attr("stroke", "black");
+
+        x1 = this.svg.select("g[data_label='" + that.labels[1] + "']").select('.stacked-bars').attr('data-xloc-right')
+        y1 = this.svg.select("g[data_label='" + that.labels[1] + "']").select('.stacked-bars').attr('data-yloc-bottom')
+
+        x2 = this.svg.select("g[data_label='" + that.labels[3] + "']").select('.stacked-bars').attr('data-xloc-left')
+        y2 = this.svg.select("g[data_label='" + that.labels[3] + "']").select('.stacked-bars').attr('data-yloc-bottom')
+
+        this.svg.append("line")
+            .classed('line-connector', true)
+            .classed('overview', true)
+
+            .attr("x1", x1)
+            .attr("y1", that.height - y1)
+            .attr("x2", x2)
+            .attr("y2", that.height - y2)
+            .attr("stroke-width", 2)
+            .attr("stroke", "black");
+
+
+        x1 = this.svg.select("g[data_label='" + that.labels[1] + "']").select('.stacked-bars').attr('data-xloc-right')
+        y1 = this.svg.select("g[data_label='" + that.labels[1] + "']").select('.stacked-bars').attr('data-yloc-top')
+
+        x2 = this.svg.select("g[data_label='" + that.labels[4] + "']").select('.stacked-bars').attr('data-xloc-left')
+        y2 = this.svg.select("g[data_label='" + that.labels[4] + "']").select('.stacked-bars').attr('data-yloc-top')
+
+        this.svg.append("line")
+            .classed('line-connector', true)
+            .classed('overview', true)
+
+            .attr("x1", x1)
+            .attr("y1", that.height - y1)
+            .attr("x2", x2)
+            .attr("y2", that.height - y2)
+            .attr("stroke-width", 2)
+            .attr("stroke", "black");
+
+    }
 }

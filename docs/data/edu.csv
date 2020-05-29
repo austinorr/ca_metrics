@@ -1,239 +1,239 @@
-﻿region,group,subgroup,HS Graduates;High School Graduates;c1,A-G;Number of Students enrolled in A-G;c2,CSU;California State University Enrollment;c3,UC;University of California;c3,CCC;California Community Colleges;c3,Out of State;Out of State;c3,Private;Private in-State Universities;c3 
-Bay Area,African American,,3599,1217,358,138,1562,328,93
-Bay Area,American Indian or Alaska Native,,0,,,,,,0
-Bay Area,Asian,,12623,10010,2067,3519,3256,1583,692
-Bay Area,Filipino,,3574,2061,681,275,1650,101,116
-Bay Area,Hispanic or Latino,,22500,8879,2810,1002,9907,698,534
-Bay Area,Race Unknown,,186,145,29,42,45,29,10
-Bay Area,Pacific Islander,,109,42,9,3,52,5,5
-Bay Area,Two or More Races,,2080,1346,276,230,707,325,119
-Bay Area,White,,19555,12374,2640,1846,6262,3765,873
-Bay Area,Male,,33612,16873,4009,3272,13015,3221,940
-Bay Area,Female,,34004,20684,5240,4058,11900,3838,1610
-Bay Area,English Learners,,7407,1972,257,71,1900,49,39
-Bay Area,Students with Disabilities,,5680,982,198,49,2410,224,79
-Bay Area,Socioeconomically Disadvantaged,,32501,13379,3281,1816,10932,675,548
-Bay Area,Migrant,,291,88,14,4,62,2,0
-Bay Area,Foster,,71,0,0,0,12,0,0
-Bay Area,Homeless,,1493,422,45,23,178,17,8
-Bay Area,All,,67775,37591,9262,7337,25037,7066,2554
-Bay Area,International,,,,,,,,0
-Central Sierra,African American,,28,8,5,0,16,4,3
-Central Sierra,American Indian or Alaska Native,,12,4,0,1,4,1,1
-Central Sierra,Asian,,,,,,,,0
-Central Sierra,Hispanic or Latino,,423,95,35,7,196,15,13
-Central Sierra,Race Unknown,,,,,,,,0
-Central Sierra,Pacific Islander,,,,,,,,0
-Central Sierra,Two or More Races,,,,,,,,0
-Central Sierra,White,,1029,344,70,37,340,83,21
-Central Sierra,Male,,842,196,38,25,301,41,13
-Central Sierra,Female,,825,315,81,27,326,73,32
-Central Sierra,English Learners,,43,5,1,0,22,2,3
-Central Sierra,Students with Disabilities,,129,12,0,1,21,2,0
-Central Sierra,Socioeconomically Disadvantaged,,1096,231,42,14,307,31,17
-Central Sierra,Foster,,9,0,,,,,0
-Central Sierra,Homeless,,103,30,0,0,1,1,0
-Central Sierra,All,,1750,520,120,54,654,118,45
-Central Sierra,International,,,,,,,,0
-Central Coast,African American,,147,57,12,2,71,22,1
-Central Coast,American Indian or Alaska Native,,,,,,,,0
-Central Coast,Asian,,570,454,56,180,157,64,41
-Central Coast,Filipino,,331,201,48,38,184,13,9
-Central Coast,Hispanic or Latino,,12042,3818,917,435,6710,272,152
-Central Coast,Race Unknown,,,,,,,,0
-Central Coast,Pacific Islander,,,,,,,,0
-Central Coast,Two or More Races,,339,201,33,43,126,31,16
-Central Coast,White,,6997,3938,799,481,2926,845,321
-Central Coast,Male,,10610,3892,787,532,5354,548,206
-Central Coast,Female,,10699,5178,1165,728,5246,760,361
-Central Coast,English Learners,,3083,382,21,6,689,9,3
-Central Coast,Students with Disabilities,,1729,162,19,7,791,21,6
-Central Coast,Socioeconomically Disadvantaged,,12890,3933,785,391,5749,213,103
-Central Coast,Migrant,,719,172,48,9,189,3,7
-Central Coast,Foster,,5,0,,,,,0
-Central Coast,Homeless,,2040,463,20,16,387,13,8
-Central Coast,All,,21425,9085,1955,1260,10684,1314,570
-Central Coast,International,,,,,,,,0
-Inland Empire,African American,,3962,1517,436,182,1359,397,119
-Inland Empire,American Indian or Alaska Native,,25,10,1,0,10,7,1
-Inland Empire,Asian,,1680,1360,203,620,389,103,75
-Inland Empire,Filipino,,810,624,179,159,234,29,42
-Inland Empire,Hispanic or Latino,,33839,13748,3896,2020,11870,1001,995
-Inland Empire,Race Unknown,,91,24,3,6,33,4,2
-Inland Empire,Pacific Islander,,13,8,3,0,3,2,2
-Inland Empire,Two or More Races,,773,465,108,66,238,85,39
-Inland Empire,White,,11745,6094,1241,727,3712,1240,578
-Inland Empire,Male,,27235,10278,2443,1574,9235,1221,664
-Inland Empire,Female,,27753,14478,3829,2398,9305,1764,1250
-Inland Empire,English Learners,,6332,1099,81,18,1285,60,39
-Inland Empire,Students with Disabilities,,5239,555,78,16,1690,110,45
-Inland Empire,Socioeconomically Disadvantaged,,40780,15574,3692,2186,11954,1091,901
-Inland Empire,Migrant,,196,81,25,11,39,0,1
-Inland Empire,Foster,,154,14,0,0,19,1,1
-Inland Empire,Homeless,,5603,1670,190,101,690,70,49
-Inland Empire,All,,55085,24767,6275,3972,18576,2989,1916
-Inland Empire,International,,,,,,,,0
-Los Angeles,African American,,6480,2976,790,267,2121,638,210
-Los Angeles,American Indian or Alaska Native,,5,3,0,0,4,0,0
-Los Angeles,Asian,,8763,6871,1451,2379,2136,748,531
-Los Angeles,Filipino,,2498,1804,581,274,851,69,106
-Los Angeles,Hispanic or Latino,,60182,31176,10097,3376,20131,1454,1574
-Los Angeles,Race Unknown,,237,138,27,8,92,14,7
-Los Angeles,Pacific Islander,,110,47,10,1,32,8,3
-Los Angeles,Two or More Races,,1190,749,159,139,417,164,63
-Los Angeles,White,,14259,8843,1750,1317,5062,2041,703
-Los Angeles,Male,,47541,23725,6404,3297,16353,2311,1186
-Los Angeles,Female,,49544,30799,8981,4788,15659,3030,2142
-Los Angeles,English Learners,,10813,3550,244,50,2119,87,78
-Los Angeles,Students with Disabilities,,8304,1838,316,47,3044,162,122
-Los Angeles,Socioeconomically Disadvantaged,,73175,38152,10491,4401,20754,1669,1515
-Los Angeles,Migrant,,164,58,17,2,23,1,0
-Los Angeles,Foster,,396,73,2,1,34,0,1
-Los Angeles,Homeless,,5505,2092,318,115,973,73,62
-Los Angeles,All,,97186,54543,15389,8091,32096,5345,3339
-Los Angeles,International,,,,,,,,0
-Northern California,African American,,14,0,0,0,24,0,2
-Northern California,American Indian or Alaska Native,,180,28,6,2,55,6,0
-Northern California,Asian,,55,30,7,3,24,4,1
-Northern California,Hispanic or Latino,,1035,286,81,28,437,41,15
-Northern California,Race Unknown,,,,0,0,6,0,0
-Northern California,Pacific Islander,,,,,,,,0
-Northern California,Two or More Races,,81,38,4,3,48,5,3
-Northern California,White,,3917,1440,300,147,1505,331,57
-Northern California,Male,,2964,798,148,92,1128,172,37
-Northern California,Female,,2925,1195,294,125,1191,247,53
-Northern California,English Learners,,175,25,6,0,39,7,3
-Northern California,Students with Disabilities,,407,14,0,0,101,5,1
-Northern California,Socioeconomically Disadvantaged,,3726,853,171,64,1038,91,27
-Northern California,Migrant,,46,9,0,0,9,0,0
-Northern California,Foster,,5,0,0,0,6,0,0
-Northern California,Homeless,,229,34,3,2,28,0,0
-Northern California,All,,6217,2063,458,225,2421,435,92
-Northern California,International,,,,,,,,0
-Orange,African American,,356,146,21,15,155,31,8
-Orange,American Indian or Alaska Native,,122,30,9,2,62,11,3
-Orange,Asian,,5848,4650,1026,1492,1875,525,296
-Orange,Filipino,,672,513,141,84,291,33,26
-Orange,Hispanic or Latino,,15956,6333,1556,564,8149,571,449
-Orange,Race Unknown,,49,27,10,8,14,3,2
-Orange,Pacific Islander,,,,,,,,0
-Orange,Two or More Races,,827,516,83,68,361,77,56
-Orange,White,,11359,6823,1353,795,4752,1848,618
-Orange,Male,,17954,8609,1817,1417,8299,1345,565
-Orange,Female,,18344,10944,2510,1686,7924,1846,930
-Orange,English Learners,,4718,1008,62,16,1460,35,39
-Orange,Students with Disabilities,,2669,363,63,16,1360,81,31
-Orange,Socioeconomically Disadvantaged,,18974,7908,1669,971,7806,373,351
-Orange,Migrant,,11,4,,,,,0
-Orange,Foster,,17,0,0,0,6,0,0
-Orange,Homeless,,3097,970,145,56,706,29,34
-Orange,All,,36344,19569,4329,3104,16258,3195,1496
-Orange,International,,,,,,,,0
-Greater Sacramento,African American,,1884,617,217,73,852,136,36
-Greater Sacramento,American Indian or Alaska Native,,9,1,0,0,4,0,0
-Greater Sacramento,Asian,,2954,2062,650,524,1131,129,75
-Greater Sacramento,Filipino,,566,401,122,61,212,35,19
-Greater Sacramento,Hispanic or Latino,,6875,2558,802,250,3004,216,120
-Greater Sacramento,Race Unknown,,17,4,1,0,8,0,0
-Greater Sacramento,Pacific Islander,,78,30,11,3,24,4,5
-Greater Sacramento,Two or More Races,,933,553,142,77,368,88,36
-Greater Sacramento,White,,11452,6001,1459,593,4547,1323,356
-Greater Sacramento,Male,,12952,5636,1500,705,5384,864,225
-Greater Sacramento,Female,,13307,7148,2055,956,5440,1147,458
-Greater Sacramento,English Learners,,2079,424,41,7,556,11,8
-Greater Sacramento,Students with Disabilities,,2116,220,48,4,889,42,11
-Greater Sacramento,Socioeconomically Disadvantaged,,14753,5315,1444,560,4926,292,163
-Greater Sacramento,Migrant,,87,27,2,0,13,1,0
-Greater Sacramento,Foster,,34,0,0,0,3,2,0
-Greater Sacramento,Homeless,,1332,317,30,13,166,17,10
-Greater Sacramento,All,,26384,12820,3568,1663,10885,2015,683
-Greater Sacramento,International,,,,,,,,0
-San Diego,African American,,1201,703,135,62,499,133,34
-San Diego,American Indian or Alaska Native,,24,6,2,0,12,4,0
-San Diego,Asian,,1857,1600,291,593,427,209,92
-San Diego,Filipino,,1270,944,257,161,493,26,23
-San Diego,Hispanic or Latino,,14265,7101,1719,834,6336,547,337
-San Diego,Race Unknown,,15,1,0,0,7,0,0
-San Diego,Pacific Islander,,34,16,3,1,5,0,1
-San Diego,Two or More Races,,1167,736,188,102,422,118,36
-San Diego,White,,10253,6654,1498,919,3252,1702,435
-San Diego,Male,,15638,8403,1903,1212,6053,1287,365
-San Diego,Female,,15883,10177,2368,1604,5935,1596,641
-San Diego,English Learners,,3913,1332,106,49,1189,35,45
-San Diego,Students with Disabilities,,2760,702,99,18,1237,109,41
-San Diego,Socioeconomically Disadvantaged,,18078,8745,1610,988,6433,528,281
-San Diego,Migrant,,220,68,23,2,38,0,2
-San Diego,Foster,,37,0,4,0,12,0,1
-San Diego,Homeless,,1370,486,40,23,175,7,14
-San Diego,All,,31669,18642,4288,2822,12080,2889,1009
-San Diego,International,,,,,,,,0
-Imperial,African American,,,,,,,,0
-Imperial,American Indian or Alaska Native,,10,0,,,,,0
-Imperial,Asian,,,,,,,,0
-Imperial,Hispanic or Latino,,2363,693,79,111,1534,105,13
-Imperial,Race Unknown,,,,,,,,0
-Imperial,Pacific Islander,,,,,,,,0
-Imperial,Two or More Races,,,,,,,,0
-Imperial,White,,133,70,11,13,51,20,0
-Imperial,Male,,1295,352,43,61,800,75,4
-Imperial,Female,,1283,445,51,72,815,64,10
-Imperial,English Learners,,824,89,4,2,405,7,0
-Imperial,Students with Disabilities,,199,5,1,1,96,4,0
-Imperial,Socioeconomically Disadvantaged,,2115,548,46,66,1192,65,10
-Imperial,Migrant,,458,101,11,7,216,4,0
-Imperial,Homeless,,256,53,1,3,44,1,0
-Imperial,All,,2584,797,94,133,1621,139,14
-Imperial,International,,,,,,,,0
-San Joaquin Valley,African American,,1987,628,254,49,839,111,45
-San Joaquin Valley,American Indian or Alaska Native,,81,21,3,0,18,4,3
-San Joaquin Valley,Asian,,2986,1970,731,429,1123,55,101
-San Joaquin Valley,Filipino,,876,576,214,69,325,18,37
-San Joaquin Valley,Hispanic or Latino,,31904,11484,4205,1056,13266,548,588
-San Joaquin Valley,Race Unknown,,60,12,10,0,19,1,0
-San Joaquin Valley,Pacific Islander,,,,,,,,0
-San Joaquin Valley,Two or More Races,,463,194,57,22,185,21,17
-San Joaquin Valley,White,,12191,5298,1604,428,4733,858,368
-San Joaquin Valley,Male,,26100,8542,2754,903,10453,711,447
-San Joaquin Valley,Female,,26859,12621,4639,1304,11057,993,792
-San Joaquin Valley,English Learners,,6814,1188,149,5,1463,35,51
-San Joaquin Valley,Students with Disabilities,,3716,289,52,8,1370,43,28
-San Joaquin Valley,Socioeconomically Disadvantaged,,40371,14051,4475,1249,14037,565,636
-San Joaquin Valley,Migrant,,1366,488,77,19,170,5,1
-San Joaquin Valley,Foster,,97,2,0,0,16,0,1
-San Joaquin Valley,Homeless,,2969,764,67,32,269,11,8
-San Joaquin Valley,All,,53259,21184,7410,2209,21646,1717,1242
-San Joaquin Valley,International,,,,,,,,0
-Northern Sacramento Valley,African American,,21,7,2,1,13,2,1
-Northern Sacramento Valley,American Indian or Alaska Native,,10,1,0,0,7,0,0
-Northern Sacramento Valley,Asian,,144,53,30,5,77,4,2
-Northern Sacramento Valley,Hispanic or Latino,,1060,263,128,18,532,18,6
-Northern Sacramento Valley,Race Unknown,,,,,,,,0
-Northern Sacramento Valley,Pacific Islander,,,,,,,,0
-Northern Sacramento Valley,Two or More Races,,68,16,4,2,26,2,0
-Northern Sacramento Valley,White,,1863,610,216,48,852,83,25
-Northern Sacramento Valley,Male,,1688,403,160,29,772,45,10
-Northern Sacramento Valley,Female,,1686,603,248,54,835,71,29
-Northern Sacramento Valley,English Learners,,224,19,1,0,38,3,1
-Northern Sacramento Valley,Students with Disabilities,,253,7,2,1,93,1,0
-Northern Sacramento Valley,Socioeconomically Disadvantaged,,2247,458,171,25,834,27,15
-Northern Sacramento Valley,Homeless,,192,23,4,0,23,0,1
-Northern Sacramento Valley,All,,3450,1013,411,83,1634,118,39
-Northern Sacramento Valley,International,,,,,,,,0
-Statewide,African American,,19679,7876,2230,789,7511,1802,552
-Statewide,American Indian or Alaska Native,,478,104,21,5,176,33,8
-Statewide,Asian,,37480,29060,6512,9744,10595,3424,1906
-Statewide,Filipino,,10597,7124,2223,1121,4240,324,378
-Statewide,Hispanic or Latino,,202444,86434,26325,9701,82072,5486,4796
-Statewide,Race Unknown,,655,351,80,64,224,51,21
-Statewide,Pacific Islander,,344,143,36,8,116,19,16
-Statewide,Two or More Races,,7921,4814,1054,752,2898,916,385
-Statewide,White,,104753,58489,12941,7351,37994,14139,4355
-Statewide,Male,,198431,87707,22006,13119,77147,11841,4662
-Statewide,Female,,203112,114587,31461,17800,75633,15429,8308
-Statewide,English Learners,,46425,11093,973,224,11165,340,309
-Statewide,Students with Disabilities,,33201,5149,876,168,13102,804,364
-Statewide,Socioeconomically Disadvantaged,,260706,109147,27877,12731,85962,5620,4567
-Statewide,Migrant,,3558,1096,217,54,759,16,11
-Statewide,Foster,,825,89,6,1,108,3,4
-Statewide,Homeless,,24189,7324,863,384,3640,239,194
-Statewide,All,,403128,202594,53559,30953,153592,27340,12999
+﻿region,group,subgroup,HS Graduates;High School Graduates;c1,A-G;Number of Students enrolled in A-G;c2,CCC;California Community Colleges;c3,CSU;California State University Enrollment;c3,UC;University of California;c3,Out of State;Out of State;c3
+Bay Area,African American,,3599,1217,1562,358,138,328
+Bay Area,American Indian or Alaska Native,,0,,,,,
+Bay Area,Asian,,12623,10010,3256,2067,3519,1583
+Bay Area,Filipino,,3574,2061,1650,681,275,101
+Bay Area,Hispanic or Latino,,22500,8879,9907,2810,1002,698
+Bay Area,Race Unknown,,186,145,45,29,42,29
+Bay Area,Pacific Islander,,109,42,52,9,3,5
+Bay Area,Two or More Races,,2080,1346,707,276,230,325
+Bay Area,White,,19555,12374,6262,2640,1846,3765
+Bay Area,Male,,33612,16873,13015,4009,3272,3221
+Bay Area,Female,,34004,20684,11900,5240,4058,3838
+Bay Area,English Learners,,7407,1972,1900,257,71,49
+Bay Area,Students with Disabilities,,5680,982,2410,198,49,224
+Bay Area,Socioeconomically Disadvantaged,,32501,13379,10932,3281,1816,675
+Bay Area,Migrant,,291,88,62,14,4,2
+Bay Area,Foster,,71,0,12,0,0,0
+Bay Area,Homeless,,1493,422,178,45,23,17
+Bay Area,All,,67775,37591,25037,9262,7337,7066
+Bay Area,International,,,,,,,
+Central Sierra,African American,,28,8,16,5,0,4
+Central Sierra,American Indian or Alaska Native,,12,4,4,0,1,1
+Central Sierra,Asian,,,,,,,
+Central Sierra,Hispanic or Latino,,423,95,196,35,7,15
+Central Sierra,Race Unknown,,,,,,,
+Central Sierra,Pacific Islander,,,,,,,
+Central Sierra,Two or More Races,,,,,,,
+Central Sierra,White,,1029,344,340,70,37,83
+Central Sierra,Male,,842,196,301,38,25,41
+Central Sierra,Female,,825,315,326,81,27,73
+Central Sierra,English Learners,,43,5,22,1,0,2
+Central Sierra,Students with Disabilities,,129,12,21,0,1,2
+Central Sierra,Socioeconomically Disadvantaged,,1096,231,307,42,14,31
+Central Sierra,Foster,,9,0,,,,
+Central Sierra,Homeless,,103,30,1,0,0,1
+Central Sierra,All,,1750,520,654,120,54,118
+Central Sierra,International,,,,,,,
+Central Coast,African American,,147,57,71,12,2,22
+Central Coast,American Indian or Alaska Native,,,,,,,
+Central Coast,Asian,,570,454,157,56,180,64
+Central Coast,Filipino,,331,201,184,48,38,13
+Central Coast,Hispanic or Latino,,12042,3818,6710,917,435,272
+Central Coast,Race Unknown,,,,,,,
+Central Coast,Pacific Islander,,,,,,,
+Central Coast,Two or More Races,,339,201,126,33,43,31
+Central Coast,White,,6997,3938,2926,799,481,845
+Central Coast,Male,,10610,3892,5354,787,532,548
+Central Coast,Female,,10699,5178,5246,1165,728,760
+Central Coast,English Learners,,3083,382,689,21,6,9
+Central Coast,Students with Disabilities,,1729,162,791,19,7,21
+Central Coast,Socioeconomically Disadvantaged,,12890,3933,5749,785,391,213
+Central Coast,Migrant,,719,172,189,48,9,3
+Central Coast,Foster,,5,0,,,,
+Central Coast,Homeless,,2040,463,387,20,16,13
+Central Coast,All,,21425,9085,10684,1955,1260,1314
+Central Coast,International,,,,,,,
+Inland Empire,African American,,3962,1517,1359,436,182,397
+Inland Empire,American Indian or Alaska Native,,25,10,10,1,0,7
+Inland Empire,Asian,,1680,1360,389,203,620,103
+Inland Empire,Filipino,,810,624,234,179,159,29
+Inland Empire,Hispanic or Latino,,33839,13748,11870,3896,2020,1001
+Inland Empire,Race Unknown,,91,24,33,3,6,4
+Inland Empire,Pacific Islander,,13,8,3,3,0,2
+Inland Empire,Two or More Races,,773,465,238,108,66,85
+Inland Empire,White,,11745,6094,3712,1241,727,1240
+Inland Empire,Male,,27235,10278,9235,2443,1574,1221
+Inland Empire,Female,,27753,14478,9305,3829,2398,1764
+Inland Empire,English Learners,,6332,1099,1285,81,18,60
+Inland Empire,Students with Disabilities,,5239,555,1690,78,16,110
+Inland Empire,Socioeconomically Disadvantaged,,40780,15574,11954,3692,2186,1091
+Inland Empire,Migrant,,196,81,39,25,11,0
+Inland Empire,Foster,,154,14,19,0,0,1
+Inland Empire,Homeless,,5603,1670,690,190,101,70
+Inland Empire,All,,55085,24767,18576,6275,3972,2989
+Inland Empire,International,,,,,,,
+Los Angeles,African American,,6480,2976,2121,790,267,638
+Los Angeles,American Indian or Alaska Native,,5,3,4,0,0,0
+Los Angeles,Asian,,8763,6871,2136,1451,2379,748
+Los Angeles,Filipino,,2498,1804,851,581,274,69
+Los Angeles,Hispanic or Latino,,60182,31176,20131,10097,3376,1454
+Los Angeles,Race Unknown,,237,138,92,27,8,14
+Los Angeles,Pacific Islander,,110,47,32,10,1,8
+Los Angeles,Two or More Races,,1190,749,417,159,139,164
+Los Angeles,White,,14259,8843,5062,1750,1317,2041
+Los Angeles,Male,,47541,23725,16353,6404,3297,2311
+Los Angeles,Female,,49544,30799,15659,8981,4788,3030
+Los Angeles,English Learners,,10813,3550,2119,244,50,87
+Los Angeles,Students with Disabilities,,8304,1838,3044,316,47,162
+Los Angeles,Socioeconomically Disadvantaged,,73175,38152,20754,10491,4401,1669
+Los Angeles,Migrant,,164,58,23,17,2,1
+Los Angeles,Foster,,396,73,34,2,1,0
+Los Angeles,Homeless,,5505,2092,973,318,115,73
+Los Angeles,All,,97186,54543,32096,15389,8091,5345
+Los Angeles,International,,,,,,,
+Northern California,African American,,14,0,24,0,0,0
+Northern California,American Indian or Alaska Native,,180,28,55,6,2,6
+Northern California,Asian,,55,30,24,7,3,4
+Northern California,Hispanic or Latino,,1035,286,437,81,28,41
+Northern California,Race Unknown,,,,6,0,0,0
+Northern California,Pacific Islander,,,,,,,
+Northern California,Two or More Races,,81,38,48,4,3,5
+Northern California,White,,3917,1440,1505,300,147,331
+Northern California,Male,,2964,798,1128,148,92,172
+Northern California,Female,,2925,1195,1191,294,125,247
+Northern California,English Learners,,175,25,39,6,0,7
+Northern California,Students with Disabilities,,407,14,101,0,0,5
+Northern California,Socioeconomically Disadvantaged,,3726,853,1038,171,64,91
+Northern California,Migrant,,46,9,9,0,0,0
+Northern California,Foster,,5,0,6,0,0,0
+Northern California,Homeless,,229,34,28,3,2,0
+Northern California,All,,6217,2063,2421,458,225,435
+Northern California,International,,,,,,,
+Orange,African American,,356,146,155,21,15,31
+Orange,American Indian or Alaska Native,,122,30,62,9,2,11
+Orange,Asian,,5848,4650,1875,1026,1492,525
+Orange,Filipino,,672,513,291,141,84,33
+Orange,Hispanic or Latino,,15956,6333,8149,1556,564,571
+Orange,Race Unknown,,49,27,14,10,8,3
+Orange,Pacific Islander,,,,,,,
+Orange,Two or More Races,,827,516,361,83,68,77
+Orange,White,,11359,6823,4752,1353,795,1848
+Orange,Male,,17954,8609,8299,1817,1417,1345
+Orange,Female,,18344,10944,7924,2510,1686,1846
+Orange,English Learners,,4718,1008,1460,62,16,35
+Orange,Students with Disabilities,,2669,363,1360,63,16,81
+Orange,Socioeconomically Disadvantaged,,18974,7908,7806,1669,971,373
+Orange,Migrant,,11,4,,,,
+Orange,Foster,,17,0,6,0,0,0
+Orange,Homeless,,3097,970,706,145,56,29
+Orange,All,,36344,19569,16258,4329,3104,3195
+Orange,International,,,,,,,
+Greater Sacramento,African American,,1884,617,852,217,73,136
+Greater Sacramento,American Indian or Alaska Native,,9,1,4,0,0,0
+Greater Sacramento,Asian,,2954,2062,1131,650,524,129
+Greater Sacramento,Filipino,,566,401,212,122,61,35
+Greater Sacramento,Hispanic or Latino,,6875,2558,3004,802,250,216
+Greater Sacramento,Race Unknown,,17,4,8,1,0,0
+Greater Sacramento,Pacific Islander,,78,30,24,11,3,4
+Greater Sacramento,Two or More Races,,933,553,368,142,77,88
+Greater Sacramento,White,,11452,6001,4547,1459,593,1323
+Greater Sacramento,Male,,12952,5636,5384,1500,705,864
+Greater Sacramento,Female,,13307,7148,5440,2055,956,1147
+Greater Sacramento,English Learners,,2079,424,556,41,7,11
+Greater Sacramento,Students with Disabilities,,2116,220,889,48,4,42
+Greater Sacramento,Socioeconomically Disadvantaged,,14753,5315,4926,1444,560,292
+Greater Sacramento,Migrant,,87,27,13,2,0,1
+Greater Sacramento,Foster,,34,0,3,0,0,2
+Greater Sacramento,Homeless,,1332,317,166,30,13,17
+Greater Sacramento,All,,26384,12820,10885,3568,1663,2015
+Greater Sacramento,International,,,,,,,
+San Diego,African American,,1201,703,499,135,62,133
+San Diego,American Indian or Alaska Native,,24,6,12,2,0,4
+San Diego,Asian,,1857,1600,427,291,593,209
+San Diego,Filipino,,1270,944,493,257,161,26
+San Diego,Hispanic or Latino,,14265,7101,6336,1719,834,547
+San Diego,Race Unknown,,15,1,7,0,0,0
+San Diego,Pacific Islander,,34,16,5,3,1,0
+San Diego,Two or More Races,,1167,736,422,188,102,118
+San Diego,White,,10253,6654,3252,1498,919,1702
+San Diego,Male,,15638,8403,6053,1903,1212,1287
+San Diego,Female,,15883,10177,5935,2368,1604,1596
+San Diego,English Learners,,3913,1332,1189,106,49,35
+San Diego,Students with Disabilities,,2760,702,1237,99,18,109
+San Diego,Socioeconomically Disadvantaged,,18078,8745,6433,1610,988,528
+San Diego,Migrant,,220,68,38,23,2,0
+San Diego,Foster,,37,0,12,4,0,0
+San Diego,Homeless,,1370,486,175,40,23,7
+San Diego,All,,31669,18642,12080,4288,2822,2889
+San Diego,International,,,,,,,
+Imperial,African American,,,,,,,
+Imperial,American Indian or Alaska Native,,10,0,,,,
+Imperial,Asian,,,,,,,
+Imperial,Hispanic or Latino,,2363,693,1534,79,111,105
+Imperial,Race Unknown,,,,,,,
+Imperial,Pacific Islander,,,,,,,
+Imperial,Two or More Races,,,,,,,
+Imperial,White,,133,70,51,11,13,20
+Imperial,Male,,1295,352,800,43,61,75
+Imperial,Female,,1283,445,815,51,72,64
+Imperial,English Learners,,824,89,405,4,2,7
+Imperial,Students with Disabilities,,199,5,96,1,1,4
+Imperial,Socioeconomically Disadvantaged,,2115,548,1192,46,66,65
+Imperial,Migrant,,458,101,216,11,7,4
+Imperial,Homeless,,256,53,44,1,3,1
+Imperial,All,,2584,797,1621,94,133,139
+Imperial,International,,,,,,,
+San Joaquin Valley,African American,,1987,628,839,254,49,111
+San Joaquin Valley,American Indian or Alaska Native,,81,21,18,3,0,4
+San Joaquin Valley,Asian,,2986,1970,1123,731,429,55
+San Joaquin Valley,Filipino,,876,576,325,214,69,18
+San Joaquin Valley,Hispanic or Latino,,31904,11484,13266,4205,1056,548
+San Joaquin Valley,Race Unknown,,60,12,19,10,0,1
+San Joaquin Valley,Pacific Islander,,,,,,,
+San Joaquin Valley,Two or More Races,,463,194,185,57,22,21
+San Joaquin Valley,White,,12191,5298,4733,1604,428,858
+San Joaquin Valley,Male,,26100,8542,10453,2754,903,711
+San Joaquin Valley,Female,,26859,12621,11057,4639,1304,993
+San Joaquin Valley,English Learners,,6814,1188,1463,149,5,35
+San Joaquin Valley,Students with Disabilities,,3716,289,1370,52,8,43
+San Joaquin Valley,Socioeconomically Disadvantaged,,40371,14051,14037,4475,1249,565
+San Joaquin Valley,Migrant,,1366,488,170,77,19,5
+San Joaquin Valley,Foster,,97,2,16,0,0,0
+San Joaquin Valley,Homeless,,2969,764,269,67,32,11
+San Joaquin Valley,All,,53259,21184,21646,7410,2209,1717
+San Joaquin Valley,International,,,,,,,
+Northern Sacramento Valley,African American,,21,7,13,2,1,2
+Northern Sacramento Valley,American Indian or Alaska Native,,10,1,7,0,0,0
+Northern Sacramento Valley,Asian,,144,53,77,30,5,4
+Northern Sacramento Valley,Hispanic or Latino,,1060,263,532,128,18,18
+Northern Sacramento Valley,Race Unknown,,,,,,,
+Northern Sacramento Valley,Pacific Islander,,,,,,,
+Northern Sacramento Valley,Two or More Races,,68,16,26,4,2,2
+Northern Sacramento Valley,White,,1863,610,852,216,48,83
+Northern Sacramento Valley,Male,,1688,403,772,160,29,45
+Northern Sacramento Valley,Female,,1686,603,835,248,54,71
+Northern Sacramento Valley,English Learners,,224,19,38,1,0,3
+Northern Sacramento Valley,Students with Disabilities,,253,7,93,2,1,1
+Northern Sacramento Valley,Socioeconomically Disadvantaged,,2247,458,834,171,25,27
+Northern Sacramento Valley,Homeless,,192,23,23,4,0,0
+Northern Sacramento Valley,All,,3450,1013,1634,411,83,118
+Northern Sacramento Valley,International,,,,,,,
+Statewide,African American,,19679,7876,7511,2230,789,1802
+Statewide,American Indian or Alaska Native,,478,104,176,21,5,33
+Statewide,Asian,,37480,29060,10595,6512,9744,3424
+Statewide,Filipino,,10597,7124,4240,2223,1121,324
+Statewide,Hispanic or Latino,,202444,86434,82072,26325,9701,5486
+Statewide,Race Unknown,,655,351,224,80,64,51
+Statewide,Pacific Islander,,344,143,116,36,8,19
+Statewide,Two or More Races,,7921,4814,2898,1054,752,916
+Statewide,White,,104753,58489,37994,12941,7351,14139
+Statewide,Male,,198431,87707,77147,22006,13119,11841
+Statewide,Female,,203112,114587,75633,31461,17800,15429
+Statewide,English Learners,,46425,11093,11165,973,224,340
+Statewide,Students with Disabilities,,33201,5149,13102,876,168,804
+Statewide,Socioeconomically Disadvantaged,,260706,109147,85962,27877,12731,5620
+Statewide,Migrant,,3558,1096,759,217,54,16
+Statewide,Foster,,825,89,108,6,1,3
+Statewide,Homeless,,24189,7324,3640,863,384,239
+Statewide,All,,403128,202594,153592,53559,30953,27340

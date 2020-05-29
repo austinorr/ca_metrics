@@ -70,6 +70,15 @@ function onLoad() {
 
     })
 
+    d3.selectAll(".chart-wrapper-edu-stacked-bar").each( function (d) {
+        let divId = "#" + this.getAttribute("id");
+        
+        var bar_chart = new EduStackedBarChart(divId);
+        bar_chart.init();
+        CHARTS.push(bar_chart);
+
+    })
+
 
     // var bar_chart = new StackedBarChart("#_viz_edubar_container1", );
     // bar_chart.init();
