@@ -15,54 +15,9 @@ class RegionStatsBarChart extends BaseChart {
 
             that.raw_data = data;
 
-            that.labels = Object.keys(data[0]).slice(3); // keys after region, group, and subgroup are values 
-            that.label_map = {};
-            for (let label of that.labels) {
-                let obj = {};
-                obj.label_list = label.split(";");
-                obj.label_short = obj.label_list[0];
-                obj.label_long = obj.label_list.slice(1).join('');
-                that.label_map[label] = obj;
-            }
-
-            data.forEach(function(d) {
-                for (let label of that.labels) {
-                    d[label] = +d[label];
-                }
-
-                d['concat_label'] = d.group + "-" + d.subgroup;
-                if (!d.subgroup) {
-                    d['width'] = 1.5; // x times normal
-                    d['label'] = d.group;
-                } else {
-                    d['width'] = 1; // x times normal
-                    d['label'] = d.subgroup;
-                }
-            });
-
-            var dataAllLong = [];
-            data //.filter(d => d.group == "All")
-                .forEach(function(d) {
-                    for (let label of that.labels) {
-                        var obj = {};
-                        obj['region'] = d['region'];
-                        obj['label'] = label;
-                        obj['value'] = d[label];
-                        d['concat_label'] = d.group + "-" + d.subgroup;
-                        if (!d.subgroup) {
-                            obj['width'] = 1.5; // x times normal
-                            obj['demographic'] = d.group;
-                        } else {
-                            obj['width'] = 1; // x times normal
-                            obj['demographic'] = d.subgroup;
-                        }
-                        dataAllLong.push(obj)
-                    }
-                })
-
-            // that.dataset = data.filter(d => d.group != "All");
-            // that.dataAllLong = dataAllLong;
-            that.data_tidy = dataAllLong;
+            that.labels = that.toLabels(data) // Object.keys(data[0]).slice(3); // keys after region, group, and subgroup are values 
+            that.label_map = that.toLabelMap(that.labels)
+            that.data_tidy = that.toTidy(data, that.labels)
             that.resize();
             that.update();
 
@@ -75,12 +30,13 @@ class RegionStatsBarChart extends BaseChart {
     }
 
     overview() {
-        let data = this.data_tidy.filter(d => (d.region == REGION) && (d.demographic == 'All'));
+        this.data = this.data_tidy.filter(d => (d.region == REGION) && (d.demographic == 'All'));
+        let data = this.data;
         let that = this;
 
-        let margin = { top: 20, right: 20, bottom: 20, left: 200 };
+        let margin = { top: 2, right: 2, bottom: 2, left: 200 };
         let width = this.container_width - margin.left - margin.right;
-        let height = this.container_height - margin.top - margin.bottom;
+        let height = 80; //this.container_height - margin.top - margin.bottom;
 
         this.svg = this.container.select("svg")
             .attr("width", width + margin.left + margin.right)
@@ -99,7 +55,7 @@ class RegionStatsBarChart extends BaseChart {
         this.x = d3.scaleLinear()
             .range([0, width]);
 
-        this.rescale(this.x, this.dataAllLong);
+        this.rescale(this.x, this.data_tidy);
 
         // layout the chart
         // let width = this.width
@@ -129,6 +85,7 @@ class RegionStatsBarChart extends BaseChart {
         var goto = this.breakdown.bind(this)
 
         bar.enter().append("rect")
+            .attr("data_label", d => d.label)
             .on("click", function(d) {
                 that.selected_bar = d3.select(this).attr('data_label');
                 return goto();
@@ -137,8 +94,8 @@ class RegionStatsBarChart extends BaseChart {
             .classed('bar', true)
             .attr("x", function(d) { return 0; })
             .attr("y", function(d) { return y(d.label); })
-            .attr("data_label", d => d.label)
             .attr("height", y.bandwidth())
+            .style("fill", d3.color(that.color))
             .merge(bar)
             .transition(t)
             .ease(d3.easeExp)
@@ -210,9 +167,20 @@ class RegionStatsBarChart extends BaseChart {
         let selected_bar = this.selected_bar,
             data = this.data_tidy
             .filter(d => d.region == REGION && d.label == selected_bar && d.demographic != 'All'),
-            margin = { top: 20, right: 20, bottom: 20, left: parseInt(this.container_width / 2) },
+            margin = { top: 20, right: 2, bottom: 10, left: parseInt(this.container_width / 2) },
             width = this.container_width - margin.left - margin.right,
-            height = this.container_height - margin.top - margin.bottom;
+            // height = this.container_height - margin.top - margin.bottom,
+            
+            height = 25 *  data.length - margin.top - margin.bottom,
+            bar_height = (height / data.length);
+
+        if (!data.length) {
+            console.warn(`No demographic breakdown data provided for selection: ${this.selected_bar}`);
+            return 
+        }
+
+        var padding = 0.3,
+            outerPadding = 0.3;
 
         this.svg = this.container.select("svg")
             .attr("width", width + margin.left + margin.right)
@@ -221,21 +189,51 @@ class RegionStatsBarChart extends BaseChart {
             .attr("transform",
                 "translate(" + margin.left + "," + margin.top + ")");
 
-        // set the ranges
-        this.y = d3.scaleBand()
-            .range([10, height])
-            .padding(0.2);
-        this.y.domain(data.map(function(d) { return d.demographic; }));
+        function alpha(values, value) {
+            var n = values.length,
+                total = d3.sum(values, value);
+            return (height - (n - 1) * padding * height / n - 2 * outerPadding * height / n) / total
+        }
+
+        function Wi(values, value, alpha) {
+            return function(i) {
+                return value(values[i]) * alpha
+            }
+        }
+
+        function Midi(values, value, alpha) {
+            var w = Wi(values, value, alpha),
+                n = values.length;
+            return function(_, i) {
+                var op = outerPadding * height / n,
+                    p = padding * height / n;
+                return op + d3.sum(values.slice(0, i), value) * alpha + i * p + w(i) / 2;
+            }
+        }
+
+        function v(d) {
+            return d.width;
+        }
+
+        var a = alpha(data, v), //scale factor between value and bar width
+            mid = Midi(data, v, a), //mid-point displacement of bar i
+            w = Wi(data, v, a); //width of bar i
+
+        this.y = d3.scaleOrdinal()
+            .range(data.map(mid))
+            .domain(data.map(function(d) { return d.demographic; }));
 
         this.x = d3.scaleLinear()
             .range([0, width]);
 
         this.rescale(this.x, data)
 
-        // let width = this.width
-        // let height = this.height
+        this.z = d3.scaleOrdinal(d3.schemeCategory10);
+
         let x = this.x
         let y = this.y
+        let z = this.z
+
 
         const t = d3.transition().duration(500);
 
@@ -259,12 +257,19 @@ class RegionStatsBarChart extends BaseChart {
             .classed('bar', true)
             .classed('breakdown', true)
             .attr("x", function(d) { return 0; })
-            .attr("y", function(d) { return y(d.demographic); })
-            .attr("height", y.bandwidth())
+            // .attr("y", function(d) { return y(d.demographic); })
+            .attr("y", function(d, i) {
+                return y(d.demographic) - a * v(d) / 2; //center the bar on the tick
+            })
+            // .attr("height", d => d.width * y.bandwidth())
+            .attr("height", function(d) {
+                return a * v(d); //`a` already accounts for both types of padding
+            })
+            .attr('fill', d => z(d.ix % 10))
             .merge(bar)
             .transition(t)
             .ease(d3.easeExp)
-            .attr("width", function(d) { return x(d.value); })
+            .attr("width", d=>x(d.value))
             .delay(delay);
 
         let value_labels = bars.selectAll(".value")
@@ -278,10 +283,10 @@ class RegionStatsBarChart extends BaseChart {
             .classed('breakdown', true)
             .attr("fill", "white")
             .attr("opacity", 0)
-            .attr("y", function(d) { return y(d.demographic) + y.bandwidth() / 2; })
+            .attr("y", function(d) { return y(d.demographic) ; })
             .attr("dy", "0.35em") //vertical align middle
             .attr("text-anchor", "end")
-            .attr("font-size", Math.min(18, y.bandwidth() * 0.95))
+            .attr("font-size", d=>Math.min(18, a * v(d) * 0.95))
             .merge(value_labels)
             .transition(t)
             .attr("opacity", 1)
@@ -303,6 +308,8 @@ class RegionStatsBarChart extends BaseChart {
         this.svg.selectAll(".y--axis").remove()
         // add the y Axis
         this.svg.append("g")
+            .attr("transform", "translate(-10, 0)")
+            .attr("stroke-width", 0)
             .classed('axis', true)
             .classed('y--axis', true)
             .classed('breakdown', true)
@@ -354,69 +361,69 @@ class StackedBarChart extends RegionStatsBarChart {
         d3.csv(this.url, function(error, data) {
             if (error) throw error;
             that.labels = Object.keys(data[0]).slice(3); // keys after region, group, and subgroup are values 
-            that.columns = [];
-            that.label_map = {};
+            // that.columns = [];
+            that.label_map = that.toLabelMap(that.labels); //{};
 
-            for (let label of that.labels) {
-                let obj = {}
+            // for (let label of that.labels) {
+            //     let obj = {}
 
-                obj.label_list = label.split(";");
-                obj.label_short = obj.label_list[0];
-                obj.label_long = obj.label_list[1];
-                obj.group = obj.label_list.slice(2).join('').trim();
+            //     obj.label_list = label.split(";");
+            //     obj.label_short = obj.label_list[0];
+            //     obj.label_long = obj.label_list[1];
+            //     obj.group = obj.label_list.slice(2).join('').trim();
 
-                that.label_map[label] = obj;
+            //     that.label_map[label] = obj;
 
-                if (!that.columns.includes(obj.group)) {
-                    that.columns.push(obj.group);
-                }
-            }
+            //     // if (!that.columns.includes(obj.group)) {
+            //     //     that.columns.push(obj.group);
+            //     // }
+            // }
 
-            data.forEach(function(d) {
-                for (let label of that.labels) {
-                    d[label] = +d[label];
-                }
+            // data.forEach(function(d) {
+            //     for (let label of that.labels) {
+            //         d[label] = +d[label];
+            //     }
 
-                d['concat_label'] = d.group + "-" + d.subgroup;
-                if (!d.subgroup) {
-                    d['width'] = "large";
-                    d['label'] = d.group;
-                } else {
-                    d['width'] = "normal";
-                    d['label'] = d.subgroup;
-                }
-            });
+            //     d['concat_label'] = d.group + "-" + d.subgroup;
+            //     if (!d.subgroup) {
+            //         d['width'] = "large";
+            //         d['label'] = d.group;
+            //     } else {
+            //         d['width'] = "normal";
+            //         d['label'] = d.subgroup;
+            //     }
+            // });
 
 
-            var data_tidy = [];
-            data //.filter(d => d.group == "All")
-                .forEach(function(d) {
-                    for (let label of that.labels) {
-                        var obj = {};
-                        obj['region'] = d['region'];
-                        obj['label'] = label;
-                        obj['value'] = d[label];
-                        obj['concat_label'] = d.group + "-" + d.subgroup;
-                        obj['column'] = that.label_map[label].group;
-                        if (!d.subgroup) {
-                            obj['width'] = 1.5; // x times normal
-                            obj['demographic'] = d.group;
-                        } else {
-                            obj['width'] = 1; // x times normal
-                            obj['demographic'] = d.subgroup;
-                        }
-                        data_tidy.push(obj)
-                    }
-                })
+            that.data_tidy = that.toTidy(data, that.labels)
+            // data //.filter(d => d.group == "All")
+            //     .forEach(function(d) {
+            //         for (let label of that.labels) {
+            //             var obj = {};
+            //             obj['region'] = d['region'];
+            //             obj['label'] = label;
+            //             obj['value'] = d[label];
+            //             obj['concat_label'] = d.group + "-" + d.subgroup;
+            //             obj['column'] = that.label_map[label].group;
+            //             if (!d.subgroup) {
+            //                 obj['width'] = 1.5; // x times normal
+            //                 obj['demographic'] = d.group;
+            //             } else {
+            //                 obj['width'] = 1; // x times normal
+            //                 obj['demographic'] = d.subgroup;
+            //             }
+            //             data_tidy.push(obj)
+            //         }
+            //     })
 
             let dataGrouped = [];
-            let data_tidy_slice = data_tidy.filter(d => (d.demographic == 'All'))
-            let regions = d3.map(data_tidy, d => d.region).keys()
-            let columns = d3.map(data_tidy, d => d.column).keys()
+            let data_tidy_slice = that.data_tidy.filter(d => (d.demographic == 'All'))
+            let regions = d3.map(that.data_tidy, d => d.region).keys()
+            let columns = d3.map(that.data_tidy, d => that.label_map[d.label].column).keys()
             let maxGroupedValue = -1;
             for (let region of regions) {
                 for (let column of columns) {
-                    let _gdata = data_tidy_slice.filter(d => d.region == region && d.column == column)
+                    let _gdata = data_tidy_slice.filter(d => d.region == region && that.label_map[d.label].column == column)
                     let obj = {}
                     obj['region'] = region;
                     obj['column'] = column;
@@ -436,7 +443,6 @@ class StackedBarChart extends RegionStatsBarChart {
                 }
             }
 
-            that.data_tidy = data_tidy;
             that.dataGrouped = dataGrouped;
             that.maxGroupedValue = maxGroupedValue;
             that.resize()
@@ -457,7 +463,7 @@ class StackedBarChart extends RegionStatsBarChart {
 
         this.margin = { top: 20, right: 70, bottom: 60, left: 20 };
         this.width = this.container_width - this.margin.left - this.margin.right;
-        this.height = this.container_height - this.margin.top - this.margin.bottom;
+        this.height = 300; //this.container_height - this.margin.top - this.margin.bottom;
         this.layers = d3.stack()
             .keys(that.labels)
             (that.data)
@@ -741,7 +747,7 @@ class EduStackedBarChart extends StackedBarChart {
                     corner = 'data-yloc-bottom';
                     break;
             }
-            
+
             return that.svg.select("g[data_label='" + label + "']").select('.stacked-bars').attr(corner) || null
 
 
@@ -775,7 +781,6 @@ class EduStackedBarChart extends StackedBarChart {
 
         function link(d) {
 
-            console.log('callig link')
             // source to target
             var x0 = cornerGetter(d.source.top, 'right'),
                 x1 = cornerGetter(d.target.top, 'left'),
@@ -815,7 +820,7 @@ class EduStackedBarChart extends StackedBarChart {
                 .classed('overview', true);
 
             var links = link_group.selectAll('.link')
-                
+
             links.exit().remove()
 
             links.data(graph).enter().append("path")
@@ -826,20 +831,20 @@ class EduStackedBarChart extends StackedBarChart {
                 .ease(d3.easeExp)
                 .style('opacity', 0.5)
                 .delay(300);
-                
+
         } else {
             var links = link_group.selectAll('.link')
 
             links.exit().remove()
 
             links.data(graph).enter().append("path")
-            .classed("link", true)
-            .merge(links)
-            .transition(that.t)
-            .ease(d3.easeExp)
-            .attr("d", d => link(d))
-            .style('opacity', 0.5)
-            .delay(0);
+                .classed("link", true)
+                .merge(links)
+                .transition(that.t)
+                .ease(d3.easeExp)
+                .attr("d", d => link(d))
+                .style('opacity', 0.5)
+                .delay(0);
 
         }
     }

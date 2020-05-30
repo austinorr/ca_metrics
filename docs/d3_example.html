@@ -3,13 +3,14 @@
 <head>
 </head>
 <style>
-  body {
-  display: grid;
-  margin: 10px;
-  width: calc(100vw - 20px);
-  grid-template-rows: 50px 1fr 50px;
 
+/*div {
+  border: 1px solid red;
 }
+
+svg {
+  border: 1px solid green;
+}*/
 
 .link {
   fill: #000;
@@ -20,7 +21,7 @@
 }
 
 .link:hover {
-  fill-opacity: 1;
+  fill-opacity: 0.3;
 }
 
 .region_label {
@@ -42,52 +43,23 @@
   stroke-linejoin: round;
   stroke-linecap: round;
 }
-._viz_container {
-  display: grid;
-  height: calc(100vh - 150px);
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr;
-  /*grid-auto-rows: minmax(min-content, max-content);*/
-}
 
 ._viz_map_group {
-  display: grid;
-  grid-row: 1 / -1;
-  grid-template-rows: 1fr 1fr;
-}
 
-._viz_bar_group {
-  display: grid;
-  /*align-items: stretch;*/
-  /*grid-auto-rows: minmax(200px, max-content);*/
-
-  grid-template-rows: repeat(3, 300px);
+  text-align: center;
 
 }
 
 .chart-wrapper-map {
-  position: relative;
-  /*display: flex;*/
-  grid-row: 1 ;
+  height: 500px;
+  width: 500px;
+  display: inline-block;
 }
 
-.chart-wrapper-bar {
-  position: relative;
-  display: flex;
-}
 
-.chart-wrapper-bar svg {
+
+[class^="chart-wrapper"] svg {
   -webkit-tap-highlight-color: rgba(0,0,0,0);
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  max-width: 100%;
-  max-height: 100%;
-}
-
-.bar {
-  fill: steelblue;
 }
 
 .backbutton{
@@ -121,9 +93,10 @@
       <div id="uid-button-1" class="_viz_map_data_toggle" _viz_units="percent" _viz_source="./data/employment.csv" onclick="mapDataToggle(this.id)">Toggle Employment Choropleth</div>
     </div>
     <div class="_viz_bar_group">
-      <div id="_viz_bar_container1" class="chart-wrapper-bar" _viz_units="percent" _viz_source="./data/employment2col.csv"></div>
-      <div id="_viz_bar_container2" class="chart-wrapper-bar" _viz_units="percent" _viz_source="./data/employment.csv"></div>
+      <div id="_viz_bar_container1" class="chart-wrapper-bar" _viz_units="percent" _viz_source="./data/employment2col.csv" _viz_color="steelblue"></div>
+      <div id="_viz_bar_container2" class="chart-wrapper-bar" _viz_units="percent" _viz_source="./data/employment.csv" _viz_color="#ffbb78"></div>
       <div id="_viz_edubar_container1" class="chart-wrapper-edu-stacked-bar" _viz_units="count" _viz_source="./data/edu.csv"></div>
+      <div id="_viz_bubble_container1" class="chart-wrapper-bubble" _viz_units="percent" _viz_source="./data/deserts.csv"></div>
       <div id="chart"></div>
     </div>
   </div>
@@ -137,11 +110,17 @@
 <script type="text/javascript" src="./static/map.js"></script>
 <script type="text/javascript" src="./static/bar_chart.js"></script>
 <script type="text/javascript" src="./static/pie_chart.js"></script>
+<script type="text/javascript" src="./static/bubble_chart.js"></script>
 <script>
 onLoad();
 
 d3.select(".chart-wrapper-map").on("click", function() {
   d3.select("._navbar").text(REGION).classed('region_label', true)
+
+  let reg_tab = REGION.toLowerCase().split(' ').join('-');
+  d3.selectAll(".tab-content .tab-pane.active").classed('active', false)
+  d3.selectAll(".tab-content .tab-pane tab-"+reg_tab).classed('active', true)
+
 
   for (var i = 0; i < CHARTS.length; i++) {
     CHARTS[i].update()

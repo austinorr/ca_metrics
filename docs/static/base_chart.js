@@ -4,6 +4,7 @@ class BaseChart {
         this.container_id = container_id;
         this.container = d3.select(container_id);
         this.url = this.container.attr("_viz_source");
+        this.color = this.container.attr("_viz_color");
         this.chart_uid = container_id + "-" + this.url;
         this.units = UNITS.filter(d => d == this.container.attr('_viz_units'));
         this.unitFormatter = getAxisTickLabelFormatter(this.units);
@@ -27,6 +28,69 @@ class BaseChart {
 
     get container_height() {
         return parseInt(d3.select(this.container_id).node().clientHeight);
+    }
+
+    toTidy(data, labels) {
+        let tidy = [];
+        let group_cache = {};
+        let group_cache_ix = -1;
+        data
+            .forEach(function(d) {
+                for (let label of labels) {
+                    var obj = {};
+                    obj['region'] = d['region'];
+                    obj['label'] = label;
+                    obj['value'] = +d[label];
+                    obj['concat_label'] = d.group + "-" + d.subgroup;
+                    obj['group'] = d.group;
+                    obj['subgroup'] = d.subgroup;
+                    if (!d.subgroup || d.group == d.subgroup) {
+                        obj['width'] = 1; // x times normal
+                        obj['demographic'] = d.group || "All";
+                    } else {
+                        obj['width'] = 0.55; // x times normal
+                        obj['demographic'] = d.subgroup || "All";
+                    }
+                    if (!(d.group in group_cache)) {
+                        group_cache_ix += 1;
+                        group_cache[d.group] = group_cache_ix;
+
+                    }
+
+                    obj['ix'] = group_cache[d.group]
+
+                    tidy.push(obj)
+                }
+            })
+        return tidy;
+    }
+
+    toLabels(data) {
+
+        let first_row = Object.keys(data[0]); // keys after region, group, and subgroup are values 
+
+        if (!(first_row.includes("subgroup"))) {
+            return first_row.slice(2)
+        }
+        return first_row.slice(3)
+    }
+
+    toLabelMap(labels) {
+        let label_map = {};
+        for (let label of labels) {
+            let obj = {};
+            obj.label_list = label.split(";");
+            obj.label_short = obj.label_list[0];
+            if (obj.label_list.length == 2) {
+                obj.label_long = obj.label_list.slice(1).join('');
+            } else if (obj.label_list.length == 3) {
+                obj.label_long = obj.label_list[1];
+                obj.column = obj.label_list.slice(2).join('').trim();
+            }
+            label_map[label] = obj;
+        }
+
+        return label_map;
     }
 
     log(message) {

@@ -26,6 +26,22 @@ const REGION_COLORS = [
     "#9edae5",
 ];
 
+// const REGION_COLORS = REGION_COLORS==null ? {
+//         "bay-area": "#34778c",
+//         "central-coast": "#c7a630",
+//         "central-sierra": "#c54241",
+//         "greater-sacramento": "#6b7130",
+//         "imperial": "#c7a630",
+//         "inland-empire": "#34778c",
+//         "los-angeles": "#6b7130",
+//         "northern-california": "#c7a630",
+//         "northern-sacramento-valley": "#c66f2c",
+//         "orange": "#c66f2c",
+//         "san-diego": "#c54241",
+//         "san-joaquin-valley": "#834778",
+//     } : REGIN_COLORS
+
+
 // increases size of region on click/hover/whatever
 const REGION_POP_SCALER = 1.01;
 
@@ -33,7 +49,7 @@ const CA_COUNTIES_REGIONS_TOPOJSON_URL = "./data/ca-counties.json"
 
 const UNITS = ["percent", "count", "usd"]
 
-var CHARTS = []
+let CHARTS = []
 
 var REGION_MAP
 
@@ -55,34 +71,38 @@ function onLoad() {
     d3.selectAll(".chart-wrapper-bar").each( function (d) {
         let divId = "#" + this.getAttribute("id");
         
-        var bar_chart = new RegionStatsBarChart(divId);
-        bar_chart.init();
-        CHARTS.push(bar_chart);
+        let chart = new RegionStatsBarChart(divId);
+        chart.init();
+        CHARTS.push(chart);
 
     })
 
     d3.selectAll(".chart-wrapper-stacked-bar").each( function (d) {
         let divId = "#" + this.getAttribute("id");
         
-        var bar_chart = new StackedBarChart(divId);
-        bar_chart.init();
-        CHARTS.push(bar_chart);
+        let chart = new StackedBarChart(divId);
+        chart.init();
+        CHARTS.push(chart);
 
     })
 
     d3.selectAll(".chart-wrapper-edu-stacked-bar").each( function (d) {
         let divId = "#" + this.getAttribute("id");
         
-        var bar_chart = new EduStackedBarChart(divId);
-        bar_chart.init();
-        CHARTS.push(bar_chart);
+        let chart = new EduStackedBarChart(divId);
+        chart.init();
+        CHARTS.push(chart);
 
     })
 
+    d3.selectAll(".chart-wrapper-bubble").each( function (d) {
+        let divId = "#" + this.getAttribute("id");
+        
+        let chart = new BubbleChart(divId);
+        chart.init();
+        CHARTS.push(chart);
 
-    // var bar_chart = new StackedBarChart("#_viz_edubar_container1", );
-    // bar_chart.init();
-    // CHARTS.push(bar_chart);
+    })
 
 }
 
