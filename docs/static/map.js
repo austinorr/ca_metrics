@@ -84,7 +84,7 @@ class RegionMap extends BaseMap {
                     .data(region_features)
                     .enter().append("path")
                     .attr("d", that.path)
-                    .style("fill", (d) => that.colors[d.properties.region_id])
+                    .style("fill", (d) => that.colors[regionTag(d.properties.region)])
                     .style('fill-opacity', 0.5)
                     .attr("data-region", d => d.properties.region)
                     .on("click", function(d) {
@@ -158,7 +158,7 @@ class RegionMap extends BaseMap {
             })
             .transition()
             .ease(d3.easeExp)
-            .style('fill', d => this.colors[d.properties.region_id])
+            .style('fill', d => this.colors[regionTag(d.properties.region)])
             .style('fill-opacity', 0.5)
     }
 

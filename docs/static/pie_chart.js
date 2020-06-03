@@ -1,6 +1,6 @@
 var dataset = {
-    apples: [75, 25, 0, 0, 0, 0],
-    oranges: [0, 0, 25, 25, 25, 25],
+    apples: [1,1, ],
+    oranges: [0, 0, 50, 50, 25, 25],
 };
 
 var width = 460,
@@ -30,12 +30,13 @@ var gs = svg.selectAll("g").data(d3.values(dataset)).enter().append("g");
 var path = gs.selectAll("path")
     .data(function(d, i) {
         return pie(d).map(function(item) {
-            return { data: item, parentIndex: i };
+            return { "data": item, "parentIndex": i };
         });
     })
     .enter().append("path")
     .attr("fill", function(d, i) { return color(i); })
     .attr("d", function(d, i) {
+        // console.log(d.data)
         return arc
             .innerRadius(10 + cwidth * d.parentIndex)
             .outerRadius(cwidth * (d.parentIndex + 1))(d.data);

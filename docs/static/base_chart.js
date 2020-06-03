@@ -20,6 +20,25 @@ class BaseChart {
             .append("g")
             .attr("transform",
                 "translate(" + this.margin.left + "," + this.margin.top + ")");
+
+        this.container.select(".roi-tooltip").remove()
+
+        this.tooltip = this.container
+            .append("div")
+            .classed("roi-tooltip", true)
+            .classed("clearfix", true)
+            .style("position","absolute")
+            .style("pointer-events", "none")
+            .style("opacity", 0)
+
+        this.tooltip.append('div')
+            .classed('roi-tooltip-header', true);
+
+        this.tooltip.append('div')
+            .classed('roi-tooltip-content', true)
+            .append('table')
+        this.tooltip.append('div')
+            .classed('roi-tooltip-footer', true)
     }
 
     get container_width() {
@@ -31,6 +50,7 @@ class BaseChart {
     }
 
     toTidy(data, labels) {
+        let that = this;
         let tidy = [];
         let group_cache = {};
         let group_cache_ix = -1;
@@ -44,6 +64,7 @@ class BaseChart {
                     obj['concat_label'] = d.group + "-" + d.subgroup;
                     obj['group'] = d.group;
                     obj['subgroup'] = d.subgroup;
+                    obj['column'] = that.label_map[label].column;
                     if (!d.subgroup || d.group == d.subgroup) {
                         obj['width'] = 1; // x times normal
                         obj['demographic'] = d.group || "All";
@@ -66,10 +87,10 @@ class BaseChart {
     }
 
     toLabels(data) {
-
         let first_row = Object.keys(data[0]); // keys after region, group, and subgroup are values 
-
-        if (!(first_row.includes("subgroup"))) {
+        if (!(first_row.includes("group"))) {
+            return first_row.slice(1)
+        } else if (!(first_row.includes("subgroup"))) {
             return first_row.slice(2)
         }
         return first_row.slice(3)
@@ -82,7 +103,7 @@ class BaseChart {
             obj.label_list = label.split(";");
             obj.label_short = obj.label_list[0];
             if (obj.label_list.length == 2) {
-                obj.label_long = obj.label_list.slice(1).join('');
+                obj.label_long = obj.label_list.slice(1).join('').trim();
             } else if (obj.label_list.length == 3) {
                 obj.label_long = obj.label_list[1];
                 obj.column = obj.label_list.slice(2).join('').trim();
@@ -116,14 +137,119 @@ class BaseChart {
         this.log('no method for loading data')
     }
 
-    rescale(ax, data) {
+    rescale(data, units) {
         // make this static?
         this.log('rescaling data')
 
-        if (this.units == "percent") {
-            ax.domain([0, 1]);
+        if (units == "percent") {
+            return 1;
         } else {
-            ax.domain([0, d3.max(data, d => d.value)]).nice()
+            return d3.max(data, d => d.value)
         }
     }
+
+    tooltip_show(d) {
+        let that = this;
+        let current_bar = d.label
+        let current_demo = d.demographic
+        let mostly_filtered_data = that.data_tidy.filter(
+            d => (d.demographic == current_demo) && (d.label == current_bar)
+        )
+
+        if (!(d.value)) {
+            d.value = mostly_filtered_data.filter(d => (d.region == REGION))[0].value
+        }
+
+        let sorted_data = mostly_filtered_data
+            .filter(d => (d.region != 'Statewide'))
+            .sort(function(a, b) { return b.value - a.value; });
+        let max_d = sorted_data[0]
+        let min_d = sorted_data.slice(-1)[0]
+
+        let statewide_data = mostly_filtered_data
+            .filter(d => (d.region == 'Statewide'))
+        let statewide_d = statewide_data[0]
+
+        this.tooltip
+            .interrupt().transition()
+            .style('opacity', 1);
+
+        this.tooltip.select('.roi-tooltip-header')
+            .html(`<h5>${that.label_map[d.label].label_long}</h5>`)
+
+        this.tooltip.select('.roi-tooltip-content table')
+            .html(
+                `
+                <tr>
+                    <td>${max_d.region}<span class="roi-tooltip-small">&nbsp(most in state)</span></td>
+                    <td>${that.labelFormatter(max_d.value)}</td>
+                </tr>
+                <tr>
+                    <td>State Average</td>
+                    <td>${that.labelFormatter(statewide_d.value)}</td>
+                </tr>
+                <tr class="roi-tooltip-active">
+                    <td>${d.region}</td>
+                    <td>${that.labelFormatter(d.value)}</td>
+                </tr>
+                <tr>
+                    <td>${min_d.region}<span class="roi-tooltip-small">&nbsp(least in state)</span></td>
+                    <td>${that.labelFormatter(min_d.value)}</td>
+                </tr>
+                `
+            )
+
+        // .style("left", (d3.event.pageX) + "px")
+        // .style("top", (d3.event.pageY-28) + "px");
+    }
+
+    tooltip_move(d) {
+        this.tooltip
+            .style("left", (d3.event.pageX) + "px")
+            .style("top", (d3.event.pageY - 28) + "px")
+
+        // console.log(d3.mouse(d3.event.currentTarget))
+    }
+
+    tooltip_hide(d) {
+        this.tooltip.interrupt().transition()
+            .style('opacity', 0);
+
+        // console.log(d3.mouse(d3.event.currentTarget))
+    }
+
+
+    // let 
+
+    // <div class="roi-tooltip">
+    //     <div class="roi-tooltip-header">
+    //       <h5>Long Chart Title</h5>
+    //     </div>
+    //     <div class="roi-tooltip-content">
+    //       <table>
+    //         <tr>
+    //           <td>High Region <span class="roi-tooltip-small">(most in state)</span></td>
+    //           <td>00%</td>
+    //         </tr>
+    //         <tr>
+    //           <td>State Average</td>
+    //           <td>00%</td>
+    //         </tr>
+    //         <tr class="roi-tooltip-active">
+    //           <td>Active Region</td>
+    //           <td>00%</td>
+    //         </tr>
+    //         <tr>
+    //           <td>Low Region <span class="roi-tooltip-small">(least in state)</span></td>
+    //           <td>00%</td>
+    //         </tr>
+    //       </table>
+    //     </div>
+    //     <div class="roi-tooltip-footer">
+    //       <h5>Click chart for demographic info</h5>
+    //     </div>
+    // </div>
+
+
+
 }
