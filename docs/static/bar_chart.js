@@ -9,6 +9,7 @@ class RegionStatsBarChart extends BaseChart {
 
     resize() {
         this.log('in resize')
+        d3.selectAll('.roi-tooltip').style('opacity', 0);
         switch (this.state) {
             case "overview":
                 this.log("resize overview")
@@ -41,6 +42,7 @@ class RegionStatsBarChart extends BaseChart {
 
     update() {
         this.log('updating bar chart')
+        d3.selectAll('.roi-tooltip').style('opacity', 0);
         this.overview();
     }
 
@@ -51,7 +53,7 @@ class RegionStatsBarChart extends BaseChart {
         let that = this;
 
         let margin = { top: 20, right: 2, bottom: 10, left: 200 };
-        let width = this.container_width - margin.left - margin.right;
+        let width = Math.max(0, this.container_width - margin.left - margin.right);
         let bar_height = 45;
         let height = this.labels.length == 1 ? bar_height : this.labels.length * bar_height * .66;
 
@@ -122,7 +124,7 @@ class RegionStatsBarChart extends BaseChart {
             .interrupt()
             .transition(t)
             .ease(d3.easeExp)
-            .attr("width", function(d) { return x(d.value); })
+            .attr("width", function(d) { return Math.max(0, x(d.value)); })
             .delay(delay);
 
         // bar.enter().nodes().forEach(function (d){})
@@ -134,6 +136,7 @@ class RegionStatsBarChart extends BaseChart {
 
         value_labels.enter().append("text")
             .attr("class", "value")
+            .style("pointer-events", "none")
             .classed('overview', true)
             .attr("fill", "white")
             .attr("opacity", 0)
@@ -334,7 +337,7 @@ class RegionStatsBarChart extends BaseChart {
             .interrupt()
             .transition(t)
             .ease(d3.easeExp)
-            .attr("width", d => x(d.value))
+            .attr("width", d => Math.max(0, x(d.value)))
             .delay(delay);
 
         let value_labels = bars.selectAll(".value")
@@ -342,10 +345,10 @@ class RegionStatsBarChart extends BaseChart {
 
         value_labels.exit().remove();
 
-
         value_labels.enter().append("text")
             .classed('value', true)
             .classed('breakdown', true)
+            .style("pointer-events", "none")
             // .attr("fill", "white")
             .attr("fill", "rgb(51, 51, 51)")
             .attr("opacity", 0)
@@ -358,7 +361,7 @@ class RegionStatsBarChart extends BaseChart {
             .transition(t)
             .attr("opacity", 1)
             .text(d => this.labelFormatter(d.value))
-            .attr("x", d => x(d.value) + 7)
+            .attr("x", d => Math.max(0,x( d.value)) + 7)
             .delay(delay);
 
         let goto = this.overview.bind(this)
@@ -372,14 +375,14 @@ class RegionStatsBarChart extends BaseChart {
                 .attr('fill', "rgb(51, 51, 51)")
                 .attr("text-anchor", "end")
                 .text("\u276E back")
-                .attr("x", width+margin.right-10)
+                .attr("x", width + margin.right - 10)
                 .attr("y", 0)
                 .on("click", goto)
         }
         backbutton
             .transition(t)
             .ease(d3.easeExp)
-            .attr("x", width+margin.right-10)
+            .attr("x", width + margin.right - 10)
             .delay(delay);
 
 
@@ -801,7 +804,7 @@ class EduStackedBarChart extends StackedBarChart {
                 .ease(d3.easeExp)
                 .style('fill-opacity', 1)
                 .style('fill', "#eeeeee")
-                .delay(that.delay);
+                // .delay(that.delay);
 
         } else {
             var links = link_group.selectAll('.link')
@@ -817,7 +820,7 @@ class EduStackedBarChart extends StackedBarChart {
                 .attr("d", d => link(d))
                 .style('fill-opacity', 1)
                 .style('fill', "#eeeeee")
-                .delay(that.delay);
+                // .delay(that.delay);
         }
     }
 }

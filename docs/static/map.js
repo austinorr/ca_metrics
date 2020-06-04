@@ -103,9 +103,10 @@ class RegionMap extends BaseMap {
             region_features = this.feature_obj.features.filter(d => d.properties.region_id == region_id);
 
         if (selected_region.classed('active-region')) {
-            d3.selectAll(".active-region").classed('active-region', false);
-            d3.selectAll(".countySelected").remove();
-            REGION = "Statewide";
+            // d3.selectAll(".active-region").classed('active-region', false);
+            // d3.selectAll(".countySelected").remove();
+            // REGION = "Statewide";
+            // let pass
 
         } else {
             d3.selectAll(".active-region").classed('active-region', false);

@@ -140,6 +140,7 @@ window.onresize = function() {
 };
 
 function resize() {
+    d3.selectAll('.roi-tooltip').style('opacity', 0);
     for (var i = 0; i < CHARTS.length; i++) {
         CHARTS[i].resize()
     }

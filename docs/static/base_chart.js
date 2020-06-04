@@ -150,6 +150,7 @@ class BaseChart {
     }
 
     tooltip_show(d) {
+        d3.selectAll('.roi-tooltip').style('opacity', 0);
         let that = this;
         let header = that.label_map[d.label].label_long || d.label
         let current_bar = d.label

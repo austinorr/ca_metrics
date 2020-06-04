@@ -136,8 +136,8 @@ class RadialChart extends RegionStatsBarChart {
         let arc = d3.arc()
             .outerRadius(radius - 10)
             .innerRadius(radius - 70)
-            .cornerRadius(3)
-            .padAngle(0.04)
+            .cornerRadius(1)
+            .padAngle(0.02)
 
 
         let pie = d3.pie()
@@ -194,10 +194,10 @@ class RadialChart extends RegionStatsBarChart {
         }
 
         let innerArc = d3.arc()
-            .outerRadius(radius - 76)
+            .outerRadius(radius - 74)
             .innerRadius(1.5)
-            .cornerRadius(5)
-            .padAngle(0.06)
+            .cornerRadius(1)
+            .padAngle(0.04)
 
 
         let innerPie = d3.pie()
