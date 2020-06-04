@@ -23,11 +23,12 @@ class BaseChart {
 
         this.container.select(".roi-tooltip").remove()
 
-        this.tooltip = this.container
+        this.tooltip = d3.select('body')//this.container
             .append("div")
+            .attr('id', this.container_id + '-tooltip')
             .classed("roi-tooltip", true)
-            .classed("clearfix", true)
-            .style("position","absolute")
+            // .classed("clearfix", true)
+            .style("position", "absolute")
             .style("pointer-events", "none")
             .style("opacity", 0)
 
@@ -150,8 +151,14 @@ class BaseChart {
 
     tooltip_show(d) {
         let that = this;
+        let header = that.label_map[d.label].label_long || d.label
         let current_bar = d.label
         let current_demo = d.demographic
+        let header_demo = '';
+        if (current_demo!='All') {
+            header_demo = "(" + current_demo+")";
+
+        }
         let mostly_filtered_data = that.data_tidy.filter(
             d => (d.demographic == current_demo) && (d.label == current_bar)
         )
@@ -175,7 +182,7 @@ class BaseChart {
             .style('opacity', 1);
 
         this.tooltip.select('.roi-tooltip-header')
-            .html(`<h5>${that.label_map[d.label].label_long}</h5>`)
+            .html(`<h5>${header}<span class="roi-tooltip-small-header">&nbsp${header_demo}</span></h5>`)
 
         this.tooltip.select('.roi-tooltip-content table')
             .html(
@@ -198,18 +205,18 @@ class BaseChart {
                 </tr>
                 `
             )
-
-        // .style("left", (d3.event.pageX) + "px")
-        // .style("top", (d3.event.pageY-28) + "px");
     }
 
     tooltip_move(d) {
-        this.tooltip
-            .style("left", (d3.event.pageX) + "px")
-            .style("top", (d3.event.pageY - 28) + "px")
 
-        // console.log(d3.mouse(d3.event.currentTarget))
-    }
+        let tt_width = this.tooltip.node().getBoundingClientRect().width;
+        let anchorPt = (window.innerWidth - d3.event.pageX-10 < tt_width) ? d3.event.pageX - tt_width : d3.event.pageX
+
+        this.tooltip
+            .style("left", (anchorPt) + "px")
+            .style("top", (d3.event.pageY - 28) + "px")
+    
+   }
 
     tooltip_hide(d) {
         this.tooltip.interrupt().transition()

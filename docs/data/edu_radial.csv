@@ -1,4 +1,4 @@
-﻿region,group,UC;University of California;c1,CSU;California State University;c1,CCC;California Community College;c1,Non-Profit;Private Non-Profit;c2,For Profit;Private For Profit;c2
+﻿region,group,UC;University of California;Public,CSU;California State University;Public,CCC;California Community College;Public,Non-Profit;Private Non-Profit;Private,For Profit;Private For Profit;Private
 Bay Area,African American,1002,4240,31560,1934,2064
 Bay Area,American Indian or Alaska Native,91,161,1082,166,150
 Bay Area,Asian,14793,21642,103159,6268,3103

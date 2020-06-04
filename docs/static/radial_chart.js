@@ -1,174 +1,256 @@
-class RadialChart extends StackedBarChart {
+class RadialChart extends RegionStatsBarChart {
     constructor(container_id) {
         super(container_id);
+        this.z = i => [
+            "#36768B",
+            "#8A9337",
+            "#C64241",
+            "#c66f2c",
+            "#834778",
+            "#878787",
+        ][i]
     }
 
     loadData() {
-        super.loadData()
+        this.log('loading data')
+        let that = this
+
+        d3.csv(this.url, function(error, data) {
+            if (error) throw error;
+
+            that.raw_data = data;
+
+            that.labels = that.toLabels(data) // Object.keys(data[0]).slice(3); // keys after region, group, and subgroup are values 
+            that.label_map = that.toLabelMap(that.labels)
+            that.data_tidy = that.toTidy(data, that.labels)
+            that.update();
+            // that.resize();
+
+        });
+    }
+
+    drawLegend() {
+        let that = this;
+        this.legend = this.svg.selectAll('.legend').remove()
+        let n = 3
+        let size = 11;
+        let padding = 6;
+        let text_width = this.width / n;
+        let itemWidth = size + padding + text_width + 5;
+        let itemHeight = size + padding;
+
+        this.legend = this.svg.selectAll('.legend');
+
+        if (this.legend.empty()) {
+            this.log('legend was empty')
+            this.legend = this.svg
+                .append("g")
+                .classed('legend', 'true')
+                .classed('overview', 'true')
+        } else {
+            this.log('legend NOT empty')
+
+            this.legend = this.svg
+                .select(".legend")
+        }
+
+        var legend_items = this.legend.selectAll('g')
+            .data(that.labels)
+            .enter()
+            .append("g")
+
+        legend_items.exit().remove();
+
+        var rects = legend_items.append('rect');
+        rects.merge(rects)
+            .classed('legend-patch', true)
+            .attr("width", size)
+            .attr("height", size)
+            .attr("transform", function(d, i) {
+                let xoff = that.width / 2 + ((i % 3) - 1) * (that.width / n);
+                let yoff = ((Math.floor(i / n) * itemHeight) + that.height + (2 * padding + size));
+                return "translate(" + xoff + "," + yoff + ")";
+            })
+            .attr("fill", function(d, i) { return that.z(i); });
+
+        var text = legend_items.append('text');
+        text.merge(text)
+            .classed('legend-text', true)
+            .attr("x", size + padding)
+            .attr("y", size / 2)
+            .attr('dy', '0.35em')
+            .attr("transform", function(d, i) {
+                let xoff = that.width / 2 + ((i % 3) - 1) * (that.width / n);
+                let yoff = ((Math.floor(i / n) * itemHeight) + that.height + (2 * padding + size));
+                return "translate(" + xoff + "," + yoff + ")";
+            })
+            .text(d => that.label_map[d].label_short);
 
     }
 
     overview() {
         this.state = 'overview';
         let that = this;
-        this.data = this.dataGrouped.filter(d => d.region == REGION);
+        this.data = this.data_tidy.filter(d => d.region == REGION && (d.demographic == 'All'));
 
-        console.log(this.labels, this.label_map)
+        this.innerData = d3.nest()
+            .key(d => d.column)
+            .rollup(
+                function(totals) {
+                    return d3.sum(totals, d => d.value)
+                })
+            .entries(that.data)
+        this.innerData.forEach(function(d) { d.label = d.key })
+
+        if (!(that.labels.includes(that.innerData[0].label))) {
+            that.innerData.forEach(function(d) {
+                that.labels.push(d.label);
+                that.label_map[d.label] = {
+                    "label_short": d.label,
+                    "label_long": d.label,
+                };
+            })
+        }
 
 
-        this.margin = { top: 2, right: 2, bottom: 60, left: 2 };
+        this.margin = { top: 2, right: 2, bottom: 80, left: 2 };
         this.width = this.container_width - this.margin.left - this.margin.right;
         this.height = 300; //this.container_height - this.margin.top - this.margin.bottom;
-        this.layers = d3.stack()
-            .keys(that.labels)
-            (that.data)
+
+        this.svg = this.container.select("svg")
+            .attr("width", this.width + this.margin.left + this.margin.right)
+            .attr("height", this.height + this.margin.top + this.margin.bottom)
+            .select("g")
+            .attr("transform",
+                "translate(" + this.margin.left + "," + this.margin.top + ")");
+
+        let show_tooltip = this.tooltip_show.bind(this)
+        let move_tooltip = this.tooltip_move.bind(this)
+        let hide_tooltip = this.tooltip_hide.bind(this)
+        let goto = this.breakdown.bind(this);
+
+        this.drawLegend()
+
+        let radius = Math.min(this.width, this.height) / 2;
+
+        let arc = d3.arc()
+            .outerRadius(radius - 10)
+            .innerRadius(radius - 70)
+            .cornerRadius(3)
+            .padAngle(0.04)
 
 
-        this.layers2 = d3.nest()
-		    .key(function(d) { return d.column; })
-		    .entries(that.data_tidy.filter(d=>d.region==REGION && d.demographic=='All'))
-		    .reverse();
+        let pie = d3.pie()
+            .sort(null)
+            .value(function(d) { return d.value; })(that.data)
 
-		var pie = d3.pie()
-		  .value(function(d) { return d.count; })
-		  .sort(null);
+        this.svg.selectAll(".breakdown").remove();
+        let piechart = this.svg.selectAll('.pie')
+        let path = piechart.selectAll('path')
 
-		this.pie_data = d3.pie()
-
-        // this.inner = [];
-        // this.outer = [];
-
-
-        // for (let l of this.data) {
-        //     let inner_data = [];
-        //     for (let label of this.labels) {
-        //         if (l[label] > 0) {
-        //             _data.push(l[label])
-        //         }
-        //     }
-        //     this.layers['inner'] = _data;
-
-
-        //     let outer_data = [];
-        //     for (let label of this.labels) {
-        //         _data.push(l[label])
-        //     }
-        //     this.layers['outer'] = _data;
-
-        // }
-
-        // return;
-
-
-        var width = 460,
-            height = 300,
-            cwidth = 25;
-
-
-        // // d3.v4
-        // var color = d3.scaleOrdinal(d3.schemeCategory10);
-        var pie = d3.pie().sort(null);
-        var arc = d3.arc();
-
-        // this.svg = this.container.select("svg")
-        //     .attr("width", width)
-        //     .attr("height", height)
-        //     .append("g")
-        //     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-
-        // var gs = this.svg.selectAll("g")
-        //     .data(d3.values(that.layers))
-        //     .enter()
-        //     .append("g");
-
-        // var path = gs.selectAll("path")
-        //     .data(function(d, i) {
-        //         return pie(d).map(function(item) {
-        //             return { data: item, parentIndex: i };
-        //         });
-        //     })
-        //     .enter().append("path")
-        //     .attr("fill", function(d, i) { return color(i); })
-        //     .attr("d", function(d, i) {
-        //         return arc
-        //             .innerRadius(10 + cwidth * d.parentIndex)
-        //             .outerRadius(cwidth * (d.parentIndex + 1))(d.data);
-        //     })
-        //     .on('click', function(d, i) { console.log(that.labels[i]) });
-
-        this.bars = this.svg.selectAll(".bar-g")
-
-        if (this.bars.empty()) {
-            this.bars = this.svg.selectAll(".bar-g")
-                .data(that.layers)
-                .enter()
-                .append('g')
-                .classed('bar-g', true)
+        if (piechart.empty()) {
+            piechart = this.svg
+                .append("g")
+                .classed('pie', true)
                 .classed('overview', true)
-                .style('fill', (d, i) => (that.z(i)))
-                .attr("data_label", (d, i) => d.key)
+                .attr("transform", "translate(" + that.width / 2 + "," + that.height / 2 + ")"); // Moving the center point
+
+            path = piechart.selectAll('path')
+                .data(pie)
+                .enter()
+                .append('path')
+                .attr('d', arc)
+                .attr('fill', function(d, i) {
+                    return that.z(i);
+                })
+                .attr("data_label", d => d.data.label)
                 .on("click", function(d, i) {
                     that.selected_bar = d3.select(this).attr('data_label');
                     return goto();
                 })
+                .on("mouseover", d => show_tooltip(d.data))
+                .on("mousemove", d => move_tooltip(d.data))
+                .on("mouseout", d => hide_tooltip(d.data))
 
-        } else {
-            this.bars = this.svg.selectAll(".bar-g")
-                .data(that.layers);
         }
 
-        let goto = this.breakdown.bind(this);
+        piechart
+            .transition(that.t).duration(500)
+            .ease(d3.easeExp)
+            .attr("transform", "translate(" + that.width / 2 + "," + that.height / 2 + ")");
 
-        this.bar = this.bars.selectAll('rect')
+        path = piechart
+            .selectAll("path")
+            .data(pie); // Compute the new angles
 
-        this.bar.exit().remove();
+        path.transition(that.t).ease(d3.easeExp).attrTween("d", arcTween); // Smooth transition with arcTween
 
-        this.bar
-            // .data((d, i) => that.layers[i].filter(d => (d[1] - d[0] > 0)))
-            .data(function(d, i) {
-		        return pie(that.layers[i].filter(d => (d[1] - d[0] > 0))).map(function(item) {
-		        	console.log(d, i)
-		            return { data: (d[1] - d[0]), parentIndex: i };
-		        });
-		    })
-            .enter()
-            .append("path")
-            .classed('stacked-bars', true)
-            .classed('overview', true)
-            // .attr("fill", function(d, i) { return that.z(i); })
-            .attr("d", function(d, i) {
-            	// console.log(d)
-                return arc
-                    .innerRadius(10 + cwidth * i)
-                    .outerRadius(cwidth * (i + 1))(d.data);
-            })
+        function arcTween(a) {
+            var i = d3.interpolate(this._current, a);
+            this._current = i(0);
+            return function(t) {
+                return arc(i(t));
+            };
+        }
 
-
-        // .append('rect')
-        // .classed('stacked-bars', true)
-        // .classed('overview', true)
-        // .attr('y', d => that.height)
-
-        // .merge(that.bar)
-        // .interrupt()
-        // .attr('x', d => x(d.data.column))
-        // .attr('width', x.bandwidth())
-
-        // .attr('data-xloc-left', d => x(d.data.column))
-        // .attr('data-xloc-right', d => x(d.data.column) + x.bandwidth())
-        // .attr('data-yloc-top', d => y(d[1]))
-        // .attr('data-yloc-bottom', d => y(d[0]))
-        // .transition(that.t)
-        // .ease(d3.easeExp)
-        // .attr('x', d => x(d.data.column))
-        // .attr('width', x.bandwidth())
-        // .attr('y', d => (y(d[1])))
-        // .attr("height", d => y(d[0]) - y(d[1]))
-        // .delay(that.delay);
+        let innerArc = d3.arc()
+            .outerRadius(radius - 76)
+            .innerRadius(1.5)
+            .cornerRadius(5)
+            .padAngle(0.06)
 
 
+        let innerPie = d3.pie()
+            .sort(null)
+            .value(function(d) { return d.value; })(that.innerData)
 
+        let innerPiechart = this.svg.selectAll('.innerpie')
+        let innerPath = innerPiechart.selectAll('path')
+
+        if (innerPiechart.empty()) {
+        	console.log('populating inner pie')
+            innerPiechart = this.svg
+                .append("g")
+                .classed('innerpie', true)
+                .classed('overview', true)
+                .attr("transform", "translate(" + that.width / 2 + "," + that.height / 2 + ")"); // Moving the center point
+
+            innerPath = innerPiechart.selectAll('path')
+                .data(innerPie)
+                .enter()
+                .append('path')
+                .attr('d', innerArc)
+                .attr('fill', function(d, i) {
+                    return that.z(i);
+                })
+                // .attr("data_label", d => d.data.label)
+                // .on("click", function(d, i) {
+                //     that.selected_bar = d3.select(this).attr('data_label');
+                //     return goto();
+                // })
+                // .on("mouseover", d => show_tooltip(d.data))
+                // .on("mousemove", d => move_tooltip(d.data))
+                // .on("mouseout", d => hide_tooltip(d.data))
+
+        }
+
+        innerPiechart
+            .transition(that.t).duration(500)
+            .ease(d3.easeExp)
+            .attr("transform", "translate(" + that.width / 2 + "," + that.height / 2 + ")");
+
+        innerPath = innerPiechart.selectAll("path")
+            .data(innerPie); // Compute the new angles
+
+        innerPath.transition(that.t).ease(d3.easeExp).attrTween("d", innerArcTween); // Smo
+
+        function innerArcTween(a) {
+            var i = d3.interpolate(this._current, a);
+            this._current = i(0);
+            return function(t) {
+                return innerArc(i(t));
+            };
+        }
+        
     }
-
-
 }

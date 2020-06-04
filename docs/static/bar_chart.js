@@ -365,17 +365,22 @@ class RegionStatsBarChart extends BaseChart {
         let backbutton = this.svg.selectAll('.backbutton');
         if (backbutton.empty()) {
             backbutton = this.svg.append('g');
+            backbutton.exit().remove();
+            backbutton.append('text')
+                .classed('backbutton', true)
+                .classed('breakdown', true)
+                .attr('fill', "rgb(51, 51, 51)")
+                .attr("text-anchor", "end")
+                .text("\u276E back")
+                .attr("x", width+margin.right-10)
+                .attr("y", 0)
+                .on("click", goto)
         }
-        backbutton.exit().remove();
-        backbutton.append('text')
-            .classed('backbutton', true)
-            .classed('breakdown', true)
-            .attr('fill', "rgb(51, 51, 51)")
-            .attr("text-anchor", "end")
-            .text("\u276E back")
-            .attr("x", width - 50)
-            .attr("y", 0)
-            .on("click", goto)
+        backbutton
+            .transition(t)
+            .ease(d3.easeExp)
+            .attr("x", width+margin.right-10)
+            .delay(delay);
 
 
         this.svg.selectAll('.demoTitle').remove();
