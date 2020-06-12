@@ -1,14 +1,6 @@
 class RadialChart extends RegionStatsBarChart {
     constructor(container_id) {
         super(container_id);
-        this.z = i => [
-            "#36768B",
-            "#8A9337",
-            "#C64241",
-            "#c66f2c",
-            "#834778",
-            "#878787",
-        ][i]
     }
 
     loadData() {
@@ -20,8 +12,8 @@ class RadialChart extends RegionStatsBarChart {
 
             that.raw_data = data;
 
-            that.labels = that.toLabels(data) // Object.keys(data[0]).slice(3); // keys after region, group, and subgroup are values 
-            that.label_map = that.toLabelMap(that.labels)
+            that.labels = toLabels(data) // Object.keys(data[0]).slice(3); // keys after region, group, and subgroup are values 
+            that.label_map = toLabelMap(that.labels)
             that.data_tidy = that.toTidy(data, that.labels)
             that.update();
             // that.resize();
@@ -115,7 +107,7 @@ class RadialChart extends RegionStatsBarChart {
 
         this.margin = { top: 2, right: 2, bottom: 80, left: 2 };
         this.width = this.container_width - this.margin.left - this.margin.right;
-        this.height = 300; //this.container_height - this.margin.top - this.margin.bottom;
+        this.height = Math.min(300, this.width); //this.container_height - this.margin.top - this.margin.bottom;
 
         this.svg = this.container.select("svg")
             .attr("width", this.width + this.margin.left + this.margin.right)
@@ -129,14 +121,24 @@ class RadialChart extends RegionStatsBarChart {
         let hide_tooltip = this.tooltip_hide.bind(this)
         let goto = this.breakdown.bind(this);
 
+        this.z = i => [
+            "#C64241",
+            "#c66f2c",
+            "#834778",
+            "#C7A630",
+            "#878787",
+            "#8A9337",
+            "#36768B",
+        ][i]
+
         this.drawLegend()
 
         let radius = Math.min(this.width, this.height) / 2;
 
         let arc = d3.arc()
             .outerRadius(radius - 10)
-            .innerRadius(radius - 70)
-            .cornerRadius(1)
+            .innerRadius(radius * .66 - 10)
+            .cornerRadius(0)
             .padAngle(0.02)
 
 
@@ -194,9 +196,9 @@ class RadialChart extends RegionStatsBarChart {
         }
 
         let innerArc = d3.arc()
-            .outerRadius(radius - 74)
+            .outerRadius(radius * .66 - 4 - 10)
             .innerRadius(1.5)
-            .cornerRadius(1)
+            .cornerRadius(0)
             .padAngle(0.04)
 
 
@@ -208,7 +210,6 @@ class RadialChart extends RegionStatsBarChart {
         let innerPath = innerPiechart.selectAll('path')
 
         if (innerPiechart.empty()) {
-        	console.log('populating inner pie')
             innerPiechart = this.svg
                 .append("g")
                 .classed('innerpie', true)
@@ -221,16 +222,16 @@ class RadialChart extends RegionStatsBarChart {
                 .append('path')
                 .attr('d', innerArc)
                 .attr('fill', function(d, i) {
-                    return that.z(i);
+                    return that.z(i + pie.length);
                 })
-                // .attr("data_label", d => d.data.label)
-                // .on("click", function(d, i) {
-                //     that.selected_bar = d3.select(this).attr('data_label');
-                //     return goto();
-                // })
-                // .on("mouseover", d => show_tooltip(d.data))
-                // .on("mousemove", d => move_tooltip(d.data))
-                // .on("mouseout", d => hide_tooltip(d.data))
+            // .attr("data_label", d => d.data.label)
+            // .on("click", function(d, i) {
+            //     that.selected_bar = d3.select(this).attr('data_label');
+            //     return goto();
+            // })
+            // .on("mouseover", d => show_tooltip(d.data))
+            // .on("mousemove", d => move_tooltip(d.data))
+            // .on("mouseout", d => hide_tooltip(d.data))
 
         }
 
@@ -251,6 +252,8 @@ class RadialChart extends RegionStatsBarChart {
                 return innerArc(i(t));
             };
         }
-        
+
+
+
     }
 }

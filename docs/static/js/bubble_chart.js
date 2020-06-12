@@ -17,18 +17,13 @@ class BubbleChart extends RegionStatsBarChart {
         d3.csv(this.url, function(error, data) {
             if (error) throw error;
             that.raw_data = data;
-            that.labels = that.toLabels(data);
-            that.label_map = that.toLabelMap(that.labels);
+            that.labels = toLabels(data);
+            that.label_map = toLabelMap(that.labels);
             that.data_tidy = that.toTidy(data, that.labels);
             that.resize();
             that.update();
 
         });
-    }
-
-    update() {
-        this.log('updating bar chart')
-        this.overview();
     }
 
     overview() {
@@ -128,11 +123,11 @@ class BubbleChart extends RegionStatsBarChart {
             .attr('fill-opacity', 1)
             .delay(that.delay);
 
-        let div_icons = this.container.selectAll("[_viz_icon^=icon-]")
-        let urls = []
-        div_icons.nodes().forEach(function(d) {
-            urls.push(d.getAttribute('src'))
-        })
+        // let div_icons = this.container.selectAll("[_viz_icon^=icon-]")
+        // let urls = []
+        // div_icons.nodes().forEach(function(d) {
+        //     urls.push(d.getAttribute('src'))
+        // })
 
 
         // urls.forEach(function (url, i) {
@@ -163,7 +158,7 @@ class BubbleChart extends RegionStatsBarChart {
             .append("svg:image")
             .classed('icon', true)
             .style("pointer-events", "none")
-            .attr('xlink:href', (d, i) => urls[i])
+            .attr('xlink:href', (d, i) => that.icon_urls[i])
             .attr('x', d => d.cx - d.scaler/2)
             .attr('y', d => (height - height / 2) - d.scaler/2)
             .attr('width', d=>d.scaler)
@@ -227,14 +222,13 @@ class BubbleChart extends RegionStatsBarChart {
             .classed('overview', true)
             .attr("fill", " white")
             .attr("opacity", 0)
-
             .attr("x", d => that.x(that.label_map[d.label].label_short) + that.x.bandwidth() / 2)
-
             .attr("font-size", Math.min(18, 250 * 0.95))
             .text(d => that.label_map[d.label].label_short)
             .merge(text_labels)
             .interrupt()
             .transition(this.t)
+            .ease(d3.easeExp)
             .attr("opacity", 1)
             .attr("text-anchor", "middle")
             .attr("alignment-baseline", "top")
@@ -250,8 +244,6 @@ class BubbleChart extends RegionStatsBarChart {
             })
             .selectAll('text,tspan')
             .attr("x", d => that.x(that.label_map[d.label].label_short) + that.x.bandwidth() / 2)
-
-
 
         // resize for label wraps.
         this.svg = this.container.select("svg")
