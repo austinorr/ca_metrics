@@ -1,4 +1,4 @@
-var DEBUG = false;
+var DEBUG = true;
 var qparam = regionTitleCase(getParameterByName('region'))
 var REGION = qparam ? qparam : ""
 var REGION_TAG = regionTag(REGION);
@@ -51,7 +51,8 @@ const CA_COUNTIES_REGIONS_TOPOJSON_URL = "./data/ca-counties.json"
 
 const UNITS = ["percent", "count", "usd"]
 
-var CHARTS = []
+var CHARTS = [];
+var VISIBLE_CHARTS_INDICES = [];
 
 var REGION_MAP
 
@@ -61,13 +62,15 @@ function chartBuilder(container, chart_mapping, chart_registry) {
     for (let _class of classes) {
         d3.select(container).selectAll(_class).each(function(d) {
             let divId = this.getAttribute("id");
-            let has_no_chart = d3.select("#" + divId).selectAll('._viz-svg-container').empty()
+            if (is_visible(divId)) {
+                let has_no_chart = d3.select("#" + divId).selectAll('._viz-svg-container').empty()
 
-            if (has_no_chart) {
-                let chart = new chart_mapping[_class](divId);
-                chart.init();
-                // chart.update();
-                chart_registry.push(chart);
+                if (has_no_chart) {
+                    let chart = new chart_mapping[_class](divId);
+                    chart.init();
+                    // chart.update();
+                    chart_registry.push(chart);
+                }
             }
         })
     }
@@ -80,6 +83,16 @@ let CHART_MAPPING = {
     ".chart-wrapper-edu-stacked-bar": EduStackedBarChart,
     ".chart-wrapper-bubble": BubbleChart,
     ".chart-wrapper-radial": RadialChart,
+}
+
+function updateVisibleCharts() {
+
+    for (var i = 0; i < CHARTS.length; i++) {
+        if (CHARTS[i].is_visible) {
+            CHARTS[i].update()
+        }
+    }
+
 }
 
 function onLoad() {
@@ -101,11 +114,7 @@ function onLoad() {
         d3.select("._navbar").text(REGION).classed('region_label', true)
 
         selectTabContent(regionTag(REGION));
-
-        for (var i = 0; i < CHARTS.length; i++) {
-            CHARTS[i].update()
-        }
-
+        updateVisibleCharts();
     });
 }
 
@@ -115,11 +124,9 @@ function mapDataToggle(id) {
     if (state) {
         REGION_MAP.baseColors()
         d3.select(elem).classed('selected', false)
-        console.log("was active", d3.select(elem))
     } else {
         REGION_MAP.choroplethColors(elem);
         d3.select(elem).classed('selected', true)
-        console.log("was not active", d3.select(elem))
     }
 }
 
@@ -175,6 +182,30 @@ function resize() {
     d3.selectAll('.roi-tooltip').style('opacity', 0);
     for (var i = 0; i < CHARTS.length; i++) {
         CHARTS[i].resize();
-        CHARTS[i].tooltip_hide(null);
+        CHARTS[i].tooltip_hide(null); // TODO: redundant?
     }
+}
+
+
+// function check_all_charts_visible() {
+//     CHARTS.forEach(function(c, i) {
+//         let viz = is_visible(c.container_id);
+//         console.log(c.container_id, viz)
+//     })
+// }
+
+window.onscroll = function() {
+
+    clearTimeout(window.scrollFinished);
+    window.scrollFinished = setTimeout(function() {
+        console.log('')
+        console.log('')
+        console.log('scrolled event')
+        updateVisibleCharts();
+
+        chartBuilder(document, CHART_MAPPING, CHARTS);
+
+
+        // check_all_charts_visible()
+    }, 200);
 }
