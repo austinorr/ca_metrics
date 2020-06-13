@@ -198,6 +198,7 @@ class RegionMap extends BaseMap {
 
     baseColors() {
         this.is_choropleth = false;
+        this.svg.selectAll('.legend').remove();
 
         d3.selectAll("#" + this.container_id + ' svg .counties path')
             .filter(function() {
@@ -219,9 +220,11 @@ class RegionMap extends BaseMap {
         this.is_choropleth = true;
 
         let that = this;
+        let lowColor = "#C2d6db",
+            highColor = "#1C5463"
 
         let cmap = d3.scaleLinear()
-            .range([d3.rgb("#C2d6db"), d3.rgb('#1C5463')]);
+            .range([d3.rgb(lowColor), d3.rgb(highColor)]);
 
         let data = [];
 
@@ -274,12 +277,59 @@ class RegionMap extends BaseMap {
                 .style('fill-opacity', 1)
                 .style('fill', d => cmap(d.properties.choro_value))
                 .duration(500)
+
+            that.svg.selectAll('.legend').remove();
+
+            var w = 30,
+                h = w * 1.618 * 2;
+
+            var key = that.svg
+                .append("g")
+                .attr("class", "legend");
+
+            var legend = key.append("defs")
+                .append("svg:linearGradient")
+                .attr("id", "gradient")
+                .attr("x1", "100%")
+                .attr("y1", "0%")
+                .attr("x2", "100%")
+                .attr("y2", "100%")
+                .attr("spreadMethod", "pad");
+
+            legend.append("stop")
+                .attr("offset", "0%")
+                .attr("stop-color", highColor)
+                .attr("stop-opacity", 1);
+
+            legend.append("stop")
+                .attr("offset", "100%")
+                .attr("stop-color", lowColor)
+                .attr("stop-opacity", 1);
+
+            key.append("rect")
+                .attr("width", w)
+                .attr("height", h)
+                .style("fill", "url(#gradient)")
+                .attr("transform", `translate(${that.width/8},${that.height-h-that.height/15})`);
+
+            var y = d3.scaleLinear()
+                .range([h, 0])
+                .domain([vmin, vmax]);
+
+            var yAxis = d3.axisRight(y);
+
+            key.append("g")
+                .attr("class", "y axis")
+                .attr("transform", `translate(${that.width/8+w+4},${that.height-h-that.height/15})`)
+                .call(
+                    yAxis
+                    .ticks(4)
+                    .tickFormat(that.labelFormatter)
+                );
         })
 
         this.cmap = cmap;
         this.data_tidy = data;
-
-
     }
 
     tooltip_show(d) {
