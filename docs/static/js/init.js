@@ -1,4 +1,4 @@
-var DEBUG = true;
+var DEBUG = false;
 var qparam = regionTitleCase(getParameterByName('region'))
 var REGION = qparam ? qparam : ""
 var REGION_TAG = regionTag(REGION);
@@ -52,29 +52,25 @@ const CA_COUNTIES_REGIONS_TOPOJSON_URL = "./data/ca-counties.json"
 const UNITS = ["percent", "count", "usd"]
 
 var CHARTS = [];
-var VISIBLE_CHARTS_INDICES = [];
 
 var REGION_MAP
 
 function chartBuilder(container, chart_mapping, chart_registry) {
     let classes = Object.keys(chart_mapping)
-    // chart_objects = []
     for (let _class of classes) {
         d3.select(container).selectAll(_class).each(function(d) {
             let divId = this.getAttribute("id");
-            if (is_visible(divId)) {
+            if (is_visible(divId, 300)) {
                 let has_no_chart = d3.select("#" + divId).selectAll('._viz-svg-container').empty()
 
                 if (has_no_chart) {
                     let chart = new chart_mapping[_class](divId);
                     chart.init();
-                    // chart.update();
                     chart_registry.push(chart);
                 }
             }
         })
     }
-    // return chart_objects
 }
 
 let CHART_MAPPING = {
@@ -86,13 +82,12 @@ let CHART_MAPPING = {
 }
 
 function updateVisibleCharts() {
-
-    for (var i = 0; i < CHARTS.length; i++) {
-        if (CHARTS[i].is_visible) {
-            CHARTS[i].update()
+    for (let chart of CHARTS) {
+        if (chart.is_visible) {
+            chart.log('is visible')
+            chart.update()
         }
     }
-
 }
 
 function onLoad() {
@@ -120,13 +115,14 @@ function onLoad() {
 
 function mapDataToggle(id) {
     let elem = '#' + id
-    let state = d3.select(elem).classed('selected')
+    let state = d3.select(elem).classed('_viz-map-selected')
     if (state) {
         REGION_MAP.baseColors()
-        d3.select(elem).classed('selected', false)
+        d3.select(elem).classed('_viz-map-selected', false)
     } else {
         REGION_MAP.choroplethColors(elem);
-        d3.select(elem).classed('selected', true)
+        d3.selectAll('._viz-map-selected').classed('_viz-map-selected', false)
+        d3.select(elem).classed('_viz-map-selected', true)
     }
 }
 
@@ -201,11 +197,8 @@ window.onscroll = function() {
         console.log('')
         console.log('')
         console.log('scrolled event')
-        updateVisibleCharts();
 
         chartBuilder(document, CHART_MAPPING, CHARTS);
 
-
-        // check_all_charts_visible()
-    }, 200);
+    }, 100);
 }

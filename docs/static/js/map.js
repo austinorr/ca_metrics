@@ -82,6 +82,7 @@ class RegionMap extends BaseMap {
     }
 
     loadData() {
+        this.log('loading data')
 
         let that = this
         let goto = this.selectRegion.bind(this);
@@ -227,6 +228,8 @@ class RegionMap extends BaseMap {
             .range([d3.rgb(lowColor), d3.rgb(highColor)]);
 
         let data = [];
+
+        this.log('loading choropleth data')
 
         d3.csv(this.url, function(error, data) {
             if (error) throw error;

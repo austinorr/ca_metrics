@@ -218,14 +218,20 @@ function wrap(text, width, direction = 1) { // This is so broken, it creates emp
         if (words.length == 1) {
             tspan = text.text(null).append("tspan");
             tspan.text(words[0]);
-                // .attr("text-anchor", anchor)
-                // .attr("dominant-baseline", baseline)
-                // .attr("x", x)
-                // .attr("y", y)
-                // .attr("dy", ++lineNumber * lineHeight * direction + dy + "em").text(word);
+            // .attr("text-anchor", anchor)
+            // .attr("dominant-baseline", baseline)
+            // .attr("x", x)
+            // .attr("y", y)
+            // .attr("dy", ++lineNumber * lineHeight * direction + dy + "em").text(word);
 
         } else {
-            tspan = text.text(null).append("tspan").attr("x", x).attr("y", y).attr("dy", dy + "em");
+            tspan = text.text(null).append("tspan")
+                .attr("text-anchor", anchor)
+                        .attr("dominant-baseline", baseline)
+                        .attr("x", x)
+                        .attr("y", y)
+                        .attr("dy", dy + "em");
+                        // .attr("x", x).attr("y", y).attr("dy", dy + "em");
             while (word = words.pop()) {
                 line.push(word);
                 tspan.text(line.join(" "));
@@ -234,11 +240,11 @@ function wrap(text, width, direction = 1) { // This is so broken, it creates emp
                     tspan.text(line.join(" "));
                     line = [word];
                     tspan = text.append("tspan")
-                    .attr("text-anchor", anchor)
-                    .attr("dominant-baseline", baseline)
-                    .attr("x", x)
-                    .attr("y", y)
-                    .attr("dy", ++lineNumber * lineHeight * direction + dy + "em").text(word);
+                        .attr("text-anchor", anchor)
+                        .attr("dominant-baseline", baseline)
+                        .attr("x", x)
+                        .attr("y", y)
+                        .attr("dy", ++lineNumber * lineHeight * direction + dy + "em").text(word);
                 }
             }
         }
@@ -253,6 +259,29 @@ function getParameterByName(name, url) {
     if (!results) return '';
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+function is_visible(id, check_ahead=0) {
+    let elem = d3.select("#" + id).node();
+    let bounding = elem.getBoundingClientRect();
+
+    // console.log(id, 'window h:', window.innerHeight, 'document h:', document.documentElement.clientHeight,
+    //     bounding.top, bounding.bottom)
+
+    let win_height = (window.innerHeight || document.documentElement.clientHeight);
+    let win_width = (window.innerWidth || document.documentElement.clientWidth);
+
+    let is_vis = (
+        (
+            (bounding.top > 1 && bounding.top - check_ahead <= win_height) &&
+            (bounding.left > 1 && bounding.left <= win_width)
+        ) ||
+        (
+            (bounding.bottom > 1 && bounding.bottom - check_ahead <= win_height) &&
+            (bounding.right > 1 && bounding.right <= win_width)
+        )
+    );
+    return is_vis;
 }
 
 // function processAjaxData(response, urlPath) {

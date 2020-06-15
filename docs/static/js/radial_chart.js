@@ -120,6 +120,8 @@ class RadialChart extends RegionStatsBarChart {
         let move_tooltip = this.tooltip_move.bind(this)
         let hide_tooltip = this.tooltip_hide.bind(this)
         let goto = this.breakdown.bind(this);
+        var on_touch = this.on_touch.bind(this)
+
 
         this.z = i => [
             "#C64241",
@@ -166,13 +168,40 @@ class RadialChart extends RegionStatsBarChart {
                     return that.z(i);
                 })
                 .attr("data_label", d => d.data.label)
-                .on("click", function(d, i) {
-                    that.selected_bar = d3.select(this).attr('data_label');
-                    return goto();
-                })
-                .on("mouseover", d => show_tooltip(d.data))
-                .on("mousemove", d => move_tooltip(d.data))
-                .on("mouseout", d => hide_tooltip(d.data))
+                // .on("click", function(d, i) {
+                //     that.selected_bar = d3.select(this).attr('data_label');
+                //     return goto();
+                // })
+                // .on("mouseover", d => show_tooltip(d.data))
+                // .on("mousemove", d => move_tooltip(d.data))
+                // .on("mouseout", d => hide_tooltip(d.data))
+                .on('touchstart touchend click mouseover mousemove mouseout', function(ele) {
+                    let d = ele.data;
+                
+                    if (d3.event.type == 'touchstart') {
+                        console.log('touched')
+                        d3.event.preventDefault();
+                        d3.event.stopPropagation();
+                        that.selected_bar = d3.select(this).attr('data_label');
+                        return on_touch(d);
+
+                    } else if (d3.event.type == 'touchend') {
+                        d3.event.preventDefault();
+                        d3.event.stopPropagation();
+
+                    } else if (d3.event.type == 'click') {
+                        console.log('click fired')
+                        hide_tooltip(d);
+                        that.selected_bar = d3.select(this).attr('data_label');
+                        return goto();
+                    } else if (d3.event.type == "mouseover") {
+                        return show_tooltip(d);
+                    } else if (d3.event.type == "mousemove") {
+                        return move_tooltip(d);
+                    } else if (d3.event.type == "mouseout") {
+                        return hide_tooltip(d);
+                    }
+            })
 
         }
 

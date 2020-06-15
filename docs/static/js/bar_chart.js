@@ -227,42 +227,33 @@ class RegionStatsBarChart extends BaseChart {
             .attr("height", y.bandwidth())
             .style("fill", d3.color(that.color))
             .merge(bar)
-            .on('touchstart touchmove touchend mousedown', function(d) {
-                // console.log(that.touched)
-
-                if (!that.in_pointer) {
-                    that.in_pointer = true;
-                    setTimeout(function() { that.in_pointer = false; }, 100);
+            .on('touchstart touchend click mouseover mousemove mouseout', function(d) {
+                
                     if (d3.event.type == 'touchstart') {
-                        // console.log('tstart', d3.event.touches)
-                        // d3.event.preventDefault();
-                        // d3.event.stopPropagation();
+                        d3.event.preventDefault();
+                        d3.event.stopPropagation();
                         that.selected_bar = d3.select(this).attr('data_label');
                         return on_touch(d);
 
-                        // }
-                        // else if (d3.event.type == 'touchmove') {
-                        //     // console.log('tmove', d3.event.touches)
-                        //     // return on_touch(d);
+                    } else if (d3.event.type == 'touchend') {
+                        d3.event.preventDefault();
+                        d3.event.stopPropagation();
 
-                        // } else if (d3.event.type == 'touchend') {
-                        //     // d3.event.preventDefault();
-                        //     // d3.event.stopPropagation();
-                        //     // console.log("tend", d3.event.touches)
-                        //     // return on_touch(d);
-
-                    } else if (d3.event.type == 'mousedown') {
-                        // console.log('click fired')
+                    } else if (d3.event.type == 'click') {
                         hide_tooltip(d);
                         that.selected_bar = d3.select(this).attr('data_label');
                         return goto();
+                    } else if (d3.event.type == "mouseover") {
+                        return show_tooltip(d);
+                    } else if (d3.event.type == "mousemove") {
+                        return move_tooltip(d);
+                    } else if (d3.event.type == "mouseout") {
+                        return hide_tooltip(d);
                     }
-                }
-
             })
-            .on("mouseover", d => show_tooltip(d))
-            .on("mousemove", d => move_tooltip(d))
-            .on("mouseout", d => hide_tooltip(d))
+            // .on("mouseover", d => show_tooltip(d))
+            // .on("mousemove", d => move_tooltip(d))
+            // .on("mouseout", d => hide_tooltip(d))
             .interrupt()
             .transition(t)
             .ease(d3.easeExp)
@@ -453,9 +444,34 @@ class RegionStatsBarChart extends BaseChart {
             .attr("height", d => a * v(d)) //`a` already accounts for both types of padding
             .attr('fill', d => z(d.ix))
             .merge(bar)
-            .on("mouseover", d => show_tooltip(d))
-            .on("mousemove", d => move_tooltip(d))
-            .on("mouseout", d => hide_tooltip(d))
+            .on('touchstart touchend click mouseover mousemove mouseout', function(d) {
+                
+                    if (d3.event.type == 'touchstart') {
+                        d3.event.preventDefault();
+                        d3.event.stopPropagation();
+                        // that.selected_bar = d3.select(this).attr('data_label');
+                        return on_touch(d);
+
+                    } else if (d3.event.type == 'touchend') {
+                        d3.event.preventDefault();
+                        d3.event.stopPropagation();
+                        return false;
+
+                    } else if (d3.event.type == 'click') {
+                        hide_tooltip(d);
+                        // that.selected_bar = d3.select(this).attr('data_label');
+                        return goto();
+                    } else if (d3.event.type == "mouseover") {
+                        return show_tooltip(d);
+                    } else if (d3.event.type == "mousemove") {
+                        return move_tooltip(d);
+                    } else if (d3.event.type == "mouseout") {
+                        return hide_tooltip(d);
+                    }
+            })
+            // .on("mouseover", d => show_tooltip(d))
+            // .on("mousemove", d => move_tooltip(d))
+            // .on("mouseout", d => hide_tooltip(d))
             .interrupt()
             .transition(t)
             .ease(d3.easeExp)
@@ -748,6 +764,8 @@ class StackedBarChart extends RegionStatsBarChart {
         var show_tooltip = this.tooltip_show.bind(this)
         var move_tooltip = this.tooltip_move.bind(this)
         var hide_tooltip = this.tooltip_hide.bind(this)
+        var on_touch = this.on_touch.bind(this)
+
 
 
         // // vertical legend orientation
@@ -794,13 +812,39 @@ class StackedBarChart extends RegionStatsBarChart {
                 .classed('overview', true)
                 .style('fill', (d, i) => (z(i)))
                 .attr("data_label", (d, i) => d.key)
-                .on("click", function(d, i) {
-                    that.selected_bar = d3.select(this).attr('data_label');
-                    return goto();
-                })
-                .on("mouseover", d => show_tooltip(d))
-                .on("mousemove", d => move_tooltip(d))
-                .on("mouseout", d => hide_tooltip(d))
+                // .on("click", function(d, i) {
+                //     console.log('clicked')
+                //     that.selected_bar = d3.select(this).attr('data_label');
+                //     return goto();
+                // })
+                // .on("mouseover", d => show_tooltip(d))
+                // .on("mousemove", d => move_tooltip(d))
+                // .on("mouseout", d => hide_tooltip(d))
+                .on('touchstart touchend click mouseover mousemove mouseout', function(d) {
+                
+                    if (d3.event.type == 'touchstart') {
+                        d3.event.preventDefault();
+                        d3.event.stopPropagation();
+                        that.selected_bar = d3.select(this).attr('data_label');
+                        return on_touch(d);
+
+                    } else if (d3.event.type == 'touchend') {
+                        d3.event.preventDefault();
+                        d3.event.stopPropagation();
+                        return false;
+
+                    } else if (d3.event.type == 'click') {
+                        hide_tooltip(d);
+                        that.selected_bar = d3.select(this).attr('data_label');
+                        return goto();
+                    } else if (d3.event.type == "mouseover") {
+                        return show_tooltip(d);
+                    } else if (d3.event.type == "mousemove") {
+                        return move_tooltip(d);
+                    } else if (d3.event.type == "mouseout") {
+                        return hide_tooltip(d);
+                    }
+            })
 
         } else {
             this.bars = this.svg.selectAll(".bar-g")

@@ -44,6 +44,10 @@ class BubbleChart extends RegionStatsBarChart {
         var show_tooltip = this.tooltip_show.bind(this)
         var move_tooltip = this.tooltip_move.bind(this)
         var hide_tooltip = this.tooltip_hide.bind(this)
+        var on_touch = this.on_touch.bind(this)
+        var goto = this.breakdown.bind(this);
+
+
 
         this.svg = this.container.select("svg")
             .attr("width", that.width + margin.left + margin.right)
@@ -73,9 +77,6 @@ class BubbleChart extends RegionStatsBarChart {
             d.scaler = .6 * d.radius * 2;
         })
 
-
-
-
         // console.log(urls)
 
         // let svg_nodes = []
@@ -92,15 +93,14 @@ class BubbleChart extends RegionStatsBarChart {
 
         bubble.exit().remove();
 
-        var goto = this.breakdown.bind(this);
 
         bubble.enter().append("circle")
             .attr("data_label", d => d.label)
-            .on("click", function(d) {
-                that.selected_bar = that.selected_bubble = d3.select(this).attr('data_label');
-                console.log('selected bubble ', that.selected_bubble)
-                return goto();
-            })
+            // .on("click", function(d) {
+            //     that.selected_bar = that.selected_bubble = d3.select(this).attr('data_label');
+            //     console.log('selected bubble ', that.selected_bubble)
+            //     return goto();
+            // })
             .classed('overview', true)
             .classed('bubble', true)
             .attr("cx", d => d.cx)
@@ -108,9 +108,34 @@ class BubbleChart extends RegionStatsBarChart {
             .attr('r', 0)
             .attr('fill-opacity', 0.0)
             .merge(bubble)
-            .on("mouseover", d => show_tooltip(d))
-            .on("mousemove", d => move_tooltip(d))
-            .on("mouseout", d => hide_tooltip(d))
+            // .on("mouseover", d => show_tooltip(d))
+            // .on("mousemove", d => move_tooltip(d))
+            // .on("mouseout", d => hide_tooltip(d))
+            .on('touchstart touchend click mouseover mousemove mouseout', function(d) {
+                
+                    if (d3.event.type == 'touchstart') {
+                        d3.event.preventDefault();
+                        d3.event.stopPropagation();
+                        that.selected_bar = that.selected_bubble = d3.select(this).attr('data_label');
+                        return on_touch(d);
+
+                    } else if (d3.event.type == 'touchend') {
+                        d3.event.preventDefault();
+                        d3.event.stopPropagation();
+                        return false;
+
+                    } else if (d3.event.type == 'click') {
+                        hide_tooltip(d);
+                        that.selected_bar = that.selected_bubble = d3.select(this).attr('data_label');
+                        return goto();
+                    } else if (d3.event.type == "mouseover") {
+                        return show_tooltip(d);
+                    } else if (d3.event.type == "mousemove") {
+                        return move_tooltip(d);
+                    } else if (d3.event.type == "mouseout") {
+                        return hide_tooltip(d);
+                    }
+            })
             .interrupt()
             .transition(that.t)
             .ease(d3.easeExp)

@@ -66,11 +66,15 @@ class BaseChart {
         return parseInt(d3.select("#" + this.container_id).node().clientHeight);
     }
 
+    get is_visible() {
+        return is_visible(this.container_id)
+    }
+
     toTidy(data, labels) {
         let that = this;
         let tidy = [];
         let group_cache = {};
-        let group_cache_ix = -1;
+        let group_cache_ix = 0;
         data
             .forEach(function(d) {
                 for (let label of labels) {
@@ -89,10 +93,9 @@ class BaseChart {
                         obj['width'] = 0.55; // x times normal
                         obj['demographic'] = d.subgroup || "All";
                     }
-                    if (!(d.group in group_cache)) {
-                        group_cache_ix += 1;
+                    if (!(d.group in group_cache) && !(d.group == "All")) {
                         group_cache[d.group] = group_cache_ix;
-
+                        group_cache_ix += 1;
                     }
 
                     obj['ix'] = group_cache[d.group]
@@ -176,9 +179,7 @@ class BaseChart {
         this.tooltip.select('.roi-tooltip-header')
             .html(`<h5>${header}<span class="roi-tooltip-small-header">&nbsp${header_demo}</span></h5>`)
 
-        this.tooltip.select('.roi-tooltip-content table')
-            .html(
-                `
+        let table_html = `
                 <tr>
                     <td>${max_d.region}<span class="roi-tooltip-small">&nbsp(most in state)</span></td>
                     <td>${that.labelFormatter(max_d.value)}</td>
@@ -195,8 +196,19 @@ class BaseChart {
                     <td>${min_d.region}<span class="roi-tooltip-small">&nbsp(least in state)</span></td>
                     <td>${that.labelFormatter(min_d.value)}</td>
                 </tr>
+                
                 `
-            )
+
+        if (this.state == "overview") {
+            table_html += `
+                <tr>
+                    <td><h5 class="breakdown-note">Click the Chart for Demographic Breakdown</h5></td>
+                </tr>
+                `
+        }
+
+        this.tooltip.select('.roi-tooltip-content table')
+            .html(table_html)
     }
 
     tooltip_move(d) {
@@ -236,36 +248,50 @@ class BaseChart {
     on_touch(d) {
         let that = this;
         var goto = this.breakdown.bind(this)
-        var hide_tooltip = this.tooltip_hide.bind(this)
+        var hide_tooltip = this.clear_roi_tooltips; //tooltip_hide.bind(this)
+        this.clear_roi_tooltips();
 
-        if (this.touched) {
-            this.tooltip_hide(d)
-            this.touched = false;
+        this.tooltip_move(d)
+        this.tooltip_show(d)
 
-        } else {
-            this.tooltip_move(d)
-            this.tooltip_show(d)
-            this.tooltip.style("pointer-events", null)
+        let header_html = this.tooltip.select('.roi-tooltip-header').node().innerHTML
+        this.tooltip.select('.roi-tooltip-header')
+            .html(`
+                <table>
+                    <tr>
+                        <td>${header_html}</td>
+                        <td class="hide-button" align="right" valign="top">(hide)</td>
+                    </tr>
+                </table>
+                `)
 
+        this.tooltip.select(".hide-button")
+            .style("pointer-events", 'all')
+            .on('click', function(d) {
+                that.clear_roi_tooltips();
+            })
+
+
+        this.tooltip.select('.roi-tooltip-content .breakdown-note').remove()
+
+        if (this.state == 'overview') {
             let table_html = this.tooltip.select('.roi-tooltip-content table').node().innerHTML
-
-            this.tooltip.select('.roi-tooltip-content table')
+            this.tooltip.select('.roi-tooltip-content table tbody')
                 .html(`
                     ${table_html}
                     <tr>
-                        <button class="breakdown-button">Click for Demographic Breakdown</button>
+                        <td><h5 class="breakdown-button">Click Here for Demographic Breakdown</h5></td>
                     </tr>
                     `)
 
-            this.tooltip.select("button.breakdown-button")
+            this.tooltip.select(".breakdown-button")
+                .style("pointer-events", 'all')
                 .on('click', function(d) {
-                    hide_tooltip(d);
+                    that.clear_roi_tooltips();
                     return goto();
                 })
-
-            this.touched = true;
-
         }
+        return false;
     }
 
 
