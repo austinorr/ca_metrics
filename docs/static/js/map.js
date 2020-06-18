@@ -111,7 +111,7 @@ class RegionMap extends BaseMap {
                     .data(region_features)
                     .enter().append("path")
                     .attr("d", that.path)
-                    .style("fill", d => that.colors[region_tag])
+                    .style("fill", that.colors[region_tag])
                     .style('fill-opacity', 0.5)
                     .attr("data-region", d => d.properties.region)
                     .on("click", function(d) {
@@ -148,67 +148,69 @@ class RegionMap extends BaseMap {
             selected_region = d3.select("svg .counties.region_" + region_id),
             region_features = this.feature_obj.features.filter(d => d.properties.region_id == region_id);
 
-        if (selected_region.classed('active-region')) {
-            // d3.selectAll(".active-region").classed('active-region', false);
-            // d3.selectAll(".countySelected").remove();
-            // REGION = "Statewide";
-            // let pass
+        // if (selected_region.classed('active-region')) {
+        //     // d3.selectAll(".active-region").classed('active-region', false);
+        //     // d3.selectAll(".countySelected").remove();
+        //     // REGION = "Statewide";
+        //     // let pass
 
-        } else {
-            d3.selectAll(".active-region").classed('active-region', false);
-            d3.selectAll(".countySelected").remove();
+        // } else {
+        d3.selectAll(".active-region").classed('active-region', false);
+        d3.selectAll(".countySelected").remove();
 
-            selected_region.classed('active-region', true)
-            REGION = region_features[0].properties.region;
+        selected_region.classed('active-region', true)
+        REGION = region_features[0].properties.region;
 
-            let bbox = selected_region.node().getBBox(),
+        let bbox = selected_region.node().getBBox(),
 
-                cx = bbox.x + bbox.width / 2,
-                cy = bbox.y + bbox.height / 2,
-                scaler = REGION_POP_SCALER,
-                color = selected_region.style('fill');
+            cx = bbox.x + bbox.width / 2,
+            cy = bbox.y + bbox.height / 2,
+            scaler = REGION_POP_SCALER,
+            color = selected_region.selectAll('path').style('fill');
 
-            let shadow_id = this.container_id + "_drop_shadow"
+        let shadow_id = this.container_id + "_drop_shadow"
 
-            var shadow = addDropShadowFilter(selected_region.clone(true), shadow_id, 5, 0, 0)
+        var shadow = addDropShadowFilter(selected_region.clone(true), shadow_id, 5, 0, 0)
+            .classed('countySelected', true)
 
-                .classed('countySelected', true)
-                .raise()
-                .selectAll('path')
-                .data(region_features)
-                .style('color', color)
-                .style('opacity', .8)
-                .style('pointer-events', 'none')
-                .style("filter", `url(#${shadow_id})`);
+            .raise()
+            .selectAll('path')
+            .classed('drop-shadow', true)
+            .data(region_features)
+            .style('fill', color)
+            .style('fill-opacity', .8)
+            .style('pointer-events', 'none')
+            .style("filter", `url(#${shadow_id})`);
 
-            var pop_region = selected_region.clone(true)
-                .classed('countySelected', true)
-                .raise()
-                .selectAll('path')
-                .data(region_features)
-                .style('color', color)
-                .style('fill-opacity', 1)
-                .style('pointer-events', 'none')
-                .transition()
-                .duration(50)
-                .attr(
-                    "transform",
-                    "translate(" + (1 - scaler) * cx + ", " + (1 - scaler) * cy + ") scale(" + scaler + ")");
-        }
+        var pop_region = selected_region.clone(true)
+            .classed('countySelected', true)
+
+            .raise()
+            .selectAll('path')
+            .classed('overlay', true)
+            .data(region_features)
+            .style('fill', color)
+            .style('fill-opacity', 1)
+            .style('pointer-events', 'none')
+            .interrupt()
+            .transition()
+            .duration(50)
+            .attr(
+                "transform",
+                "translate(" + (1 - scaler) * cx + ", " + (1 - scaler) * cy + ") scale(" + scaler + ")");
+        // }
     }
 
     baseColors() {
+        let that = this;
         this.is_choropleth = false;
         this.svg.selectAll('.legend').remove();
-
-        d3.selectAll("#" + this.container_id + ' svg .counties path')
-            .filter(function() {
-                return !this.classList.contains('drop-shadow');
-            })
-            .transition()
-            .ease(d3.easeExp)
-            .style('fill', d => this.colors[regionTag(d.properties.region)])
+        d3.selectAll("#" + that.container_id + ' svg .counties path')
+            .style('fill', d => that.colors[regionTag(d.properties.region)])
             .style('fill-opacity', 0.5)
+
+        d3.selectAll("#" + that.container_id + ' svg .counties path.overlay')
+            .style('fill-opacity', 1)
     }
 
     choroplethColors(id) {
@@ -269,12 +271,14 @@ class RegionMap extends BaseMap {
             let _sel = d3.selectAll("#" + that.container_id + ' svg .counties path')
 
             d3.selectAll("#" + that.container_id + ' svg .counties path')
+                .interrupt()
                 .transition()
                 .ease(d3.easeExp)
                 .style('fill-opacity', 0)
                 .duration(200)
 
             d3.selectAll("#" + that.container_id + ' svg .counties path')
+                .interrupt()
                 .transition()
                 .ease(d3.easeExp)
                 .style('fill-opacity', 1)

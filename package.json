@@ -1,0 +1,35 @@
+{
+  "name": "ca-metrics",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webpack.config.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/cli": "^7.10.1",
+    "@babel/core": "^7.10.2",
+    "@babel/preset-env": "^7.10.2",
+    "babel-loader": "^8.1.0",
+    "core-js": "^3.6.5",
+    "uglifyjs-webpack-plugin": "^2.2.0",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "make combine; webpack --mode development",
+    "build": "make combine; webpack --mode production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/austinorr/ca_metrics.git"
+  },
+  "author": "austin orr",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/austinorr/ca_metrics/issues"
+  },
+  "homepage": "https://github.com/austinorr/ca_metrics#readme"
+}

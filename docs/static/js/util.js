@@ -7,7 +7,7 @@ function addDropShadowFilter(svg, id, stddev = 3, xoffset = 5, yoffset = 5) {
     var defs = svg.append("defs");
 
     // create filter with id #drop-shadow
-    // height=130% so that the shadow is not clipped
+    // height=200% so that the shadow is not clipped
     var filter = defs.append("filter")
         .attr("id", id)
         .classed("drop-shadow", true)
@@ -210,7 +210,8 @@ function wrap(text, width, direction = 1) { // This is so broken, it creates emp
             y = text.attr("y"),
             dy = text.attr("dy") ? parseFloat(text.attr("dy")) : 0, //<-- null check
             anchor = text.attr("text-anchor"),
-            baseline = text.attr('dominant-baseline');
+            baseline = text.attr('dominant-baseline'),
+            tspan = null;
         // if (direction<0) {
         //     words = words.reverse();
         // }

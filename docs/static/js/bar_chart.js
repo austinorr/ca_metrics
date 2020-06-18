@@ -166,17 +166,6 @@ class RegionStatsBarChart extends BaseChart {
             .attr("transform",
                 "translate(" + margin.left + "," + margin.top + ")");
 
-        // console.log(this.container_id, title_text_bbox, svg_stretch, constraint)
-        // return
-
-
-        // this.svg = this.container.select("svg")
-        //     .attr("width", width + margin.left + margin.right)
-        //     .attr("height", height + margin.top + margin.bottom)
-        //     .select("g")
-        //     .attr("transform",
-        //         "translate(" + margin.left + "," + margin.top + ")");
-
         // set the y range
         this.y = d3.scaleBand()
             .range([0, height])
@@ -812,14 +801,6 @@ class StackedBarChart extends RegionStatsBarChart {
                 .classed('overview', true)
                 .style('fill', (d, i) => (z(i)))
                 .attr("data_label", (d, i) => d.key)
-                // .on("click", function(d, i) {
-                //     console.log('clicked')
-                //     that.selected_bar = d3.select(this).attr('data_label');
-                //     return goto();
-                // })
-                // .on("mouseover", d => show_tooltip(d))
-                // .on("mousemove", d => move_tooltip(d))
-                // .on("mouseout", d => hide_tooltip(d))
                 .on('touchstart touchend click mouseover mousemove mouseout', function(d) {
                 
                     if (d3.event.type == 'touchstart') {
@@ -918,8 +899,6 @@ class EduStackedBarChart extends StackedBarChart {
 
         this.legend.selectAll('.legend-patch')
             .attr("fill", (d, i) => that.z(i))
-
-
 
         let graph = [{
                 "source": {

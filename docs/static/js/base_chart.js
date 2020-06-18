@@ -294,37 +294,4 @@ class BaseChart {
         return false;
     }
 
-
-    // let 
-    // <div class="roi-tooltip">
-    //     <div class="roi-tooltip-header">
-    //       <h5>Long Chart Title</h5>
-    //     </div>
-    //     <div class="roi-tooltip-content">
-    //       <table>
-    //         <tr>
-    //           <td>High Region <span class="roi-tooltip-small">(most in state)</span></td>
-    //           <td>00%</td>
-    //         </tr>
-    //         <tr>
-    //           <td>State Average</td>
-    //           <td>00%</td>
-    //         </tr>
-    //         <tr class="roi-tooltip-active">
-    //           <td>Active Region</td>
-    //           <td>00%</td>
-    //         </tr>
-    //         <tr>
-    //           <td>Low Region <span class="roi-tooltip-small">(least in state)</span></td>
-    //           <td>00%</td>
-    //         </tr>
-    //       </table>
-    //     </div>
-    //     <div class="roi-tooltip-footer">
-    //       <h5>Click chart for demographic info</h5>
-    //     </div>
-    // </div>
-
-
-
 }

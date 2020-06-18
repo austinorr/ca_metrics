@@ -5,28 +5,6 @@ var REGION_TAG = regionTag(REGION);
 
 // ----- Map Constants -------
 
-// the indices of this list align with the "region_id" attribute in the topojson file(s)
-// const REGION_COLORS_ = [
-//     "#1f77b4",
-//     "#aec7e8",
-//     "#ff7f0e",
-//     "#ffbb78",
-//     "#2ca02c",
-//     "#98df8a",
-//     "#d62728",
-//     "#ff9896",
-//     "#9467bd",
-//     "#c5b0d5",
-//     "#8c564b",
-//     "#c49c94",
-//     "#e377c2",
-//     "#f7b6d2",
-//     "#bcbd22",
-//     "#dbdb8d",
-//     "#17becf",
-//     "#9edae5",
-// ];
-
 var REGION_COLORS = (typeof REGION_COLORS == 'undefined') || (REGION_COLORS == null) ? {
     "bay-area": "#34778c", // hs
     "central-coast": "#c7a630",
@@ -148,9 +126,6 @@ function initDataLabels() {
 function selectTabContent(region_tag) {
 
     d3.selectAll(".tab-content .tab-pane.active").classed('active', false)
-    if (d3.selectAll(".tab-content .tab-pane.tab-" + region_tag).empty()) {
-        console.log(region_tag, 'Missing!!')
-    }
     d3.selectAll(".tab-content .tab-pane.tab-" + region_tag).classed('active', true)
 
     d3.selectAll(".roi-collapse-heading[class*=-color]").attr('class', "roi-collapse-heading")
@@ -164,41 +139,32 @@ window.onresize = function() {
     }, 500);
 };
 
-
-// window.touched=false;
-// window.ontouchstart = function () {
-//     clearTimeout(window.touchfinished);
-//     window.touchfinished = setTimeout(function() {
-//         window.touched = window.touched ? false : true;
-//     }, 500);
-
-// }
+window.ontouchstart = function() {
+    d3.selectAll('.roi-tooltip').style('opacity', 0);
+}
 
 function resize() {
     d3.selectAll('.roi-tooltip').style('opacity', 0);
     for (var i = 0; i < CHARTS.length; i++) {
         CHARTS[i].resize();
-        CHARTS[i].tooltip_hide(null); // TODO: redundant?
     }
 }
 
-
-// function check_all_charts_visible() {
-//     CHARTS.forEach(function(c, i) {
-//         let viz = is_visible(c.container_id);
-//         console.log(c.container_id, viz)
-//     })
-// }
-
 window.onscroll = function() {
-
     clearTimeout(window.scrollFinished);
     window.scrollFinished = setTimeout(function() {
-        console.log('')
-        console.log('')
-        console.log('scrolled event')
-
         chartBuilder(document, CHART_MAPPING, CHARTS);
 
     }, 100);
+}
+
+window.onload = function() {
+    var qparam = regionTitleCase(getParameterByName('region'));
+    var REGION = qparam ? qparam : "Bay Area";
+    var REGION_TAG = regionTag(REGION);
+    onLoad();
+};
+
+export function init_on_expand() {
+    chartBuilder(document, CHART_MAPPING, CHARTS)
 }
