@@ -9,11 +9,11 @@ var REGION_COLORS = (typeof REGION_COLORS == 'undefined') || (REGION_COLORS == n
     "bay-area": "#34778c", // hs
     "central-coast": "#c7a630",
     "central-sierra": "#c54241",
-    "greater-sacramento": "#6b7130",
+    "greater-sacramento": "#6b7130", // to sacramento-tahoe
     "imperial": "#c7a630",
     "inland-empire": "#34778c",
     "los-angeles": "#6b7130", // ag
-    "northern-california": "#c7a630",
+    "northern-california": "#c7a630", // to north-far-north
     "northern-sacramento-valley": "#c66f2c",
     "orange": "#c66f2c", // csu
     "san-diego": "#c54241", // ccc
@@ -62,7 +62,6 @@ let CHART_MAPPING = {
 function updateVisibleCharts() {
     for (let chart of CHARTS) {
         if (chart.is_visible) {
-            chart.log('is visible')
             chart.update()
         }
     }
@@ -86,22 +85,9 @@ function onLoad() {
     d3.selectAll(".chart-wrapper-map").on("click", function() {
         d3.select("._navbar").text(REGION).classed('region_label', true)
 
-        selectTabContent(regionTag(REGION));
-        updateVisibleCharts();
+        // selectTabContent(regionTag(REGION));
+        // updateVisibleCharts();
     });
-}
-
-function mapDataToggle(id) {
-    let elem = '#' + id
-    let state = d3.select(elem).classed('_viz-map-selected')
-    if (state) {
-        REGION_MAP.baseColors()
-        d3.select(elem).classed('_viz-map-selected', false)
-    } else {
-        REGION_MAP.choroplethColors(elem);
-        d3.selectAll('._viz-map-selected').classed('_viz-map-selected', false)
-        d3.select(elem).classed('_viz-map-selected', true)
-    }
 }
 
 function initDataLabels() {
@@ -153,6 +139,7 @@ function resize() {
 window.onscroll = function() {
     clearTimeout(window.scrollFinished);
     window.scrollFinished = setTimeout(function() {
+        updateVisibleCharts();
         chartBuilder(document, CHART_MAPPING, CHARTS);
 
     }, 100);
@@ -167,4 +154,17 @@ window.onload = function() {
 
 export function init_on_expand() {
     chartBuilder(document, CHART_MAPPING, CHARTS)
+}
+
+export function mapDataToggle(id) {
+    let elem = '#' + id
+    let state = d3.select(elem).classed('_viz-map-selected')
+    if (state) {
+        REGION_MAP.baseColors()
+        d3.select(elem).classed('_viz-map-selected', false)
+    } else {
+        REGION_MAP.choroplethColors(elem);
+        d3.selectAll('._viz-map-selected').classed('_viz-map-selected', false)
+        d3.select(elem).classed('_viz-map-selected', true)
+    }
 }

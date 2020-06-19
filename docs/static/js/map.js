@@ -25,7 +25,7 @@ class BaseMap {
             .style("position", "absolute")
             .style("pointer-events", "none")
             .style("opacity", 0)
-            .style('height', 0)
+
 
         this.tooltip.append('div')
             .classed('roi-tooltip-header', true);
@@ -81,14 +81,38 @@ class RegionMap extends BaseMap {
 
     }
 
+    on_click(d) {
+        
+        let goto = this.selectRegion.bind(this);
+        let region_tag = regionTag(d.properties.region);
+        this.selected_region = d.properties.region;
+
+        this.clear_roi_tooltips();
+
+        if (this.redirect_url) {
+            window.location.href = this.redirect_url + `?region=${region_tag}`;
+        
+        } else {
+            
+            window.history.pushState(
+                "", document.title,
+                window.location.href.split('?')[0] + `?region=${region_tag}`
+            );
+            goto();
+            selectTabContent(regionTag(REGION));
+            updateVisibleCharts();
+        }        
+    }
+
     loadData() {
         this.log('loading data')
 
         let that = this
-        let goto = this.selectRegion.bind(this);
         var show_tooltip = this.tooltip_show.bind(this)
         var move_tooltip = this.tooltip_move.bind(this)
         var hide_tooltip = this.tooltip_hide.bind(this)
+        var on_touch = this.on_touch.bind(this)
+        var on_click = this.on_click.bind(this)
 
         d3.json(that.url, function(error, ca) {
             if (error) throw error;
@@ -114,21 +138,44 @@ class RegionMap extends BaseMap {
                     .style("fill", that.colors[region_tag])
                     .style('fill-opacity', 0.5)
                     .attr("data-region", d => d.properties.region)
-                    .on("click", function(d) {
-                        that.selected_region = d.properties.region;
+                    // .on("click", function(d) {
+                    //     that.selected_region = d.properties.region;
 
-                        window.history.pushState(
-                            "", document.title,
-                            window.location.href.split('?')[0] + `?region=${region_tag}`
-                        );
-                        if (that.redirect_url) {
-                            window.location.href = that.redirect_url + `?region=${region_tag}`;
+                    //     window.history.pushState(
+                    //         "", document.title,
+                    //         window.location.href.split('?')[0] + `?region=${region_tag}`
+                    //     );
+                    //     if (that.redirect_url) {
+                    //         window.location.href = that.redirect_url + `?region=${region_tag}`;
+                    //     }
+                    //     return goto();
+                    // })
+                    // .on("mouseover", d => show_tooltip(d))
+                    // .on("mousemove", d => move_tooltip(d))
+                    // .on("mouseout", d => hide_tooltip(d))
+                    .on('touchstart touchend click mouseover mousemove mouseout', function(d) {
+
+                        if (d3.event.type == 'touchstart') {
+                            d3.event.preventDefault();
+                            d3.event.stopPropagation();
+                            that.selected_region = d.properties.region;
+                            return on_touch(d);
+
+                        } else if (d3.event.type == 'touchend') {
+                            d3.event.preventDefault();
+                            d3.event.stopPropagation();
+                            return false;
+
+                        } else if (d3.event.type == 'click') {
+                            return on_click(d);
+                        } else if (d3.event.type == "mouseover") {
+                            return show_tooltip(d);
+                        } else if (d3.event.type == "mousemove") {
+                            return move_tooltip(d);
+                        } else if (d3.event.type == "mouseout") {
+                            return hide_tooltip(d);
                         }
-                        return goto();
                     })
-                    .on("mouseover", d => show_tooltip(d))
-                    .on("mousemove", d => move_tooltip(d))
-                    .on("mouseout", d => hide_tooltip(d))
             }
 
 
@@ -400,7 +447,6 @@ class RegionMap extends BaseMap {
 
         }
 
-        this.tooltip.style('height', null);
         this.tooltip
             .interrupt().transition()
             .style('opacity', 1);
@@ -419,7 +465,7 @@ class RegionMap extends BaseMap {
             py = d3.event.pageY;
         }
 
-        let anchorPt = (window.innerWidth - px - 10 < tt_width) ? px - tt_width : px
+        let anchorPt = Math.max(0, (window.innerWidth - px < tt_width) ? px - tt_width : px)
 
         this.tooltip
             .style("left", (anchorPt) + "px")
@@ -428,16 +474,92 @@ class RegionMap extends BaseMap {
     }
 
     tooltip_hide(d) {
+        // TODO: make this unclickable if hidden!!!
         this.tooltip.interrupt().transition()
-            .style('opacity', 0).on("end", function() {
-                d3.select(this).style('height', 0);
-            })
+            .style('opacity', 0)
+
     }
 
     clear_roi_tooltips() {
+        // TODO: make this unclickable if hidden!!!
         d3.selectAll('.roi-tooltip')
-            .style('height', 0)
             .style('opacity', 0);
+    }
+
+    on_touch(d) {
+        let that = this;
+        // var goto = this.breakdown.bind(this)
+        var hide_tooltip = this.clear_roi_tooltips; //tooltip_hide.bind(this)
+        this.clear_roi_tooltips();
+
+        this.tooltip_move(d)
+        this.tooltip_show(d)
+        let region = d.properties.region
+
+        let onclick = this.on_click.bind(this)
+
+        if (this.is_choropleth) {
+            let header_html = this.tooltip.select('.roi-tooltip-header').node().innerHTML
+            this.tooltip.select('.roi-tooltip-header')
+                .html(`
+                <table>
+                    <tr>
+                        <td>${header_html}</td>
+                        <td class="hide-button" align="right" valign="top">(hide)</td>
+                    </tr>
+                </table>
+                `)
+
+            this.tooltip.select(".hide-button")
+                .style("pointer-events", 'all')
+                .on('click', function(d) {
+                    that.clear_roi_tooltips();
+                })
+
+            let table_html = this.tooltip.select('.roi-tooltip-content table').node().innerHTML
+            this.tooltip.select('.roi-tooltip-content table tbody')
+                .html(`
+                    ${table_html}
+                    <tr>
+                        <td><h5 class="region-button">Click For ${region} Details</h5></td>
+                    </tr>
+                    `)
+
+            this.tooltip.select(".region-button")
+                .style("pointer-events", 'all')
+                .on('click', function() {
+                    that.clear_roi_tooltips();
+                    onclick(d);
+                })
+
+        } else {
+            onclick(d);
+
+        }
+
+
+
+
+        // this.tooltip.select('.roi-tooltip-content .breakdown-note').remove()
+
+        // if (this.state == 'overview') {
+        //     let table_html = this.tooltip.select('.roi-tooltip-content table').node().innerHTML
+        //     this.tooltip.select('.roi-tooltip-content table tbody')
+        //         .html(`
+        //             ${table_html}
+        //             <tr>
+        //                 <td><h5 class="breakdown-button">Click Here for Demographic Breakdown</h5></td>
+        //             </tr>
+        //             `)
+
+        //     this.tooltip.select(".breakdown-button")
+        //         .style("pointer-events", 'all')
+        //         .on('click', function(d) {
+        //             that.clear_roi_tooltips();
+        //             return goto();
+        //         })
+        // }
+        return false;
     }
 
 }

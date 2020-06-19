@@ -65,5 +65,5 @@ if __name__ == "__main__":
 
     docs_dir = Path(__file__).parent.parent.absolute()
 
-    with open(docs_dir / "docs" / "index.html", "w") as f:
+    with open(docs_dir / "docs" / "_vega_out.html", "w") as f:
         f.write(chart.to_html())

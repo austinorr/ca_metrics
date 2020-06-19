@@ -1,26 +1,12 @@
 <!DOCTYPE html>
 
 <head>
+  <meta charset="utf-8">
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="https://d3js.org/topojson.v2.min.js"></script>
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script> -->
-  <!-- <script type="text/javascript" src="./static/ca-metrics.js"></script> -->
-  <!-- <script type="text/javascript" src="./static/test/bundle.js"></script> -->
-  <!--   <script type="text/javascript" src="./static/js/util.js"></script>
-  <script type="text/javascript" src="./static/js/base_chart.js"></script>
-  <script type="text/javascript" src="./static/js/map.js"></script>
-  <script type="text/javascript" src="./static/js/bar_chart.js"></script>
-  <script type="text/javascript" src="./static/js/bubble_chart.js"></script>
-  <script type="text/javascript" src="./static/js/radial_chart.js"></script>
-  <script type="text/javascript" src="./static/js/init.js"></script> -->
-  <!-- <script type="module" src="./static/js/base_chart.js"></script>
-  <script type="module" src="./static/js/map.js"></script>
-  <script type="module" src="./static/js/bar_chart.js"></script>
-  <script type="module" src="./static/js/bubble_chart.js"></script>
-  <script type="module" src="./static/js/radial_chart.js"></script>
-  <script type="module" src="./static/js/init.js"></script> -->
-  <!-- <script type="text/javascript" src="./static/built.js"></script> -->
   <script src="./build/bundle.js"></script>
+
+  <!-- <script type="module" src="./static/build.js"></script> -->
 
   <style>
     /*div {
@@ -160,20 +146,19 @@ svg {
 
   </style>
 </head>
-
 <body>
   <div class='_navbar'></div>
   <div class="_viz_container">
     <div class="_viz_map_group">
       <div id="region-map-123456" class="chart-wrapper-map" _viz_source="./data/ca-counties.json" _viz_redirect_url=""></div> <!-- TODO: link up redirect action -->
       <div class="stat-col ">
-        <a class="stat-btn _viz_map_data_toggle" id="stat-btn38865" _viz_units="percent" _viz_source="./data/employment.csv" onclick="mapDataToggle(this.id)" onload="initDataLabel(this.id)">
+        <a class="stat-btn _viz_map_data_toggle" id="stat-btn38865" _viz_units="percent" _viz_source="./data/employment.csv" onclick="dataviz.mapDataToggle(this.id)">
           <img class="color-icon" width=50 src="https://dev.californiacompetes.org/assets/general-images/ag-icon-blue.svg">
           <h4 class="stat-value">00%</h4>
           <h5>of of residents are employed</h5>
         </a>
       </div>
-      <div id="uid-button-1" class="_viz_map_data_toggle" _viz_units="percent" _viz_source="./data/employment.csv" onclick="mapDataToggle(this.id)">Toggle Employment Choropleth</div>
+      <div id="uid-button-1" class="_viz_map_data_toggle" _viz_units="percent" _viz_source="./data/employment.csv" onclick="dataviz.mapDataToggle(this.id)">Toggle Employment Choropleth</div>
     </div>
     <div class="_viz_bar_group">
       <div id="_viz_bar_container1" class="chart-wrapper-bar" _viz_units="percent" _viz_source="./data/employment2col.csv" _viz_color="steelblue" , _viz_title="Job Openings but this title test is fing long so hows this?">
@@ -192,49 +177,5 @@ svg {
       </div>
       <div id="_viz_radial_container1" class="chart-wrapper-radial" _viz_units="count" _viz_source="./data/edu_radial.csv"></div>
     </div>
-    <!-- <div style="height:200px"></div> -->
   </div>
-<!--   <script type="text/javascript" src="./static/js/util.js"></script>
-  <script type="text/javascript" src="./static/js/base_chart.js"></script>
-  <script type="text/javascript" src="./static/js/map.js"></script>
-  <script type="text/javascript" src="./static/js/bar_chart.js"></script>
-  <script type="text/javascript" src="./static/js/bubble_chart.js"></script>
-  <script type="text/javascript" src="./static/js/radial_chart.js"></script>
-  <script type="text/javascript" src="./static/js/init.js"></script> -->
-  <script>
-  // onLoad();
-
-  // d3.select(".chart-wrapper-map").on("click", function() {
-  //   d3.select("._navbar").text(REGION).classed('region_label', true)
-
-  //   let reg_tab = REGION.toLowerCase().split(' ').join('-');
-  //   d3.selectAll(".tab-content .tab-pane.active").classed('active', false)
-  //   d3.selectAll(".tab-content .tab-pane tab-"+reg_tab).classed('active', true)
-
-
-  //   for (var i = 0; i < CHARTS.length; i++) {
-  //     CHARTS[i].update()
-  //   }
-
-  // });
-
-
-  // function resize() {
-  //   for (var i = 0; i < CHARTS.length; i++) {
-  //     CHARTS[i].resize()
-  //   }
-  // }
-
-  // var doit;
-  // window.onresize = function() {
-  //   clearTimeout(doit);
-  //   doit = setTimeout(function() {
-  //     resize();
-  //   }, 100);
-  // };
-
-
-
-  </script>
-
 </body>

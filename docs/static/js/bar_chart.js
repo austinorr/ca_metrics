@@ -87,11 +87,11 @@ class RegionStatsBarChart extends BaseChart {
 
         let title_center = margin.left / 2;
         let title_text_anchor = 'middle';
-        let title_text_dy = "0em";
+        let title_text_dy = "1em";
         let title_text_y = height / 2; //y(data[0].label) + y.bandwidth() / 2; // TODO this is jacked up.
         let title_text_x = -title_center;
         let text_wrap_width = margin.left * 0.95;
-        let text_alignment_baseline = 'hanging';
+        let text_alignment_baseline = 'bottom';
         let text_wrap_direction = 1;
 
         if (data.length > 1) {
@@ -99,7 +99,7 @@ class RegionStatsBarChart extends BaseChart {
             title_text_dy = "0em";
             title_text_y = -margin.top/2;
             title_text_x = -title_center + Math.min((bar_height / 2 + margin.top), margin.left / 2) / 2 + 6;
-            text_wrap_width = width - margin.left - margin.right;
+            text_wrap_width = width;
             text_alignment_baseline = 'middle';
             text_wrap_direction = 1;
         }
@@ -446,10 +446,6 @@ class RegionStatsBarChart extends BaseChart {
                         d3.event.stopPropagation();
                         return false;
 
-                    } else if (d3.event.type == 'click') {
-                        hide_tooltip(d);
-                        // that.selected_bar = d3.select(this).attr('data_label');
-                        return goto();
                     } else if (d3.event.type == "mouseover") {
                         return show_tooltip(d);
                     } else if (d3.event.type == "mousemove") {
@@ -532,7 +528,7 @@ class RegionStatsBarChart extends BaseChart {
             .attr("x", 0 )
             .attr("y", 0- margin.top);
 
-        wrap(title.select('text.demoTitle'), this.container_width - 100)
+        wrap(title.select('text.demoTitle'), width)
     }
 }
 

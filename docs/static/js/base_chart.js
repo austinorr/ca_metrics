@@ -25,7 +25,7 @@ class BaseChart {
             .style("position", "absolute")
             .style("pointer-events", "none")
             .style("opacity", 0)
-            .style('height', 0)
+        // .style('height', 0)
 
         this.tooltip.append('div')
             .classed('roi-tooltip-header', true);
@@ -137,8 +137,10 @@ class BaseChart {
 
         if (units == "percent") {
             return 1;
-        } else {
+        } else if (REGION == "Statewide") {
             return d3.max(data, d => d.value)
+        } else {
+            return d3.max(data.filter(d => d.region != 'Statewide'), d => d.value)
         }
     }
 
@@ -171,7 +173,7 @@ class BaseChart {
             .filter(d => (d.region == 'Statewide'))
         let statewide_d = statewide_data[0]
 
-        this.tooltip.style('height', null);
+        // this.tooltip.style('height', null);
         this.tooltip
             .interrupt().transition()
             .style('opacity', 1);
@@ -224,7 +226,7 @@ class BaseChart {
             py = d3.event.pageY;
         }
 
-        let anchorPt = (window.innerWidth - px - 10 < tt_width) ? px - tt_width : px
+        let anchorPt = Math.max(0, (window.innerWidth - px < tt_width) ? px - tt_width : px)
 
         this.tooltip
             .style("left", (anchorPt) + "px")
@@ -234,14 +236,15 @@ class BaseChart {
 
     tooltip_hide(d) {
         this.tooltip.interrupt().transition()
-            .style('opacity', 0).on("end", function() {
-                d3.select(this).style('height', 0);
-            })
+            .style('opacity', 0)
+        // .on("end", function() {
+        //     d3.select(this).style('height', 0);
+        // })
     }
 
     clear_roi_tooltips() {
         d3.selectAll('.roi-tooltip')
-            .style('height', 0)
+            // .style('height', 0)
             .style('opacity', 0);
     }
 
