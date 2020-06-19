@@ -131,6 +131,15 @@ class BaseChart {
         this.log('no method for loading data')
     }
 
+    checkData(data) {
+        if (data.length == 0) {
+            throw new InitializationError(`No data for region: ${REGION} on chart: ${this.chart_uid}`)
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     rescale(data, units) {
         // make this static?
         this.log('rescaling data')

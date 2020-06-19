@@ -121,31 +121,31 @@ Los Angeles,Higher Income,,0.915064096
 Los Angeles,Middle Income,,0.862022638
 Los Angeles,Lower Income,,0.744089007
 Los Angeles,Very Low Income,,0.542294145
-Northern California,All,,0.76480639
-Northern California,Native American/Alaska Native,,0.708179414
-Northern California,Asian,,0.770713985
-Northern California,Asian,Other Asian,1
-Northern California,Asian,South Asian,0.806074739
-Northern California,Asian,Southeast Asian,0.723065972
-Northern California,Native Hawaiian/Other Pacific Islander,,0.74393636
-Northern California,Some Other Race alone,,0.689265549
-Northern California,2 or more races,,0.81042695
-Northern California,White,,0.760002077
-Northern California,Black,,0.766208529
-Northern California,Latino/Latina,,0.793071568
-Northern California,Latino/Latina,Mexican,0.785672903
-Northern California,Latino/Latina,Central American,0.81300813
-Northern California,Latino/Latina,Cuban,1
-Northern California,Latino/Latina,Puerto Rican,0.502139807
-Northern California,Latino/Latina,South American,0.870445371
-Northern California,Latino/Latina,Other Hispanic,0.834071517
-Northern California,Female,,0.722599983
-Northern California,Male,,0.806061447
-Northern California,Very High Income,,0.89034754
-Northern California,Higher Income,,0.863870919
-Northern California,Middle Income,,0.81350553
-Northern California,Lower Income,,0.679741442
-Northern California,Very Low Income,,0.454267651
+North Far North,All,,0.76480639
+North Far North,Native American/Alaska Native,,0.708179414
+North Far North,Asian,,0.770713985
+North Far North,Asian,Other Asian,1
+North Far North,Asian,South Asian,0.806074739
+North Far North,Asian,Southeast Asian,0.723065972
+North Far North,Native Hawaiian/Other Pacific Islander,,0.74393636
+North Far North,Some Other Race alone,,0.689265549
+North Far North,2 or more races,,0.81042695
+North Far North,White,,0.760002077
+North Far North,Black,,0.766208529
+North Far North,Latino/Latina,,0.793071568
+North Far North,Latino/Latina,Mexican,0.785672903
+North Far North,Latino/Latina,Central American,0.81300813
+North Far North,Latino/Latina,Cuban,1
+North Far North,Latino/Latina,Puerto Rican,0.502139807
+North Far North,Latino/Latina,South American,0.870445371
+North Far North,Latino/Latina,Other Hispanic,0.834071517
+North Far North,Female,,0.722599983
+North Far North,Male,,0.806061447
+North Far North,Very High Income,,0.89034754
+North Far North,Higher Income,,0.863870919
+North Far North,Middle Income,,0.81350553
+North Far North,Lower Income,,0.679741442
+North Far North,Very Low Income,,0.454267651
 Orange,All,,0.833031178
 Orange,Native American/Alaska Native,,0.81619072
 Orange,Asian,,0.808511078
@@ -171,31 +171,31 @@ Orange,Higher Income,,0.908120632
 Orange,Middle Income,,0.874346733
 Orange,Lower Income,,0.780712128
 Orange,Very Low Income,,0.646782756
-Greater Sacramento,All,,0.784186721
-Greater Sacramento,Native American/Alaska Native,,0.606485963
-Greater Sacramento,Asian,,0.802787125
-Greater Sacramento,Asian,Other Asian,0.852125704
-Greater Sacramento,Asian,South Asian,0.790468574
-Greater Sacramento,Asian,Southeast Asian,0.818613648
-Greater Sacramento,Native Hawaiian/Other Pacific Islander,,0.713392854
-Greater Sacramento,Some Other Race alone,,0.761303186
-Greater Sacramento,2 or more races,,0.749761581
-Greater Sacramento,White,,0.784162402
-Greater Sacramento,Black,,0.769401729
-Greater Sacramento,Latino/Latina,,0.790736496
-Greater Sacramento,Latino/Latina,Mexican,0.792456329
-Greater Sacramento,Latino/Latina,Central American,0.744908094
-Greater Sacramento,Latino/Latina,Cuban,0.66578424
-Greater Sacramento,Latino/Latina,Puerto Rican,0.782756627
-Greater Sacramento,Latino/Latina,South American,0.889378726
-Greater Sacramento,Latino/Latina,Other Hispanic,0.803786993
-Greater Sacramento,Female,,0.72312218
-Greater Sacramento,Male,,0.847317874
-Greater Sacramento,Very High Income,,0.869769454
-Greater Sacramento,Higher Income,,0.884626269
-Greater Sacramento,Middle Income,,0.82597506
-Greater Sacramento,Lower Income,,0.702022851
-Greater Sacramento,Very Low Income,,0.534837425
+Sacramento Tahoe,All,,0.784186721
+Sacramento Tahoe,Native American/Alaska Native,,0.606485963
+Sacramento Tahoe,Asian,,0.802787125
+Sacramento Tahoe,Asian,Other Asian,0.852125704
+Sacramento Tahoe,Asian,South Asian,0.790468574
+Sacramento Tahoe,Asian,Southeast Asian,0.818613648
+Sacramento Tahoe,Native Hawaiian/Other Pacific Islander,,0.713392854
+Sacramento Tahoe,Some Other Race alone,,0.761303186
+Sacramento Tahoe,2 or more races,,0.749761581
+Sacramento Tahoe,White,,0.784162402
+Sacramento Tahoe,Black,,0.769401729
+Sacramento Tahoe,Latino/Latina,,0.790736496
+Sacramento Tahoe,Latino/Latina,Mexican,0.792456329
+Sacramento Tahoe,Latino/Latina,Central American,0.744908094
+Sacramento Tahoe,Latino/Latina,Cuban,0.66578424
+Sacramento Tahoe,Latino/Latina,Puerto Rican,0.782756627
+Sacramento Tahoe,Latino/Latina,South American,0.889378726
+Sacramento Tahoe,Latino/Latina,Other Hispanic,0.803786993
+Sacramento Tahoe,Female,,0.72312218
+Sacramento Tahoe,Male,,0.847317874
+Sacramento Tahoe,Very High Income,,0.869769454
+Sacramento Tahoe,Higher Income,,0.884626269
+Sacramento Tahoe,Middle Income,,0.82597506
+Sacramento Tahoe,Lower Income,,0.702022851
+Sacramento Tahoe,Very Low Income,,0.534837425
 San Diego,All,,0.833725989
 San Diego,Native American/Alaska Native,,0.799869418
 San Diego,Asian,,0.832278728

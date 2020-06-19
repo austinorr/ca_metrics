@@ -9,11 +9,11 @@ var REGION_COLORS = (typeof REGION_COLORS == 'undefined') || (REGION_COLORS == n
     "bay-area": "#34778c", // hs
     "central-coast": "#c7a630",
     "central-sierra": "#c54241",
-    "greater-sacramento": "#6b7130", // to sacramento-tahoe
+    "sacramento-tahoe": "#6b7130", 
     "imperial": "#c7a630",
     "inland-empire": "#34778c",
     "los-angeles": "#6b7130", // ag
-    "northern-california": "#c7a630", // to north-far-north
+    "north-far-north": "#c7a630", 
     "northern-sacramento-valley": "#c66f2c",
     "orange": "#c66f2c", // csu
     "san-diego": "#c54241", // ccc
@@ -43,8 +43,18 @@ function chartBuilder(container, chart_mapping, chart_registry) {
 
                 if (has_no_chart) {
                     let chart = new chart_mapping[_class](divId);
-                    chart.init();
+                    
+                    try {
+                        chart.init().catch(console.error);
+                    } catch (error) {
+                        if (error instanceof InitializationError) {
+                            console.error(error)
+                        }
+                    }
+                    
                     chart_registry.push(chart);
+                    console.log(CHARTS)
+
                 }
             }
         })
@@ -168,3 +178,5 @@ export function mapDataToggle(id) {
         d3.select(elem).classed('_viz-map-selected', true)
     }
 }
+
+

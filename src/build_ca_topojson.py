@@ -4,7 +4,7 @@ import pandas
 import requests
 import topojson
 
-DATAPATH = Path(__file__).parent.parent / "data"
+DATAPATH = Path(__file__).resolve().parents[1] / "docs" / "data"
 CA_TOPO_URL = "https://raw.githubusercontent.com/scottpham/california-counties/master/caCountiesTopo.json"
 
 
@@ -41,12 +41,12 @@ def _join_regions(gdf):
 
 
 def _make_topology(
-    gdf, presimplify=False, prequantize=False, topoquantize=True, toposimplify=True, **kwargs
+    gdf, prequantize=True, topoquantize=True, toposimplify=True, **kwargs
 ):
 
     topo = topojson.Topology(
         gdf,
-        presimplify=presimplify,
+        presimplify=False, # presimplify is broken in this library on date 05/01/2020
         prequantize=prequantize,
         topoquantize=topoquantize,
         toposimplify=toposimplify,
@@ -62,7 +62,7 @@ def main(**kwargs):
 
 if __name__ == "__main__":
 
-    topo = main(toposimplify=0.005)
+    topo = main(toposimplify=1e-2, topoquantize=1e4)
 
     with open(DATAPATH / "ca-counties.json", "w") as f:
         f.write(topo.to_json())

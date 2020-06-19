@@ -20,7 +20,6 @@ class BubbleChart extends RegionStatsBarChart {
             that.labels = toLabels(data);
             that.label_map = toLabelMap(that.labels);
             that.data_tidy = that.toTidy(data, that.labels);
-            that.resize();
             that.update();
 
         });
@@ -29,6 +28,7 @@ class BubbleChart extends RegionStatsBarChart {
     overview() {
         this.state = 'overview';
         this.data = this.data_tidy.filter(d => (d.region == REGION) && (d.demographic == 'All'));
+        this.checkData(this.data)
         let data = this.data;
         let that = this;
 

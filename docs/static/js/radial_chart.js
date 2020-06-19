@@ -84,6 +84,7 @@ class RadialChart extends RegionStatsBarChart {
         this.state = 'overview';
         let that = this;
         this.data = this.data_tidy.filter(d => d.region == REGION && (d.demographic == 'All'));
+        this.checkData(this.data)
 
         this.innerData = d3.nest()
             .key(d => d.column)

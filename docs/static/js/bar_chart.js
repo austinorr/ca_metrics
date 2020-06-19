@@ -32,21 +32,31 @@ class RegionStatsBarChart extends BaseChart {
             that.labels = toLabels(data)
             that.label_map = toLabelMap(that.labels)
             that.data_tidy = that.toTidy(data, that.labels)
-            that.update();
+            try {
+                that.update();
+            } catch (error) {
+                console.error(error)
+            }
+
             // that.resize();
 
         });
     }
 
     update() {
-        super.update();
-        this.overview();
+        try {
+            super.update();
+            this.overview();
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     overview() {
         this.state = 'overview';
         this.touched = false;
         this.data = this.data_tidy.filter(d => (d.region == REGION) && (d.demographic == 'All'));
+        this.checkData(this.data)
         let data = this.data;
         let that = this;
 
@@ -97,7 +107,7 @@ class RegionStatsBarChart extends BaseChart {
         if (data.length > 1) {
             title_text_anchor = 'start';
             title_text_dy = "0em";
-            title_text_y = -margin.top/2;
+            title_text_y = -margin.top / 2;
             title_text_x = -title_center + Math.min((bar_height / 2 + margin.top), margin.left / 2) / 2 + 6;
             text_wrap_width = width;
             text_alignment_baseline = 'middle';
@@ -150,7 +160,7 @@ class RegionStatsBarChart extends BaseChart {
             svg_stretch = Math.max(icon_bbox.height, title_text_bbox.height);
             constraint = margin.top;
             margin.top = Math.max(constraint, svg_stretch);
-            title.selectAll('tspan').attr('y', -margin.top/2)
+            title.selectAll('tspan').attr('y', -margin.top / 2)
             icons.attr('y', -svg_stretch / 2)
 
         } else {
@@ -217,28 +227,28 @@ class RegionStatsBarChart extends BaseChart {
             .style("fill", d3.color(that.color))
             .merge(bar)
             .on('touchstart touchend click mouseover mousemove mouseout', function(d) {
-                
-                    if (d3.event.type == 'touchstart') {
-                        d3.event.preventDefault();
-                        d3.event.stopPropagation();
-                        that.selected_bar = d3.select(this).attr('data_label');
-                        return on_touch(d);
 
-                    } else if (d3.event.type == 'touchend') {
-                        d3.event.preventDefault();
-                        d3.event.stopPropagation();
+                if (d3.event.type == 'touchstart') {
+                    d3.event.preventDefault();
+                    d3.event.stopPropagation();
+                    that.selected_bar = d3.select(this).attr('data_label');
+                    return on_touch(d);
 
-                    } else if (d3.event.type == 'click') {
-                        hide_tooltip(d);
-                        that.selected_bar = d3.select(this).attr('data_label');
-                        return goto();
-                    } else if (d3.event.type == "mouseover") {
-                        return show_tooltip(d);
-                    } else if (d3.event.type == "mousemove") {
-                        return move_tooltip(d);
-                    } else if (d3.event.type == "mouseout") {
-                        return hide_tooltip(d);
-                    }
+                } else if (d3.event.type == 'touchend') {
+                    d3.event.preventDefault();
+                    d3.event.stopPropagation();
+
+                } else if (d3.event.type == 'click') {
+                    hide_tooltip(d);
+                    that.selected_bar = d3.select(this).attr('data_label');
+                    return goto();
+                } else if (d3.event.type == "mouseover") {
+                    return show_tooltip(d);
+                } else if (d3.event.type == "mousemove") {
+                    return move_tooltip(d);
+                } else if (d3.event.type == "mouseout") {
+                    return hide_tooltip(d);
+                }
             })
             // .on("mouseover", d => show_tooltip(d))
             // .on("mousemove", d => move_tooltip(d))
@@ -276,7 +286,7 @@ class RegionStatsBarChart extends BaseChart {
             .attr("fill", d => x(d.value) > render_outside_threshold ? "white" : "rgb(51, 51, 51)")
             .delay(delay);
 
-        this.svg.selectAll(".value").nodes().forEach(function (d) {
+        this.svg.selectAll(".value").nodes().forEach(function(d) {
             // TODO layout the white in the bar IFF it'll fit.
 
         })
@@ -434,25 +444,25 @@ class RegionStatsBarChart extends BaseChart {
             .attr('fill', d => z(d.ix))
             .merge(bar)
             .on('touchstart touchend click mouseover mousemove mouseout', function(d) {
-                
-                    if (d3.event.type == 'touchstart') {
-                        d3.event.preventDefault();
-                        d3.event.stopPropagation();
-                        // that.selected_bar = d3.select(this).attr('data_label');
-                        return on_touch(d);
 
-                    } else if (d3.event.type == 'touchend') {
-                        d3.event.preventDefault();
-                        d3.event.stopPropagation();
-                        return false;
+                if (d3.event.type == 'touchstart') {
+                    d3.event.preventDefault();
+                    d3.event.stopPropagation();
+                    // that.selected_bar = d3.select(this).attr('data_label');
+                    return on_touch(d);
 
-                    } else if (d3.event.type == "mouseover") {
-                        return show_tooltip(d);
-                    } else if (d3.event.type == "mousemove") {
-                        return move_tooltip(d);
-                    } else if (d3.event.type == "mouseout") {
-                        return hide_tooltip(d);
-                    }
+                } else if (d3.event.type == 'touchend') {
+                    d3.event.preventDefault();
+                    d3.event.stopPropagation();
+                    return false;
+
+                } else if (d3.event.type == "mouseover") {
+                    return show_tooltip(d);
+                } else if (d3.event.type == "mousemove") {
+                    return move_tooltip(d);
+                } else if (d3.event.type == "mouseout") {
+                    return hide_tooltip(d);
+                }
             })
             // .on("mouseover", d => show_tooltip(d))
             // .on("mousemove", d => move_tooltip(d))
@@ -502,7 +512,7 @@ class RegionStatsBarChart extends BaseChart {
                 .text("\u276E back")
                 .attr('dominant-baseline', 'hanging')
                 .attr("x", width + margin.right - 10)
-                .attr("y", 0- margin.top)
+                .attr("y", 0 - margin.top)
                 .on("click", goto)
         }
         backbutton
@@ -525,8 +535,8 @@ class RegionStatsBarChart extends BaseChart {
             .attr('fill', this.color)
             .attr("text-anchor", "start")
             .text(title_text)
-            .attr("x", 0 )
-            .attr("y", 0- margin.top);
+            .attr("x", 0)
+            .attr("y", 0 - margin.top);
 
         wrap(title.select('text.demoTitle'), width)
     }
@@ -581,15 +591,14 @@ class StackedBarChart extends RegionStatsBarChart {
             that.columns = columns;
 
             that.update()
-            that.resize()
+            // that.resize()
 
         });
     }
 
-    update() {
-        super.update();
-        this.overview();
-    }
+    // update() {
+    //     super.update();
+    // }
 
     cornerGetter(label, which) {
 
@@ -697,6 +706,8 @@ class StackedBarChart extends RegionStatsBarChart {
         let that = this;
         this.data = this.dataGrouped.filter(d => d.region == REGION);
 
+        this.checkData(this.data)
+
         this.margin = { top: 2, right: 2, bottom: 80, left: 2 };
         this.width = this.container_width - this.margin.left - this.margin.right;
         this.height = 300; //this.container_height - this.margin.top - this.margin.bottom;
@@ -798,7 +809,7 @@ class StackedBarChart extends RegionStatsBarChart {
                 .style('fill', (d, i) => (z(i)))
                 .attr("data_label", (d, i) => d.key)
                 .on('touchstart touchend click mouseover mousemove mouseout', function(d) {
-                
+
                     if (d3.event.type == 'touchstart') {
                         d3.event.preventDefault();
                         d3.event.stopPropagation();
@@ -821,7 +832,7 @@ class StackedBarChart extends RegionStatsBarChart {
                     } else if (d3.event.type == "mouseout") {
                         return hide_tooltip(d);
                     }
-            })
+                })
 
         } else {
             this.bars = this.svg.selectAll(".bar-g")

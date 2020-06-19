@@ -71,31 +71,31 @@ Central Sierra,Economic,Rich,0.857886,0.428943
 Central Sierra,Economic,Upper Income,0.8858981,0.44294905
 Central Sierra,Gender,Female,0.7444361,0.37221805
 Central Sierra,Gender,Male,0.7995716,0.3997858
-Greater Sacramento,All,,0.7841867,0.39209335
-Greater Sacramento,American Indian/Alaska Native,,0.606486,0.303243
-Greater Sacramento,Asian,,0.8027871,0.40139355
-Greater Sacramento,Asian,Other Asian,0.8521257,0.42606285
-Greater Sacramento,Asian,South Asian,0.7904686,0.3952343
-Greater Sacramento,Asian,Southeast Asian,0.8186136,0.4093068
-Greater Sacramento,Native Hawaiian and Other Pacific Islander alone,,0.7133929,0.35669645
-Greater Sacramento,Some Other Race alone,,0.7613032,0.3806516
-Greater Sacramento,Two or More Races,,0.7497616,0.3748808
-Greater Sacramento,White alone,,0.7841624,0.3920812
-Greater Sacramento,Black or African American alone,,0.7694017,0.38470085
-Greater Sacramento,Latinx,,0.7907365,0.39536825
-Greater Sacramento,Latinx,Central American,0.7449081,0.37245405
-Greater Sacramento,Latinx,Cuban,0.6657842,0.3328921
-Greater Sacramento,Latinx,Mexican,0.7924563,0.39622815
-Greater Sacramento,Latinx,Other Hispanic,0.803787,0.4018935
-Greater Sacramento,Latinx,Puerto Rican,0.7827566,0.3913783
-Greater Sacramento,Latinx,South American,0.8893787,0.44468935
-Greater Sacramento,Economic,Lower Income,0.7020229,0.35101145
-Greater Sacramento,Economic,Middle Income,0.8259751,0.41298755
-Greater Sacramento,Economic,Poor,0.5348374,0.2674187
-Greater Sacramento,Economic,Rich,0.8697695,0.43488475
-Greater Sacramento,Economic,Upper Income,0.8846263,0.44231315
-Greater Sacramento,Gender,Female,0.7231222,0.3615611
-Greater Sacramento,Gender,Male,0.8473179,0.42365895
+Sacramento Tahoe,All,,0.7841867,0.39209335
+Sacramento Tahoe,American Indian/Alaska Native,,0.606486,0.303243
+Sacramento Tahoe,Asian,,0.8027871,0.40139355
+Sacramento Tahoe,Asian,Other Asian,0.8521257,0.42606285
+Sacramento Tahoe,Asian,South Asian,0.7904686,0.3952343
+Sacramento Tahoe,Asian,Southeast Asian,0.8186136,0.4093068
+Sacramento Tahoe,Native Hawaiian and Other Pacific Islander alone,,0.7133929,0.35669645
+Sacramento Tahoe,Some Other Race alone,,0.7613032,0.3806516
+Sacramento Tahoe,Two or More Races,,0.7497616,0.3748808
+Sacramento Tahoe,White alone,,0.7841624,0.3920812
+Sacramento Tahoe,Black or African American alone,,0.7694017,0.38470085
+Sacramento Tahoe,Latinx,,0.7907365,0.39536825
+Sacramento Tahoe,Latinx,Central American,0.7449081,0.37245405
+Sacramento Tahoe,Latinx,Cuban,0.6657842,0.3328921
+Sacramento Tahoe,Latinx,Mexican,0.7924563,0.39622815
+Sacramento Tahoe,Latinx,Other Hispanic,0.803787,0.4018935
+Sacramento Tahoe,Latinx,Puerto Rican,0.7827566,0.3913783
+Sacramento Tahoe,Latinx,South American,0.8893787,0.44468935
+Sacramento Tahoe,Economic,Lower Income,0.7020229,0.35101145
+Sacramento Tahoe,Economic,Middle Income,0.8259751,0.41298755
+Sacramento Tahoe,Economic,Poor,0.5348374,0.2674187
+Sacramento Tahoe,Economic,Rich,0.8697695,0.43488475
+Sacramento Tahoe,Economic,Upper Income,0.8846263,0.44231315
+Sacramento Tahoe,Gender,Female,0.7231222,0.3615611
+Sacramento Tahoe,Gender,Male,0.8473179,0.42365895
 Imperial,All,,0.7711793,0.38558965
 Imperial,American Indian/Alaska Native,,0.9031658,0.4515829
 Imperial,Asian,,0.7244275,0.36221375
@@ -170,31 +170,31 @@ Los Angeles,Economic,Rich,0.9005888,0.4502944
 Los Angeles,Economic,Upper Income,0.9150641,0.45753205
 Los Angeles,Gender,Female,0.7497553,0.37487765
 Los Angeles,Gender,Male,0.8805512,0.4402756
-Northern California,All,,0.7648064,0.3824032
-Northern California,American Indian/Alaska Native,,0.7081794,0.3540897
-Northern California,Asian,,0.770714,0.385357
-Northern California,Asian,Other Asian,1,0.5
-Northern California,Asian,South Asian,0.8060747,0.40303735
-Northern California,Asian,Southeast Asian,0.723066,0.361533
-Northern California,Native Hawaiian and Other Pacific Islander alone,,0.7439364,0.3719682
-Northern California,Some Other Race alone,,0.6892655,0.34463275
-Northern California,Two or More Races,,0.810427,0.4052135
-Northern California,White alone,,0.7600021,0.38000105
-Northern California,Black or African American alone,,0.7662085,0.38310425
-Northern California,Latinx,,0.7930716,0.3965358
-Northern California,Latinx,Central American,0.8130081,0.40650405
-Northern California,Latinx,Cuban,1,0.5
-Northern California,Latinx,Mexican,0.7856729,0.39283645
-Northern California,Latinx,Other Hispanic,0.8340715,0.41703575
-Northern California,Latinx,Puerto Rican,0.5021398,0.2510699
-Northern California,Latinx,South American,0.8704454,0.4352227
-Northern California,Economic,Lower Income,0.6797414,0.3398707
-Northern California,Economic,Middle Income,0.8135055,0.40675275
-Northern California,Economic,Poor,0.4542677,0.22713385
-Northern California,Economic,Rich,0.8903475,0.44517375
-Northern California,Economic,Upper Income,0.8638709,0.43193545
-Northern California,Gender,Female,0.7226,0.3613
-Northern California,Gender,Male,0.8060614,0.4030307
+North Far North,All,,0.7648064,0.3824032
+North Far North,American Indian/Alaska Native,,0.7081794,0.3540897
+North Far North,Asian,,0.770714,0.385357
+North Far North,Asian,Other Asian,1,0.5
+North Far North,Asian,South Asian,0.8060747,0.40303735
+North Far North,Asian,Southeast Asian,0.723066,0.361533
+North Far North,Native Hawaiian and Other Pacific Islander alone,,0.7439364,0.3719682
+North Far North,Some Other Race alone,,0.6892655,0.34463275
+North Far North,Two or More Races,,0.810427,0.4052135
+North Far North,White alone,,0.7600021,0.38000105
+North Far North,Black or African American alone,,0.7662085,0.38310425
+North Far North,Latinx,,0.7930716,0.3965358
+North Far North,Latinx,Central American,0.8130081,0.40650405
+North Far North,Latinx,Cuban,1,0.5
+North Far North,Latinx,Mexican,0.7856729,0.39283645
+North Far North,Latinx,Other Hispanic,0.8340715,0.41703575
+North Far North,Latinx,Puerto Rican,0.5021398,0.2510699
+North Far North,Latinx,South American,0.8704454,0.4352227
+North Far North,Economic,Lower Income,0.6797414,0.3398707
+North Far North,Economic,Middle Income,0.8135055,0.40675275
+North Far North,Economic,Poor,0.4542677,0.22713385
+North Far North,Economic,Rich,0.8903475,0.44517375
+North Far North,Economic,Upper Income,0.8638709,0.43193545
+North Far North,Gender,Female,0.7226,0.3613
+North Far North,Gender,Male,0.8060614,0.4030307
 Northern Sacramento Valley,All,,0.7524677,0.37623385
 Northern Sacramento Valley,American Indian/Alaska Native,,0.6105578,0.3052789
 Northern Sacramento Valley,Asian,,0.8891699,0.44458495
