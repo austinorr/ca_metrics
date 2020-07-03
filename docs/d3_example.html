@@ -5,18 +5,7 @@
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="https://d3js.org/topojson.v2.min.js"></script>
   <script src="./build/bundle.js"></script>
-
-  <!-- <script type="module" src="./static/build.js"></script> -->
-
   <style>
-    /*div {
-  border: 1px solid red;
-}
-
-svg {
-  border: 1px solid green;
-}*/
-
   .link {
     fill: #000;
     fill-opacity: 0.5;
@@ -144,8 +133,13 @@ svg {
     font-size: 12px;
   }
 
+  [class^="chart-wrapper"] .has-breakdown:hover {
+    fill-opacity: 0.5;
+  }
+
   </style>
 </head>
+
 <body>
   <div class='_navbar'></div>
   <div class="_viz_container">
@@ -161,10 +155,13 @@ svg {
       <div id="uid-button-1" class="_viz_map_data_toggle" _viz_units="percent" _viz_source="./data/employment.csv" onclick="dataviz.mapDataToggle(this.id)">Toggle Employment Choropleth</div>
     </div>
     <div class="_viz_bar_group">
+      <div id="chart45135" class="chart-wrapper-bar" _viz_source="./data/single_family_jobs_2.csv" _viz_units="count" _viz_color="#34778c" _viz_title="Number\u0020of\u0020jobs\u0020openings\u0020that\u0020provide\u0020a\u0020living\u0020wage"></div>
       <div id="_viz_bar_container1" class="chart-wrapper-bar" _viz_units="percent" _viz_source="./data/employment2col.csv" _viz_color="steelblue" , _viz_title="Job Openings but this title test is fing long so hows this?">
         <img class="bar-icon hidden" src="https://dev.californiacompetes.org/assets/general-images/roi-employment-icon.svg" _viz_icon="icon-1">
       </div>
-      <div id="_viz_bar_container2" class="chart-wrapper-bar" _viz_units="percent" _viz_source="./data/employment.csv" _viz_color="#ffbb78" _viz_title="Bar\u0020Chart\u0020Example even longer.">
+      <div id="_viz_bar_container2" class="chart-wrapper-bar" _viz_units="percent" _viz_source="./data/employment2col.csv" _viz_color="steelblue">
+      </div>
+      <div id="_viz_bar_container3" class="chart-wrapper-bar" _viz_units="percent" _viz_source="./data/employment.csv" _viz_color="#ffbb78" _viz_title="Bar\u0020Chart\u0020Example even longer.">
         <img class="bar-icon hidden" src="https://dev.californiacompetes.org/assets/general-images/roi-employment-icon.svg" _viz_icon="icon-1">
       </div>
       <div id="_viz_edubar_container1" class="chart-wrapper-edu-stacked-bar" _viz_units="count" _viz_source="./data/edu.csv"></div>
@@ -179,3 +176,14 @@ svg {
     </div>
   </div>
 </body>
+<script>
+  var remap = {
+    "north-far-north": "North-Far North",
+    "inland-empire": "Inland Empire Yo!",
+  }
+
+  for (key in remap) dataviz.REGION_NAME_MAPPING[key] = remap[key];
+
+  dataviz.REGION_COLORS["north-far-north"] = "#eee";
+
+</script>

@@ -149,7 +149,7 @@ function insertLinebreaks(d) {
         // .attr("text-anchor", "middle")
         // .attr("alignment-baseline", "middle");
         if (i > 0)
-            tspan.attr('dy', dy + 1.1 * i + 'em');
+            tspan.attr('dy', "1.1" + 'em');
     }
 }
 
@@ -198,7 +198,7 @@ function insertLinebreaks(d) {
 //     });
 // }
 
-function wrap(text, width, direction = 1) { // This is so broken, it creates empty tspans if the single word is > than width
+function wrap(text, width, direction = 1) { 
     text.each(function() {
         var text = d3.select(this),
             words = text.text().split(/\s+/).reverse(),
@@ -218,12 +218,12 @@ function wrap(text, width, direction = 1) { // This is so broken, it creates emp
 
         if (words.length == 1) {
             tspan = text.text(null).append("tspan");
-            tspan.text(words[0]);
-            // .attr("text-anchor", anchor)
-            // .attr("dominant-baseline", baseline)
-            // .attr("x", x)
-            // .attr("y", y)
-            // .attr("dy", ++lineNumber * lineHeight * direction + dy + "em").text(word);
+            tspan.text(words[0])
+            .attr("text-anchor", anchor)
+            .attr("dominant-baseline", baseline)
+            .attr("x", x)
+            .attr("y", y)
+            .attr("dy", dy + "em");
 
         } else {
             tspan = text.text(null).append("tspan")

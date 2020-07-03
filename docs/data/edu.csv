@@ -1,21 +1,21 @@
 ﻿region,group,subgroup,HS Graduates;High School Graduates;c1,A-G;Number of Students enrolled in A-G;c2,CCC;California Community Colleges;c3,CSU;California State University Enrollment;c3,UC;University of California;c3,Out of State;Out of State;c3
-Bay Area,African American,,3599,1217,1562,358,138,328
+Bay Area,African American,,3599,1217,1562,358,138,
 Bay Area,American Indian or Alaska Native,,0,,,,,
-Bay Area,Asian,,12623,10010,3256,2067,3519,1583
-Bay Area,Filipino,,3574,2061,1650,681,275,101
-Bay Area,Hispanic or Latino,,22500,8879,9907,2810,1002,698
-Bay Area,Race Unknown,,186,145,45,29,42,29
-Bay Area,Pacific Islander,,109,42,52,9,3,5
-Bay Area,Two or More Races,,2080,1346,707,276,230,325
-Bay Area,White,,19555,12374,6262,2640,1846,3765
-Bay Area,Male,,33612,16873,13015,4009,3272,3221
-Bay Area,Female,,34004,20684,11900,5240,4058,3838
-Bay Area,English Learners,,7407,1972,1900,257,71,49
-Bay Area,Students with Disabilities,,5680,982,2410,198,49,224
-Bay Area,Socioeconomically Disadvantaged,,32501,13379,10932,3281,1816,675
-Bay Area,Migrant,,291,88,62,14,4,2
-Bay Area,Foster,,71,0,12,0,0,0
-Bay Area,Homeless,,1493,422,178,45,23,17
+Bay Area,Asian,,12623,10010,3256,2067,3519,
+Bay Area,Filipino,,3574,2061,1650,681,275,
+Bay Area,Hispanic or Latino,,22500,8879,9907,2810,1002,
+Bay Area,Race Unknown,,186,145,45,29,42,
+Bay Area,Pacific Islander,,109,42,52,9,3,
+Bay Area,Two or More Races,,2080,1346,707,276,230,
+Bay Area,White,,19555,12374,6262,2640,1846,
+Bay Area,Male,,33612,16873,13015,4009,3272,
+Bay Area,Female,,34004,20684,11900,5240,4058,
+Bay Area,English Learners,,7407,1972,1900,257,71,
+Bay Area,Students with Disabilities,,5680,982,2410,198,49,
+Bay Area,Socioeconomically Disadvantaged,,32501,13379,10932,3281,1816,
+Bay Area,Migrant,,291,88,62,14,4,
+Bay Area,Foster,,71,0,12,0,0,
+Bay Area,Homeless,,1493,422,178,45,23,
 Bay Area,All,,67775,37591,25037,9262,7337,7066
 Bay Area,International,,,,,,,
 Central Sierra,African American,,28,8,16,5,0,4

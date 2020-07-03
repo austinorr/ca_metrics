@@ -5,12 +5,14 @@ class BaseChart {
         this.container = d3.select("#" + container_id);
         this.url = this.container.attr("_viz_source");
         this.color = this.container.attr("_viz_color");
+        this.limit_to = parseInt(this.container.attr("_viz_limit_to"))
+        this.limit_by = this.container.attr("_viz_limit_by")
         this.title = JSON.parse(`"${this.container.attr("_viz_title")}"`);
         this.chart_uid = container_id + "-" + this.url;
         this.units = UNITS.filter(d => d == this.container.attr('_viz_units'));
         this.unitFormatter = getAxisTickLabelFormatter(this.units);
-        this.labelFormatter = getLabelFormatter(this.units)
-        this.touched = false;
+        this.labelFormatter = getLabelFormatter(this.units);
+        this.hidden = false;
 
         this.svg = this.container.append("svg")
             .classed("_viz-svg-container", true)
@@ -25,7 +27,6 @@ class BaseChart {
             .style("position", "absolute")
             .style("pointer-events", "none")
             .style("opacity", 0)
-        // .style('height', 0)
 
         this.tooltip.append('div')
             .classed('roi-tooltip-header', true);
@@ -86,7 +87,7 @@ class BaseChart {
                     obj['group'] = d.group;
                     obj['subgroup'] = d.subgroup;
                     obj['column'] = that.label_map[label].column;
-                    if (!d.subgroup || d.group == d.subgroup) {
+                    if (!d.subgroup || d.group == d.subgroup) { // TODO this doesn't work, everything is .55 if subgroup is null
                         obj['width'] = 1; // x times normal
                         obj['demographic'] = d.group || "All";
                     } else {
@@ -131,11 +132,29 @@ class BaseChart {
         this.log('no method for loading data')
     }
 
+    checkIfBreakdown(d) {
+        let data = this.data_tidy.filter(
+            e => e.region == REGION && e.label == d.label &&
+            e.demographic != 'All' && e.value != null
+        );
+
+        return data.length > 0;
+    }
+
+
     checkData(data) {
+
         if (data.length == 0) {
-            throw new InitializationError(`No data for region: ${REGION} on chart: ${this.chart_uid}`)
+            this.container.style('opacity', 0)
+            this.hidden = true;
+            throw new InitializationError(
+                `No Data for\n\tregion: ${REGION}\n\tdata source: ${this.url}\n\tchart: ${this.container_id}`
+            )
+
             return false;
         } else {
+            this.container.style('opacity', 1)
+            this.hidden = false;
             return true;
         }
     }
@@ -154,7 +173,9 @@ class BaseChart {
     }
 
     tooltip_show(d) {
-        // d3.selectAll('.roi-tooltip').style('opacity', 0);
+        if (this.hidden) {
+            return false;
+        }
         let that = this;
         let header = that.label_map[d.label].label_long || d.label
         let current_bar = d.label
@@ -165,7 +186,7 @@ class BaseChart {
 
         }
         let mostly_filtered_data = that.data_tidy.filter(
-            d => (d.demographic == current_demo) && (d.label == current_bar)
+            d => (d.demographic == current_demo && d.label == current_bar && d.value != null)
         )
 
         if (!(d.value)) {
@@ -192,34 +213,30 @@ class BaseChart {
 
         let table_html = `
                 <tr>
-                    <td>${max_d.region}<span class="roi-tooltip-small">&nbsp(most in state)</span></td>
-                    <td>${that.labelFormatter(max_d.value)}</td>
+                    <td>${REGION_NAME_MAPPING[regionTag(max_d.region)] || max_d.region}<span class="roi-tooltip-small">&nbsp(most in state)</span></td>
+                    <td>${REGION_NAME_MAPPING[regionTag(max_d.region)] ? that.labelFormatter(max_d.value) : 'No Data'}</td>
                 </tr>
                 <tr>
                     <td>State Average</td>
-                    <td>${that.labelFormatter(statewide_d.value)}</td>
+                    <td>${statewide_d ? that.labelFormatter(statewide_d.value) : 'No Data'}</td>
                 </tr>
                 <tr class="roi-tooltip-active">
-                    <td>${d.region}</td>
-                    <td>${that.labelFormatter(d.value)}</td>
+                    <td>${REGION_NAME_MAPPING[regionTag(d.region)] || d.region}</td>
+                    <td>${REGION_NAME_MAPPING[regionTag(d.region)] ? that.labelFormatter(d.value) : 'No Data'}</td>
                 </tr>
                 <tr>
-                    <td>${min_d.region}<span class="roi-tooltip-small">&nbsp(least in state)</span></td>
-                    <td>${that.labelFormatter(min_d.value)}</td>
-                </tr>
-                
-                `
-
-        if (this.state == "overview") {
-            table_html += `
-                <tr>
-                    <td><h5 class="breakdown-note">Click the Chart for Demographic Breakdown</h5></td>
+                    <td>${REGION_NAME_MAPPING[regionTag(min_d.region)] || min_d.region}<span class="roi-tooltip-small">&nbsp(least in state)</span></td>
+                    <td>${REGION_NAME_MAPPING[regionTag(min_d.region)] ? that.labelFormatter(min_d.value) : 'No Data'}</td>
                 </tr>
                 `
-        }
-
         this.tooltip.select('.roi-tooltip-content table')
             .html(table_html)
+
+        this.tooltip.select('.roi-tooltip-footer .breakdown-note').remove()
+        if (this.state == "overview" & d.hasBreakdown) {
+            this.tooltip.select('.roi-tooltip-footer')
+                .html(`<h5 class="breakdown-note">Click the Chart for Demographic Breakdown</h5>`)
+        }
     }
 
     tooltip_move(d) {
@@ -246,6 +263,7 @@ class BaseChart {
     tooltip_hide(d) {
         this.tooltip.interrupt().transition()
             .style('opacity', 0)
+            .style("pointer-events", 'none');
         // .on("end", function() {
         //     d3.select(this).style('height', 0);
         // })
@@ -254,7 +272,8 @@ class BaseChart {
     clear_roi_tooltips() {
         d3.selectAll('.roi-tooltip')
             // .style('height', 0)
-            .style('opacity', 0);
+            .style('opacity', 0)
+            .style("pointer-events", 'none');
     }
 
     on_touch(d) {
@@ -272,7 +291,7 @@ class BaseChart {
                 <table>
                     <tr>
                         <td>${header_html}</td>
-                        <td class="hide-button" align="right" valign="top">(hide)</td>
+                        <td class="hide-button" align="right" valign="top"></td>
                     </tr>
                 </table>
                 `)
@@ -283,18 +302,11 @@ class BaseChart {
                 that.clear_roi_tooltips();
             })
 
+        this.tooltip.select('.roi-tooltip-footer .breakdown-note').remove()
 
-        this.tooltip.select('.roi-tooltip-content .breakdown-note').remove()
-
-        if (this.state == 'overview') {
-            let table_html = this.tooltip.select('.roi-tooltip-content table').node().innerHTML
-            this.tooltip.select('.roi-tooltip-content table tbody')
-                .html(`
-                    ${table_html}
-                    <tr>
-                        <td><h5 class="breakdown-button">Click Here for Demographic Breakdown</h5></td>
-                    </tr>
-                    `)
+        if (this.state == 'overview' & d.hasBreakdown) {
+            this.tooltip.select('.roi-tooltip-footer')
+                .html(`<h5 class="breakdown-button">Click Here for Demographic Breakdown</h5>`)
 
             this.tooltip.select(".breakdown-button")
                 .style("pointer-events", 'all')
@@ -302,6 +314,9 @@ class BaseChart {
                     that.clear_roi_tooltips();
                     return goto();
                 })
+        } else {
+            this.tooltip.select('.roi-tooltip-footer .breakdown-button').remove()
+
         }
         return false;
     }

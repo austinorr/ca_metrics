@@ -7,17 +7,8 @@ class RegionStatsBarChart extends BaseChart {
     }
 
     resize() {
-        super.resize()
-        switch (this.state) {
-            case "overview":
-                this.log("resize overview")
-                this.overview();
-                break;
-            case "breakdown":
-                this.log("resize breakdown")
-                this.breakdown();
-                break;
-        }
+        super.resize();
+        this.update();
     }
 
     loadData() {
@@ -26,26 +17,34 @@ class RegionStatsBarChart extends BaseChart {
 
         d3.csv(this.url, function(error, data) {
             if (error) throw error;
-
             that.raw_data = data;
-
             that.labels = toLabels(data)
             that.label_map = toLabelMap(that.labels)
             that.data_tidy = that.toTidy(data, that.labels)
-            try {
-                that.update();
-            } catch (error) {
-                console.error(error)
-            }
 
-            // that.resize();
+            that.draw_overview();
+
 
         });
     }
 
     update() {
+        super.update()
+        switch (this.state) {
+            case "overview":
+                this.log("resize overview")
+                this.draw_overview();
+                break;
+            case "breakdown":
+                this.log("resize breakdown")
+                this.breakdown();
+                break;
+        }
+
+    }
+
+    draw_overview() {
         try {
-            super.update();
             this.overview();
         } catch (error) {
             console.error(error)
@@ -54,26 +53,36 @@ class RegionStatsBarChart extends BaseChart {
 
     overview() {
         this.state = 'overview';
-        this.touched = false;
-        this.data = this.data_tidy.filter(d => (d.region == REGION) && (d.demographic == 'All'));
-        this.checkData(this.data)
-        let data = this.data;
         let that = this;
+        this.data = this.data_tidy
+            .filter(d => (d.region == REGION && d.demographic == 'All'));
+        
+        this.checkData(this.data)
+        this.data
+            .forEach(
+                function (d) {
+                    d.hasBreakdown = that.checkIfBreakdown(d);
+                }
+            );
+
+        let data = this.data;
 
         if (this.labels.length == 1 && (this.title == "null" || this.title === null)) {
             this.title = this.label_map[this.labels[0]].label_short;
+        } else if (this.title == "null" || this.title === null) {
+            this.title = null;
         }
 
         let margin = {
             top: data.length > 1 ? 30 : 30,
-            right: 2,
+            right: 100,
             bottom: 5,
             left: 130
         };
         let width = Math.max(0, this.container_width - margin.left - margin.right);
         let bar_height = 50;
         let height = Math.max(
-            50, this.labels.length == 1 ? bar_height : this.labels.length * bar_height * .66
+            bar_height, this.labels.length == 1 ? bar_height : this.labels.length * bar_height * .66
         )
 
         let icon_group = this.svg.selectAll(".icon-g")
@@ -98,7 +107,7 @@ class RegionStatsBarChart extends BaseChart {
         let title_center = margin.left / 2;
         let title_text_anchor = 'middle';
         let title_text_dy = "1em";
-        let title_text_y = height / 2; //y(data[0].label) + y.bandwidth() / 2; // TODO this is jacked up.
+        let title_text_y = height / 2; 
         let title_text_x = -title_center;
         let text_wrap_width = margin.left * 0.95;
         let text_alignment_baseline = 'bottom';
@@ -133,13 +142,13 @@ class RegionStatsBarChart extends BaseChart {
         let svg_stretch = 0;
         let constraint = 0;
 
-        let icon_width = Math.min((bar_height / 2 + margin.top), margin.left / 2),
+        let icon_width = this.icon_urls.length > 0 ? Math.min((bar_height / 2 + margin.top), margin.left / 2) : 1,
             icon_height = icon_width,
             icon_vert_translate = -icon_height,
             icon_y = height / 2;
 
         if (data.length > 1) {
-            icon_width = Math.min((bar_height / 2 + margin.top), margin.left / 2);
+            // icon_width = Math.min((bar_height / 2 + margin.top), margin.left / 2);
             icon_height = icon_width;
             icon_vert_translate = -icon_height / 2;
             icon_y = title_text_bbox.y + title_text_bbox.height / 2;
@@ -232,6 +241,7 @@ class RegionStatsBarChart extends BaseChart {
                     d3.event.preventDefault();
                     d3.event.stopPropagation();
                     that.selected_bar = d3.select(this).attr('data_label');
+                    that.breakdownTitleColor = d3.select(this).attr('fill');
                     return on_touch(d);
 
                 } else if (d3.event.type == 'touchend') {
@@ -241,6 +251,7 @@ class RegionStatsBarChart extends BaseChart {
                 } else if (d3.event.type == 'click') {
                     hide_tooltip(d);
                     that.selected_bar = d3.select(this).attr('data_label');
+                    that.breakdownTitleColor = d3.select(this).attr('fill');
                     return goto();
                 } else if (d3.event.type == "mouseover") {
                     return show_tooltip(d);
@@ -250,21 +261,19 @@ class RegionStatsBarChart extends BaseChart {
                     return hide_tooltip(d);
                 }
             })
-            // .on("mouseover", d => show_tooltip(d))
-            // .on("mousemove", d => move_tooltip(d))
-            // .on("mouseout", d => hide_tooltip(d))
+
             .interrupt()
             .transition(t)
             .ease(d3.easeExp)
             .attr("width", d => Math.max(0, x(d.value)))
             .delay(delay);
+        
+        bars.selectAll('.bar').classed('has-breakdown', d => d.hasBreakdown)
 
         let value_labels = bars.selectAll(".value")
             .data(data);
 
         value_labels.exit().remove();
-
-        let render_outside_threshold = 200;
 
         value_labels.enter().append("text")
             .attr("class", "value")
@@ -274,22 +283,17 @@ class RegionStatsBarChart extends BaseChart {
             .attr("opacity", 0)
             .attr("y", d => y(d.label) + y.bandwidth() / 2)
             .attr("dy", "0.35em")
-            .attr("text-anchor", d => x(d.value) > render_outside_threshold ? "end" : "start")
+            .attr("text-anchor", "start")
             .attr("font-size", Math.min(18, y.bandwidth() * 0.95))
             .merge(value_labels)
             .interrupt()
             .transition(t)
             .attr("opacity", 1)
             .text(d => this.labelFormatter(d.value))
-            .attr("text-anchor", d => x(d.value) > render_outside_threshold ? "end" : "start")
-            .attr("x", d => x(d.value) > render_outside_threshold ? x(d.value) - 7 : x(d.value) + 7)
-            .attr("fill", d => x(d.value) > render_outside_threshold ? "white" : "rgb(51, 51, 51)")
+            .attr("text-anchor", "start")
+            .attr("x", d => Math.max(0, x(d.value)) + 7)
+            .attr("fill", d => "rgb(51, 51, 51)")
             .delay(delay);
-
-        this.svg.selectAll(".value").nodes().forEach(function(d) {
-            // TODO layout the white in the bar IFF it'll fit.
-
-        })
 
         if (data.length > 1) {
             let titles = bars.selectAll(".titles")
@@ -313,27 +317,27 @@ class RegionStatsBarChart extends BaseChart {
     }
 
     breakdown() {
-        this.state = "breakdown";
         let selected_bar = this.selected_bar,
+            that=this,
             data = this.data_tidy.filter(d => d.region == REGION && d.label == selected_bar && d.demographic != 'All' && d.value != null),
             margin = { top: 30, right: 100, bottom: 10, left: 20 },
             width = this.container_width - margin.left - margin.right,
-            height = 25 * data.length - margin.top - margin.bottom,
-            bar_height = (height / data.length);
+            height = Math.max(25, 25 * data.length);
 
         var show_tooltip = this.tooltip_show.bind(this)
         var move_tooltip = this.tooltip_move.bind(this)
         var hide_tooltip = this.tooltip_hide.bind(this)
         var on_touch = this.on_touch.bind(this)
 
-
         if (!data.length) {
             console.warn(`No demographic breakdown data provided for selection: ${this.selected_bar}`);
             return
+        } else {
+            this.state = "breakdown";
         }
 
         var padding = 0.3,
-            outerPadding = 0.3;
+            outerPadding = 0.05;
 
         function alpha(values, value) {
             var n = values.length,
@@ -398,7 +402,7 @@ class RegionStatsBarChart extends BaseChart {
         demo_labels.enter().append("text")
             .classed("demo_labels", true)
             .classed('breakdown', true)
-            .attr('fill', d => z(d.ix % 10))
+            .attr('fill', d => z(d.ix))
             .attr("y", d => y(d.demographic))
             .attr("dy", "0.35em") //vertical align middle
             .attr("text-anchor", "end")
@@ -464,9 +468,6 @@ class RegionStatsBarChart extends BaseChart {
                     return hide_tooltip(d);
                 }
             })
-            // .on("mouseover", d => show_tooltip(d))
-            // .on("mousemove", d => move_tooltip(d))
-            // .on("mouseout", d => hide_tooltip(d))
             .interrupt()
             .transition(t)
             .ease(d3.easeExp)
@@ -502,7 +503,7 @@ class RegionStatsBarChart extends BaseChart {
         let goto = this.overview.bind(this)
         let backbutton = this.svg.selectAll('.backbutton');
         if (backbutton.empty()) {
-            backbutton = this.svg.append('g');
+            backbutton = this.svg.append('g').classed('breakdown', true);
             backbutton.exit().remove();
             backbutton.append('text')
                 .classed('backbutton', true)
@@ -522,9 +523,8 @@ class RegionStatsBarChart extends BaseChart {
             .delay(delay);
 
 
-        this.svg.selectAll('.demoTitle').remove();
-        let title = this.svg.append('g')
-        // let title_text = this.label_map[selected_bar].label_long || this.label_map[selected_bar].label_short;
+        this.svg.selectAll('.demoTitle-group').remove();
+        let title = this.svg.append('g').classed('breakdown', true).classed('demoTitle-group', true);
         let title_text = this.label_map[selected_bar].label_short;
 
         title.exit().remove();
@@ -532,7 +532,7 @@ class RegionStatsBarChart extends BaseChart {
             .classed('breakdown', true)
             .classed('demoTitle', true)
             .attr('dominant-baseline', 'hanging')
-            .attr('fill', this.color)
+            .attr('fill', that.breakdownTitleColor || that.color)
             .attr("text-anchor", "start")
             .text(title_text)
             .attr("x", 0)
@@ -590,7 +590,7 @@ class StackedBarChart extends RegionStatsBarChart {
             that.maxGroupedValue = maxGroupedValue;
             that.columns = columns;
 
-            that.update()
+            that.draw_overview()
             // that.resize()
 
         });
@@ -625,14 +625,25 @@ class StackedBarChart extends RegionStatsBarChart {
 
     drawLegend() {
         let that = this;
-        this.legend = this.svg.selectAll('.legend').remove()
-        let n = this.columns.length
+        let legend_entries = {}
+        this.layers
+            .forEach(function(d) {
+                if (d.column in legend_entries) {
+                    legend_entries[d.column].push(d.label)
+                } else {
+                    legend_entries[d.column] = [d.label]
+                }
+            })
+
+        for (let entry in legend_entries) {
+            legend_entries[entry].reverse()
+        }
+
         let size = 11;
         let padding = 6;
-        let text_width = this.width / n;
-        let itemWidth = size + padding + text_width + 5;
         let itemHeight = size + padding;
 
+        this.svg.selectAll('.legend').remove()
         this.legend = this.svg.selectAll('.legend');
 
         if (this.legend.empty()) {
@@ -647,37 +658,35 @@ class StackedBarChart extends RegionStatsBarChart {
             this.legend = this.svg
                 .select(".legend")
         }
-        let rev_labels = that.labels.slice().reverse();
 
         var legend_items = this.legend.selectAll('g')
-            .data(that.labels)
+            .data(that.layers)
             .enter()
             .append("g")
 
         legend_items.exit().remove();
 
         var rects = legend_items.append('rect');
-        let yoff_cache = {};
-        for (let col of this.columns) {
-            yoff_cache[col] = 0;
-        }
+
+        this.legend_height_required = -1; 
+
         rects.merge(rects)
             .classed('legend-patch', true)
             .attr("width", size)
             .attr("height", size)
             .attr("transform", function(d, i) {
-                let xoff = that.x(that.columns[i % n]);
-                let yoff = ((Math.floor(i / n) * itemHeight) + that.height + (2 * padding + size));
+                let xoff = that.x(d.column);
+                let yoff = (
+                    (legend_entries[d.column].indexOf(d.label) * 
+                        itemHeight) + that.height + (2 * padding + size)
+                    );
+                if (yoff > that.legend_height_required) {
+                    that.legend_height_required = yoff;
+                }
                 return "translate(" + xoff + "," + yoff + ")";
             })
-            // .attr("transform", function(d, i) {
-            //     let col = that.label_map[d].column;
-            //     let xoff = that.x(col);
-            //     let yoff = (yoff_cache[col]>0?yoff_cache[col]:0 ) * itemHeight + that.height + (2 * padding + size);
-            //     yoff_cache[col] +=1;
-            //     return "translate(" + xoff + "," + yoff + ")";
-            // })
             .attr("fill", function(d, i) { return that.z(i); });
+        that.legend_height_required += padding
 
         var text = legend_items.append('text');
         text.merge(text)
@@ -686,18 +695,14 @@ class StackedBarChart extends RegionStatsBarChart {
             .attr("y", size / 2)
             .attr('dy', '0.35em')
             .attr("transform", function(d, i) {
-                let xoff = that.x(that.columns[i % n]);
-                let yoff = ((Math.floor(i / n) * itemHeight) + that.height + (2 * padding + size));
+                let xoff = that.x(d.column);
+                let yoff = (
+                    (legend_entries[d.column].indexOf(d.label) * 
+                        itemHeight) + that.height + (2 * padding + size)
+                    );
                 return "translate(" + xoff + "," + yoff + ")";
             })
-            // .attr("transform", function(d, i) {
-            //     let col = that.label_map[d].column;
-            //     let xoff = that.x(col);
-            //     let yoff = (yoff_cache[col]>0?yoff_cache[col]:0 ) * itemHeight + that.height + (2 * padding + size);
-            //     yoff_cache[col] +=1;
-            //     return "translate(" + xoff + "," + yoff + ")";
-            // })
-            .text(d => that.label_map[d].label_short);
+            .text(d => d.label_short);
 
     }
 
@@ -708,9 +713,9 @@ class StackedBarChart extends RegionStatsBarChart {
 
         this.checkData(this.data)
 
-        this.margin = { top: 2, right: 2, bottom: 80, left: 2 };
+        this.margin = { top: 20, right: 2, bottom: 20, left: 2 };
         this.width = this.container_width - this.margin.left - this.margin.right;
-        this.height = 300; //this.container_height - this.margin.top - this.margin.bottom;
+        this.height = 300 - this.margin.top - this.margin.bottom;
         this.layers = d3.stack()
             .keys(that.labels)
             (that.data)
@@ -722,6 +727,7 @@ class StackedBarChart extends RegionStatsBarChart {
             d.label = d.key;
             d.region = REGION;
             d.demographic = 'All';
+            d.hasBreakdown = that.checkIfBreakdown(d);
         })
 
         this.t = d3.transition().duration(500);
@@ -757,45 +763,13 @@ class StackedBarChart extends RegionStatsBarChart {
         let z = this.z;
 
         this.drawLegend()
+        this.container.select('svg')
+            .attr("height", Math.max(that.height, that.legend_height_required) + that.margin.top + that.margin.bottom)
+        
         var show_tooltip = this.tooltip_show.bind(this)
         var move_tooltip = this.tooltip_move.bind(this)
         var hide_tooltip = this.tooltip_hide.bind(this)
         var on_touch = this.on_touch.bind(this)
-
-
-
-        // // vertical legend orientation
-        // legend
-        //     .append('g')
-        //     .classed('legend-boxes', true)
-        //     .selectAll('rect')
-        //     .data(that.labels)
-        //     .enter()
-        //     .append("rect")
-        //     .attr("x", (width) - 5)
-        // // 100 is where the first dot appears. 25 is the distance between dots
-        //     .attr("y", function(d, i) { return 0 + i * (size + padding) }) 
-        //     .attr("width", size)
-        //     .attr("height", size)
-        //     .style("fill", function(d, i) { return z(i) })
-
-        // // Add one dot in the legend for each name.
-        // legend
-        //     .append('g')
-        //     .classed('legend-text', true)
-        //     .selectAll('text')
-        //     .data(that.labels)
-        //     .enter()
-        //     .append("text")
-        //     .attr("x", width - 5 - padding)
-        // // 100 is where the first dot appears. 25 is the distance between dots
-        //     .attr("y", function(d, i) { return 0 + i * (size + padding) }) 
-        //     .attr("dy", function(d, i) { return 0 + ((size + padding) / 2) })
-        //     .style("fill", function(d, i) { return z(i) })
-        //     .text(function(d) { return that.label_map[d].label_short })
-        //     .attr("text-anchor", "end")
-        //     .style("alignment-baseline", "middle")
-
 
         this.bars = this.svg.selectAll(".bar-g")
 
@@ -806,7 +780,8 @@ class StackedBarChart extends RegionStatsBarChart {
                 .append('g')
                 .classed('bar-g', true)
                 .classed('overview', true)
-                .style('fill', (d, i) => (z(i)))
+                // .classed('has-breakdown', d=>that.checkIfBreakdown(d.label))
+                .attr('fill', (d, i) => (z(i)))
                 .attr("data_label", (d, i) => d.key)
                 .on('touchstart touchend click mouseover mousemove mouseout', function(d) {
 
@@ -814,6 +789,7 @@ class StackedBarChart extends RegionStatsBarChart {
                         d3.event.preventDefault();
                         d3.event.stopPropagation();
                         that.selected_bar = d3.select(this).attr('data_label');
+                        that.breakdownTitleColor = d3.select(this).attr('fill');
                         return on_touch(d);
 
                     } else if (d3.event.type == 'touchend') {
@@ -824,6 +800,7 @@ class StackedBarChart extends RegionStatsBarChart {
                     } else if (d3.event.type == 'click') {
                         hide_tooltip(d);
                         that.selected_bar = d3.select(this).attr('data_label');
+                        that.breakdownTitleColor = d3.select(this).attr('fill');
                         return goto();
                     } else if (d3.event.type == "mouseover") {
                         return show_tooltip(d);
@@ -838,6 +815,8 @@ class StackedBarChart extends RegionStatsBarChart {
             this.bars = this.svg.selectAll(".bar-g")
                 .data(that.layers);
         }
+        this.bars
+            .classed('has-breakdown', d => d.hasBreakdown);
 
         let goto = this.breakdown.bind(this);
 
@@ -850,11 +829,12 @@ class StackedBarChart extends RegionStatsBarChart {
             .enter()
             .append('rect')
             .classed('stacked-bars', true)
+            .classed('bar', true)
             .classed('overview', true)
             .attr('y', d => that.height)
 
             .merge(that.bar)
-            .interrupt()
+
             .attr('x', d => x(d.data.column))
             .attr('width', x.bandwidth())
 
@@ -862,6 +842,7 @@ class StackedBarChart extends RegionStatsBarChart {
             .attr('data-xloc-right', d => x(d.data.column) + x.bandwidth())
             .attr('data-yloc-top', d => y(d[1]))
             .attr('data-yloc-bottom', d => y(d[0]))
+            .interrupt()
             .transition(that.t)
             .ease(d3.easeExp)
             .attr('x', d => x(d.data.column))
@@ -869,8 +850,8 @@ class StackedBarChart extends RegionStatsBarChart {
             .attr('y', d => (y(d[1])))
             .attr("height", d => y(d[0]) - y(d[1]))
             .delay(that.delay);
-    }
 
+    }
 }
 
 class EduStackedBarChart extends StackedBarChart {

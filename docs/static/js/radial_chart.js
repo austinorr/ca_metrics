@@ -9,14 +9,12 @@ class RadialChart extends RegionStatsBarChart {
 
         d3.csv(this.url, function(error, data) {
             if (error) throw error;
-
             that.raw_data = data;
-
-            that.labels = toLabels(data) // Object.keys(data[0]).slice(3); // keys after region, group, and subgroup are values 
+            that.labels = toLabels(data)
             that.label_map = toLabelMap(that.labels)
             that.data_tidy = that.toTidy(data, that.labels)
-            that.update();
-            // that.resize();
+
+            that.draw_overview();
 
         });
     }
@@ -85,6 +83,12 @@ class RadialChart extends RegionStatsBarChart {
         let that = this;
         this.data = this.data_tidy.filter(d => d.region == REGION && (d.demographic == 'All'));
         this.checkData(this.data)
+        this.data
+            .forEach(
+                function(d) {
+                    d.hasBreakdown = that.checkIfBreakdown(d);
+                }
+            );
 
         this.innerData = d3.nest()
             .key(d => d.column)
@@ -164,26 +168,20 @@ class RadialChart extends RegionStatsBarChart {
                 .data(pie)
                 .enter()
                 .append('path')
+                .classed('wedge', true)
                 .attr('d', arc)
                 .attr('fill', function(d, i) {
                     return that.z(i);
                 })
                 .attr("data_label", d => d.data.label)
-                // .on("click", function(d, i) {
-                //     that.selected_bar = d3.select(this).attr('data_label');
-                //     return goto();
-                // })
-                // .on("mouseover", d => show_tooltip(d.data))
-                // .on("mousemove", d => move_tooltip(d.data))
-                // .on("mouseout", d => hide_tooltip(d.data))
                 .on('touchstart touchend click mouseover mousemove mouseout', function(ele) {
                     let d = ele.data;
-                
+
                     if (d3.event.type == 'touchstart') {
-                        console.log('touched')
                         d3.event.preventDefault();
                         d3.event.stopPropagation();
                         that.selected_bar = d3.select(this).attr('data_label');
+                        that.breakdownTitleColor = d3.select(this).attr('fill');
                         return on_touch(d);
 
                     } else if (d3.event.type == 'touchend') {
@@ -191,9 +189,9 @@ class RadialChart extends RegionStatsBarChart {
                         d3.event.stopPropagation();
 
                     } else if (d3.event.type == 'click') {
-                        console.log('click fired')
                         hide_tooltip(d);
                         that.selected_bar = d3.select(this).attr('data_label');
+                        that.breakdownTitleColor = d3.select(this).attr('fill');
                         return goto();
                     } else if (d3.event.type == "mouseover") {
                         return show_tooltip(d);
@@ -202,7 +200,7 @@ class RadialChart extends RegionStatsBarChart {
                     } else if (d3.event.type == "mouseout") {
                         return hide_tooltip(d);
                     }
-            })
+                })
 
         }
 
@@ -213,7 +211,8 @@ class RadialChart extends RegionStatsBarChart {
 
         path = piechart
             .selectAll("path")
-            .data(pie); // Compute the new angles
+            .data(pie) // Compute the new angles
+            .classed('has-breakdown', d => d.data.hasBreakdown);
 
         path.transition(that.t).ease(d3.easeExp).attrTween("d", arcTween); // Smooth transition with arcTween
 

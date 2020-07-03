@@ -1,29 +1,29 @@
 ﻿region,group,subgroup,How many people are employed?,How many people are employed divided by two?
 Bay Area,All,,0.842933,0.4214665
-Bay Area,American Indian/Alaska Native,,0.656117,0.3280585
-Bay Area,Asian,,0.8398916,0.4199458
-Bay Area,Asian,Other Asian,0.8922345,0.44611725
-Bay Area,Asian,South Asian,0.8381305,0.41906525
-Bay Area,Asian,Southeast Asian,0.8722801,0.43614005
-Bay Area,Native Hawaiian and Other Pacific Islander alone,,0.8599589,0.42997945
-Bay Area,Some Other Race alone,,0.8677622,0.4338811
-Bay Area,Two or More Races,,0.8564283,0.42821415
-Bay Area,White alone,,0.8527458,0.4263729
-Bay Area,Black or African American alone,,0.803066,0.401533
-Bay Area,Latinx,,0.838197,0.4190985
-Bay Area,Latinx,Central American,0.8574299,0.42871495
-Bay Area,Latinx,Cuban,0.8231587,0.41157935
-Bay Area,Latinx,Mexican,0.8388913,0.41944565
-Bay Area,Latinx,Other Hispanic,0.8045702,0.4022851
-Bay Area,Latinx,Puerto Rican,0.8154743,0.40773715
-Bay Area,Latinx,South American,0.8115528,0.4057764
-Bay Area,Economic,Lower Income,0.7984013,0.39920065
-Bay Area,Economic,Middle Income,0.8778358,0.4389179
-Bay Area,Economic,Poor,0.6056203,0.30281015
-Bay Area,Economic,Rich,0.8951682,0.4475841
-Bay Area,Economic,Upper Income,0.9325542,0.4662771
-Bay Area,Gender,Female,0.7846385,0.39231925
-Bay Area,Gender,Male,0.9004772,0.4502386
+Bay Area,American Indian/Alaska Native,,0.656117,
+Bay Area,Asian,,0.8398916,
+Bay Area,Asian,Other Asian,0.8922345,
+Bay Area,Asian,South Asian,0.8381305,
+Bay Area,Asian,Southeast Asian,0.8722801,
+Bay Area,Native Hawaiian and Other Pacific Islander alone,,0.8599589,
+Bay Area,Some Other Race alone,,0.8677622,
+Bay Area,Two or More Races,,0.8564283,
+Bay Area,White alone,,0.8527458,
+Bay Area,Black or African American alone,,0.803066,
+Bay Area,Latinx,,0.838197,
+Bay Area,Latinx,Central American,0.8574299,
+Bay Area,Latinx,Cuban,0.8231587,
+Bay Area,Latinx,Mexican,0.8388913,
+Bay Area,Latinx,Other Hispanic,0.8045702,
+Bay Area,Latinx,Puerto Rican,0.8154743,
+Bay Area,Latinx,South American,0.8115528,
+Bay Area,Economic,Lower Income,0.7984013,
+Bay Area,Economic,Middle Income,0.8778358,
+Bay Area,Economic,Poor,0.6056203,
+Bay Area,Economic,Rich,0.8951682,
+Bay Area,Economic,Upper Income,0.9325542,
+Bay Area,Gender,Female,0.7846385,
+Bay Area,Gender,Male,0.9004772,
 Central Coast,All,,0.8211619,0.41058095
 Central Coast,American Indian/Alaska Native,,0.6202278,0.3101139
 Central Coast,Asian,,0.8413736,0.4206868

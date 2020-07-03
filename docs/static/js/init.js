@@ -5,7 +5,7 @@ var REGION_TAG = regionTag(REGION);
 
 // ----- Map Constants -------
 
-var REGION_COLORS = (typeof REGION_COLORS == 'undefined') || (REGION_COLORS == null) ? {
+export var REGION_COLORS = (typeof REGION_COLORS == 'undefined') || (REGION_COLORS == null) ? {
     "bay-area": "#34778c", // hs
     "central-coast": "#c7a630",
     "central-sierra": "#c54241",
@@ -14,11 +14,15 @@ var REGION_COLORS = (typeof REGION_COLORS == 'undefined') || (REGION_COLORS == n
     "inland-empire": "#34778c",
     "los-angeles": "#6b7130", // ag
     "north-far-north": "#c7a630", 
-    "northern-sacramento-valley": "#c66f2c",
+    "upper-sacramento-valley": "#c66f2c",
     "orange": "#c66f2c", // csu
     "san-diego": "#c54241", // ccc
     "san-joaquin-valley": "#834778", // uc
 } : REGION_COLORS
+
+export var REGION_NAME_MAPPING = (typeof REGION_NAME_MAPPING == 'undefined') || (REGION_NAME_MAPPING == null) ? {
+    "north-far-north": "North- -- -Far North", 
+} : REGION_NAME_MAPPING
 
 var COLOR_CYCLE = i => Object.values(REGION_COLORS)[i]
 
@@ -29,7 +33,7 @@ const CA_COUNTIES_REGIONS_TOPOJSON_URL = "./data/ca-counties.json"
 
 const UNITS = ["percent", "count", "usd"]
 
-var CHARTS = [];
+export var CHARTS = [];
 
 var REGION_MAP
 
@@ -53,7 +57,6 @@ function chartBuilder(container, chart_mapping, chart_registry) {
                     }
                     
                     chart_registry.push(chart);
-                    console.log(CHARTS)
 
                 }
             }
@@ -72,8 +75,14 @@ let CHART_MAPPING = {
 function updateVisibleCharts() {
     for (let chart of CHARTS) {
         if (chart.is_visible) {
-            chart.update()
+            chart.update();
         }
+    }
+}
+
+function resetCharts() {
+    for (let chart of CHARTS) {
+        chart.state = 'overview';
     }
 }
 
@@ -152,7 +161,7 @@ window.onscroll = function() {
         updateVisibleCharts();
         chartBuilder(document, CHART_MAPPING, CHARTS);
 
-    }, 100);
+    }, 50);
 }
 
 window.onload = function() {

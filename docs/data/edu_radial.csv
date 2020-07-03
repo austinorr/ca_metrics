@@ -1,15 +1,15 @@
 ﻿region,group,CCC;California Community College;Public,CSU;California State University;Public,UC;University of California;Public,Non-Profit;Private Non-Profit;Private,For Profit;Private For Profit;Private
-Bay Area,African American,31560,4240,1002,1934,2064
-Bay Area,American Indian or Alaska Native,1082,161,91,166,150
-Bay Area,Asian,103159,21642,14793,6268,3103
+Bay Area,African American,,4240,1002,1934,2064
+Bay Area,American Indian or Alaska Native,,161,91,166,150
+Bay Area,Asian,,21642,14793,6268,3103
 Bay Area,Filipino,,,,,
-Bay Area,Hispanic or Latino,128973,23757,10001,6867,5081
-Bay Area,Race Unknown,9579,4128,1573,1738,4278
-Bay Area,Pacific Islander,2796,410,83,260,408
-Bay Area,Two or More Races,23458,4678,2764,2490,955
-Bay Area,White,117456,17517,13894,12382,4702
-Bay Area,Male,197916,37727,23887,15267,8880
-Bay Area,Female,232049,44268,25171,21076,14645
+Bay Area,Hispanic or Latino,,23757,10001,6867,5081
+Bay Area,Race Unknown,,4128,1573,1738,4278
+Bay Area,Pacific Islander,,410,83,260,408
+Bay Area,Two or More Races,,4678,2764,2490,955
+Bay Area,White,,17517,13894,12382,4702
+Bay Area,Male,,37727,23887,15267,8880
+Bay Area,Female,,44268,25171,21076,14645
 Bay Area,English Learners,,,,,
 Bay Area,Students with Disabilities,,,,,
 Bay Area,Socioeconomically Disadvantaged,,,,,
@@ -17,7 +17,7 @@ Bay Area,Migrant,,,,,
 Bay Area,Foster,,,,,
 Bay Area,Homeless,,,,,
 Bay Area,All,429965,81995,49058,36343,23525
-Bay Area,International,11902,5462,4857,4238,2784
+Bay Area,International,,5462,4857,4238,2784
 Central Sierra,African American,88,0,0,0,0
 Central Sierra,American Indian or Alaska Native,58,0,0,0,0
 Central Sierra,Asian,65,0,0,0,0

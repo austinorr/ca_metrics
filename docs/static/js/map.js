@@ -82,7 +82,6 @@ class RegionMap extends BaseMap {
     }
 
     on_click(d) {
-        
         let goto = this.selectRegion.bind(this);
         let region_tag = regionTag(d.properties.region);
         this.selected_region = d.properties.region;
@@ -91,17 +90,18 @@ class RegionMap extends BaseMap {
 
         if (this.redirect_url) {
             window.location.href = this.redirect_url + `?region=${region_tag}`;
-        
+
         } else {
-            
+
             window.history.pushState(
                 "", document.title,
                 window.location.href.split('?')[0] + `?region=${region_tag}`
             );
             goto();
             selectTabContent(regionTag(REGION));
+            resetCharts();
             updateVisibleCharts();
-        }        
+        }
     }
 
     loadData() {
@@ -124,11 +124,13 @@ class RegionMap extends BaseMap {
             ], that.feature_obj)
 
             let nRegions = d3.max(that.feature_obj.features, d => d.properties.region_id)
+            let defaultRegions = {}
 
             for (var i = 0; i < nRegions + 1; i++) {
                 var region_features = that.feature_obj.features.filter(d => d.properties.region_id == i);
                 let region = region_features[0].properties.region;
                 let region_tag = regionTag(region)
+                defaultRegions[region_tag] = region;
                 that.svg.append("g")
                     .attr("class", `counties region_${i} ${region_tag}`)
                     .selectAll("path")
@@ -138,21 +140,6 @@ class RegionMap extends BaseMap {
                     .style("fill", that.colors[region_tag])
                     .style('fill-opacity', 0.5)
                     .attr("data-region", d => d.properties.region)
-                    // .on("click", function(d) {
-                    //     that.selected_region = d.properties.region;
-
-                    //     window.history.pushState(
-                    //         "", document.title,
-                    //         window.location.href.split('?')[0] + `?region=${region_tag}`
-                    //     );
-                    //     if (that.redirect_url) {
-                    //         window.location.href = that.redirect_url + `?region=${region_tag}`;
-                    //     }
-                    //     return goto();
-                    // })
-                    // .on("mouseover", d => show_tooltip(d))
-                    // .on("mousemove", d => move_tooltip(d))
-                    // .on("mouseout", d => hide_tooltip(d))
                     .on('touchstart touchend click mouseover mousemove mouseout', function(d) {
 
                         if (d3.event.type == 'touchstart') {
@@ -178,6 +165,7 @@ class RegionMap extends BaseMap {
                     })
             }
 
+            REGION_NAME_MAPPING = Object.assign(defaultRegions, REGION_NAME_MAPPING)
 
             if (!(REGION == "Statewide") && REGION != "") {
 
@@ -195,13 +183,6 @@ class RegionMap extends BaseMap {
             selected_region = d3.select("svg .counties.region_" + region_id),
             region_features = this.feature_obj.features.filter(d => d.properties.region_id == region_id);
 
-        // if (selected_region.classed('active-region')) {
-        //     // d3.selectAll(".active-region").classed('active-region', false);
-        //     // d3.selectAll(".countySelected").remove();
-        //     // REGION = "Statewide";
-        //     // let pass
-
-        // } else {
         d3.selectAll(".active-region").classed('active-region', false);
         d3.selectAll(".countySelected").remove();
 
@@ -295,21 +276,35 @@ class RegionMap extends BaseMap {
             that.feature_obj.features
                 .forEach(function(d) {
                     let obj = {};
-                    let v = +choro_data.filter(
-                        e => e.region == d.properties.region)[0][that.choro_label];
-                    d.properties.choro_value = v;
+                    let fdata = choro_data.filter(e => e.region == d.properties.region);
+                    if (fdata.length == 0) {
+                        console.error(`No data provided for region: ${d.properties.region}\nin data source: ${that.url}`)
+                        let v = "No Data";
+                        d.properties.choro_value = v;
 
-                    obj['region'] = d.properties.region;
-                    obj['label'] = that.choro_label;
-                    obj['value'] = v;
+                        obj['region'] = d.properties.region;
+                        obj['label'] = that.choro_label;
+                        obj['value'] = v;
 
-                    data.push(obj);
+                        data.push(obj);
 
-                    if (v < vmin) {
-                        vmin = v;
-                    }
-                    if (v > vmax) {
-                        vmax = v;
+                    } else {
+
+                        let v = +fdata[0][that.choro_label];
+                        d.properties.choro_value = v;
+
+                        obj['region'] = d.properties.region;
+                        obj['label'] = that.choro_label;
+                        obj['value'] = v;
+
+                        data.push(obj);
+
+                        if (v < vmin) {
+                            vmin = v;
+                        }
+                        if (v > vmax) {
+                            vmax = v;
+                        }
                     }
                 })
 
@@ -394,7 +389,7 @@ class RegionMap extends BaseMap {
         if (!this.is_choropleth) {
 
             this.tooltip.select('.roi-tooltip-header')
-                .html(`<h5>${current_region}</h5>`)
+                .html(`<h5>${REGION_NAME_MAPPING[regionTag(current_region)]}</h5>`)
 
             this.tooltip.select('.roi-tooltip-content table').html(
                 `
@@ -425,22 +420,23 @@ class RegionMap extends BaseMap {
 
             this.tooltip.select('.roi-tooltip-content table')
                 .html(
+
                     `
                 <tr>
-                    <td>${max_d.region}<span class="roi-tooltip-small">&nbsp(most in state)</span></td>
-                    <td>${that.labelFormatter(max_d.choro_value)}</td>
+                    <td>${REGION_NAME_MAPPING[regionTag(max_d.region)] || max_d.region}<span class="roi-tooltip-small">&nbsp(most in state)</span></td>
+                    <td>${REGION_NAME_MAPPING[regionTag(max_d.region)] ? that.labelFormatter(max_d.choro_value) : 'No Data'}</td>
                 </tr>
                 <tr>
                     <td>State Average</td>
-                    <td>${that.labelFormatter(statewide_d[that.choro_label])}</td>
+                    <td>${statewide_d ? that.labelFormatter(statewide_d[that.choro_label]) : 'No Data'}</td>
                 </tr>
                 <tr class="roi-tooltip-active">
-                    <td>${d.properties.region}</td>
-                    <td>${that.labelFormatter(d.properties.choro_value)}</td>
+                    <td>${REGION_NAME_MAPPING[regionTag(d.properties.region)] || d.properties.region} </td>
+                    <td>${REGION_NAME_MAPPING[regionTag(d.properties.region)] ? that.labelFormatter(d.properties.choro_value) : 'No Data'}</td>
                 </tr>
                 <tr>
-                    <td>${min_d.region}<span class="roi-tooltip-small">&nbsp(least in state)</span></td>
-                    <td>${that.labelFormatter(min_d.choro_value)}</td>
+                    <td>${REGION_NAME_MAPPING[regionTag(min_d.region)] || min_d.region}<span class="roi-tooltip-small">&nbsp(least in state)</span></td>
+                    <td>${REGION_NAME_MAPPING[regionTag(min_d.region)] ? that.labelFormatter(min_d.choro_value) : 'No Data'}</td>
                 </tr>
                 `
                 )
@@ -474,22 +470,21 @@ class RegionMap extends BaseMap {
     }
 
     tooltip_hide(d) {
-        // TODO: make this unclickable if hidden!!!
         this.tooltip.interrupt().transition()
             .style('opacity', 0)
+            .style("pointer-events", 'none');
 
     }
 
     clear_roi_tooltips() {
-        // TODO: make this unclickable if hidden!!!
         d3.selectAll('.roi-tooltip')
-            .style('opacity', 0);
+            .style('opacity', 0)
+            .style("pointer-events", 'none');
     }
 
     on_touch(d) {
         let that = this;
-        // var goto = this.breakdown.bind(this)
-        var hide_tooltip = this.clear_roi_tooltips; //tooltip_hide.bind(this)
+        var hide_tooltip = this.clear_roi_tooltips;
         this.clear_roi_tooltips();
 
         this.tooltip_move(d)
@@ -521,7 +516,7 @@ class RegionMap extends BaseMap {
                 .html(`
                     ${table_html}
                     <tr>
-                        <td><h5 class="region-button">Click For ${region} Details</h5></td>
+                        <td><h5 class="region-button">Click For ${REGION_NAME_MAPPING[regionTag(region)]} Details</h5></td>
                     </tr>
                     `)
 
@@ -534,31 +529,8 @@ class RegionMap extends BaseMap {
 
         } else {
             onclick(d);
-
         }
 
-
-
-
-        // this.tooltip.select('.roi-tooltip-content .breakdown-note').remove()
-
-        // if (this.state == 'overview') {
-        //     let table_html = this.tooltip.select('.roi-tooltip-content table').node().innerHTML
-        //     this.tooltip.select('.roi-tooltip-content table tbody')
-        //         .html(`
-        //             ${table_html}
-        //             <tr>
-        //                 <td><h5 class="breakdown-button">Click Here for Demographic Breakdown</h5></td>
-        //             </tr>
-        //             `)
-
-        //     this.tooltip.select(".breakdown-button")
-        //         .style("pointer-events", 'all')
-        //         .on('click', function(d) {
-        //             that.clear_roi_tooltips();
-        //             return goto();
-        //         })
-        // }
         return false;
     }
 
