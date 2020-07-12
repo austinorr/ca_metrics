@@ -28,6 +28,7 @@ class RadialChart extends RegionStatsBarChart {
         let text_width = this.width / n;
         let itemWidth = size + padding + text_width + 5;
         let itemHeight = size + padding;
+        let data = this.pie;
 
         this.legend = this.svg.selectAll('.legend');
 
@@ -45,9 +46,15 @@ class RadialChart extends RegionStatsBarChart {
         }
 
         var legend_items = this.legend.selectAll('g')
-            .data(that.labels)
+            .data(data)
             .enter()
             .append("g")
+            .attr("data_label", d => d.data.label)
+            .attr("data_color", function(d, i) { return that.z(i); })
+            .on('touchstart touchend click mouseover mousemove mouseout', function(d) {
+                that.overviewPointerHandler(d.data, this)
+            })
+
 
         legend_items.exit().remove();
 
@@ -62,6 +69,7 @@ class RadialChart extends RegionStatsBarChart {
                 return "translate(" + xoff + "," + yoff + ")";
             })
             .attr("fill", function(d, i) { return that.z(i); });
+        rects.classed('has-breakdown', d => d.data.hasBreakdown);
 
         var text = legend_items.append('text');
         text.merge(text)
@@ -74,7 +82,7 @@ class RadialChart extends RegionStatsBarChart {
                 let yoff = ((Math.floor(i / n) * itemHeight) + that.height + (2 * padding + size));
                 return "translate(" + xoff + "," + yoff + ")";
             })
-            .text(d => that.label_map[d].label_short);
+            .text(d => that.label_map[d.data.label].label_short);
 
     }
 
@@ -82,33 +90,13 @@ class RadialChart extends RegionStatsBarChart {
         this.state = 'overview';
         let that = this;
         this.data = this.data_tidy.filter(d => d.region == REGION && (d.demographic == 'All'));
-        this.checkData(this.data)
+        this.checkData(that.data)
         this.data
             .forEach(
                 function(d) {
                     d.hasBreakdown = that.checkIfBreakdown(d);
                 }
             );
-
-        this.innerData = d3.nest()
-            .key(d => d.column)
-            .rollup(
-                function(totals) {
-                    return d3.sum(totals, d => d.value)
-                })
-            .entries(that.data)
-        this.innerData.forEach(function(d) { d.label = d.key })
-
-        if (!(that.labels.includes(that.innerData[0].label))) {
-            that.innerData.forEach(function(d) {
-                that.labels.push(d.label);
-                that.label_map[d.label] = {
-                    "label_short": d.label,
-                    "label_long": d.label,
-                };
-            })
-        }
-
 
         this.margin = { top: 2, right: 2, bottom: 80, left: 2 };
         this.width = this.container_width - this.margin.left - this.margin.right;
@@ -119,26 +107,17 @@ class RadialChart extends RegionStatsBarChart {
             .attr("height", this.height + this.margin.top + this.margin.bottom)
             .select("g")
             .attr("transform",
-                "translate(" + this.margin.left + "," + this.margin.top + ")");
-
-        let show_tooltip = this.tooltip_show.bind(this)
-        let move_tooltip = this.tooltip_move.bind(this)
-        let hide_tooltip = this.tooltip_hide.bind(this)
-        let goto = this.breakdown.bind(this);
-        var on_touch = this.on_touch.bind(this)
-
+                 "translate(" + this.margin.left + "," + this.margin.top + ")");
 
         this.z = i => [
-            "#C64241",
-            "#c66f2c",
-            "#834778",
-            "#C7A630",
-            "#878787",
-            "#8A9337",
-            "#36768B",
+            "#C64241", // red
+            "#36768B", // blue
+            "#C66F2C", // orange
+            "#8A9337", // green
+            "#834778", // purple
+            "#C7A630", // yellow
+            "#878787", // grey
         ][i]
-
-        this.drawLegend()
 
         let radius = Math.min(this.width, this.height) / 2;
 
@@ -152,6 +131,10 @@ class RadialChart extends RegionStatsBarChart {
         let pie = d3.pie()
             .sort(null)
             .value(function(d) { return d.value; })(that.data)
+
+        this.pie = pie;
+
+        this.drawLegend()
 
         this.svg.selectAll(".breakdown").remove();
         let piechart = this.svg.selectAll('.pie')
@@ -174,34 +157,11 @@ class RadialChart extends RegionStatsBarChart {
                     return that.z(i);
                 })
                 .attr("data_label", d => d.data.label)
-                .on('touchstart touchend click mouseover mousemove mouseout', function(ele) {
-                    let d = ele.data;
+                .attr("data_color", function(d, i) { return that.z(i); })
+                .on('touchstart touchend click mouseover mousemove mouseout', function(d) {
+                    that.overviewPointerHandler(d.data, this)
 
-                    if (d3.event.type == 'touchstart') {
-                        d3.event.preventDefault();
-                        d3.event.stopPropagation();
-                        that.selected_bar = d3.select(this).attr('data_label');
-                        that.breakdownTitleColor = d3.select(this).attr('fill');
-                        return on_touch(d);
-
-                    } else if (d3.event.type == 'touchend') {
-                        d3.event.preventDefault();
-                        d3.event.stopPropagation();
-
-                    } else if (d3.event.type == 'click') {
-                        hide_tooltip(d);
-                        that.selected_bar = d3.select(this).attr('data_label');
-                        that.breakdownTitleColor = d3.select(this).attr('fill');
-                        return goto();
-                    } else if (d3.event.type == "mouseover") {
-                        return show_tooltip(d);
-                    } else if (d3.event.type == "mousemove") {
-                        return move_tooltip(d);
-                    } else if (d3.event.type == "mouseout") {
-                        return hide_tooltip(d);
-                    }
                 })
-
         }
 
         piechart
@@ -223,66 +183,5 @@ class RadialChart extends RegionStatsBarChart {
                 return arc(i(t));
             };
         }
-
-        let innerArc = d3.arc()
-            .outerRadius(radius * .66 - 4 - 10)
-            .innerRadius(1.5)
-            .cornerRadius(0)
-            .padAngle(0.04)
-
-
-        let innerPie = d3.pie()
-            .sort(null)
-            .value(function(d) { return d.value; })(that.innerData)
-
-        let innerPiechart = this.svg.selectAll('.innerpie')
-        let innerPath = innerPiechart.selectAll('path')
-
-        if (innerPiechart.empty()) {
-            innerPiechart = this.svg
-                .append("g")
-                .classed('innerpie', true)
-                .classed('overview', true)
-                .attr("transform", "translate(" + that.width / 2 + "," + that.height / 2 + ")"); // Moving the center point
-
-            innerPath = innerPiechart.selectAll('path')
-                .data(innerPie)
-                .enter()
-                .append('path')
-                .attr('d', innerArc)
-                .attr('fill', function(d, i) {
-                    return that.z(i + pie.length);
-                })
-            // .attr("data_label", d => d.data.label)
-            // .on("click", function(d, i) {
-            //     that.selected_bar = d3.select(this).attr('data_label');
-            //     return goto();
-            // })
-            // .on("mouseover", d => show_tooltip(d.data))
-            // .on("mousemove", d => move_tooltip(d.data))
-            // .on("mouseout", d => hide_tooltip(d.data))
-
-        }
-
-        innerPiechart
-            .transition(that.t).duration(500)
-            .ease(d3.easeExp)
-            .attr("transform", "translate(" + that.width / 2 + "," + that.height / 2 + ")");
-
-        innerPath = innerPiechart.selectAll("path")
-            .data(innerPie); // Compute the new angles
-
-        innerPath.transition(that.t).ease(d3.easeExp).attrTween("d", innerArcTween); // Smo
-
-        function innerArcTween(a) {
-            var i = d3.interpolate(this._current, a);
-            this._current = i(0);
-            return function(t) {
-                return innerArc(i(t));
-            };
-        }
-
-
-
     }
 }

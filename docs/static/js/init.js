@@ -1,4 +1,4 @@
-var DEBUG = false;
+export var DEBUG = false;
 var qparam = regionTitleCase(getParameterByName('region'))
 var REGION = qparam ? qparam : ""
 var REGION_TAG = regionTag(REGION);

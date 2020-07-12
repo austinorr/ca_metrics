@@ -50,8 +50,6 @@
     display: inline-block;
   }
 
-
-
   [class^="chart-wrapper"] svg {
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   }
@@ -137,6 +135,11 @@
     fill-opacity: 0.5;
   }
 
+  footer {
+    height: 200px;
+    width: 100vw;
+  }
+
   </style>
 </head>
 
@@ -155,7 +158,14 @@
       <div id="uid-button-1" class="_viz_map_data_toggle" _viz_units="percent" _viz_source="./data/employment.csv" onclick="dataviz.mapDataToggle(this.id)">Toggle Employment Choropleth</div>
     </div>
     <div class="_viz_bar_group">
-      <div id="chart45135" class="chart-wrapper-bar" _viz_source="./data/single_family_jobs_2.csv" _viz_units="count" _viz_color="#34778c" _viz_title="Number\u0020of\u0020jobs\u0020openings\u0020that\u0020provide\u0020a\u0020living\u0020wage"></div>
+      <div id="_viz_bar_bubble1" class="chart-wrapper-bar" _viz_units="percent" _viz_source="./data/deserts.csv" _viz_color="#c66f2c" _viz_sort="descending" _viz_limit=3></div>
+      <div id="chart45102" class="chart-wrapper-bar" _viz_source="./data/attainment_named.csv" _viz_units="percent" _viz_color="#c66f2c" _viz_sort="descending" _viz_limit=3 _viz_title="What\u0020is\u0020the\u0020highest\u0020level\u0020of\u0020education\u0020attained\u003F" style="opacity: 1;"></div>
+      <div id="chart45143" class="chart-wrapper-bar" _viz_source="./data/_no_git_data/hom_price_pct_200624_231234.csv" _viz_units="percent" _viz_color="#899237" _viz_statewide_tt_label="noneya%}*`~"></div>
+      <div id="chart45144" class="chart-wrapper-bar" _viz_source="./data/_no_git_data/home_pct.csv" _viz_units="percent" _viz_color="#c66f2c"></div>
+      <div id="chart45135" class="chart-wrapper-bar" _viz_source="./data/single_family_jobs_2.csv" _viz_units="count" _viz_color="#34778c" _viz_title="Number\u0020of\u0020jobs\u0020openings\u0020that\u0020provide\u0020a\u0020living\u0020wage">
+        <img class="bar-icon hidden" src="https://dev.californiacompetes.org/assets/general-images/roi-employment-icon.svg" _viz_icon="icon-1">
+        <img class="bar-icon hidden" src="https://dev.californiacompetes.org/assets/general-images/roi-employment-icon.svg" _viz_icon="icon-1">
+      </div>
       <div id="_viz_bar_container1" class="chart-wrapper-bar" _viz_units="percent" _viz_source="./data/employment2col.csv" _viz_color="steelblue" , _viz_title="Job Openings but this title test is fing long so hows this?">
         <img class="bar-icon hidden" src="https://dev.californiacompetes.org/assets/general-images/roi-employment-icon.svg" _viz_icon="icon-1">
       </div>
@@ -172,18 +182,32 @@
         <img class="bubble-icon hidden" src="https://dev.californiacompetes.org/assets/general-images/roi-doc-icon.svg" _viz_icon="icon-4">
         <img class="bubble-icon hidden" src="https://dev.californiacompetes.org/assets/general-images/roi-dent-icon.svg" _viz_icon="icon-5">
       </div>
+      <div id="_viz_bubble_container2" class="chart-wrapper-bubble" _viz_units="percent" _viz_source="./data/deserts.csv" _viz_sort="descending" _viz_limit=3>
+        <img class="bubble-icon hidden" src="https://dev.californiacompetes.org/assets/general-images/roi-groc-icon.svg" _viz_icon="icon-1">
+        <img class="bubble-icon hidden" src="https://dev.californiacompetes.org/assets/general-images/roi-gas-icon.svg" _viz_icon="icon-2">
+        <img class="bubble-icon hidden" src="https://dev.californiacompetes.org/assets/general-images/roi-bank-icon.svg" _viz_icon="icon-3">
+        <img class="bubble-icon hidden" src="https://dev.californiacompetes.org/assets/general-images/roi-doc-icon.svg" _viz_icon="icon-4">
+        <img class="bubble-icon hidden" src="https://dev.californiacompetes.org/assets/general-images/roi-dent-icon.svg" _viz_icon="icon-5">
+      </div>
+      <div id="_viz_bubble_container3" class="chart-wrapper-bubble" _viz_units="percent" _viz_source="./data/deserts.csv" _viz_sort="ascending" _viz_limit=-3>
+      </div>
       <div id="_viz_radial_container1" class="chart-wrapper-radial" _viz_units="count" _viz_source="./data/edu_radial.csv"></div>
+
+
+
     </div>
   </div>
 </body>
+<footer>
+</footer>
 <script>
-  var remap = {
-    "north-far-north": "North-Far North",
-    "inland-empire": "Inland Empire Yo!",
-  }
+var remap = {
+  "north-far-north": "North-Far North",
+  "inland-empire": "Inland Empire Yo!",
+}
 
-  for (key in remap) dataviz.REGION_NAME_MAPPING[key] = remap[key];
+for (key in remap) dataviz.REGION_NAME_MAPPING[key] = remap[key];
 
-  dataviz.REGION_COLORS["north-far-north"] = "#eee";
+dataviz.REGION_COLORS["north-far-north"] = "#eee";
 
 </script>

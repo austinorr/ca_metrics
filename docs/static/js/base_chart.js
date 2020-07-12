@@ -5,9 +5,10 @@ class BaseChart {
         this.container = d3.select("#" + container_id);
         this.url = this.container.attr("_viz_source");
         this.color = this.container.attr("_viz_color");
-        this.limit_to = parseInt(this.container.attr("_viz_limit_to"))
-        this.limit_by = this.container.attr("_viz_limit_by")
+        this.limit_to = parseInt(this.container.attr("_viz_limit"))
+        this.sort = this.container.attr("_viz_sort")
         this.title = JSON.parse(`"${this.container.attr("_viz_title")}"`);
+        this.statewide_tt_label = this.container.attr("_viz_statewide_tt_label") || "State Average";
         this.chart_uid = container_id + "-" + this.url;
         this.units = UNITS.filter(d => d == this.container.attr('_viz_units'));
         this.unitFormatter = getAxisTickLabelFormatter(this.units);
@@ -39,14 +40,15 @@ class BaseChart {
 
         let that = this;
         let div_icons = this.container.selectAll("[_viz_icon^=icon-]")
-        let icon_urls = []
+        let icon_url_list = []
         if (!div_icons.empty()) {
             div_icons.nodes().forEach(function(d) {
-                icon_urls.push(d.getAttribute('src'))
+                icon_url_list.push(d.getAttribute('src'))
                 that.container.selectAll("[_viz_icon^=icon-]").remove()
             })
         }
-        this.icon_urls = icon_urls;
+        this.icon_url_list = icon_url_list;
+        this.icon_urls = {};
 
         this.color_sequence = [
             "#C54241",
@@ -172,6 +174,62 @@ class BaseChart {
         }
     }
 
+    overviewPointerHandler(d, ele) {
+        var goto = this.breakdown.bind(this)
+        var show_tooltip = this.tooltip_show.bind(this)
+        var move_tooltip = this.tooltip_move.bind(this)
+        var hide_tooltip = this.tooltip_hide.bind(this)
+        var on_touch = this.on_touch.bind(this)
+
+        if (d3.event.type == 'touchstart') {
+            d3.event.preventDefault();
+            d3.event.stopPropagation();
+            this.selected_bar = d3.select(ele).attr('data_label');
+            this.breakdownTitleColor = d3.select(ele).attr('data_color');
+            return on_touch(d);
+
+        } else if (d3.event.type == 'touchend') {
+            d3.event.preventDefault();
+            d3.event.stopPropagation();
+
+        } else if (d3.event.type == 'click') {
+            hide_tooltip(d);
+            this.selected_bar = d3.select(ele).attr('data_label');
+            this.breakdownTitleColor = d3.select(ele).attr('data_color');
+            return goto();
+        } else if (d3.event.type == "mouseover") {
+            return show_tooltip(d);
+        } else if (d3.event.type == "mousemove") {
+            return move_tooltip(d);
+        } else if (d3.event.type == "mouseout") {
+            return hide_tooltip(d);
+        }
+    }
+
+    breakdownPointerHandler(d, ele) {
+        var show_tooltip = this.tooltip_show.bind(this)
+        var move_tooltip = this.tooltip_move.bind(this)
+        var hide_tooltip = this.tooltip_hide.bind(this)
+        var on_touch = this.on_touch.bind(this)
+
+        if (d3.event.type == 'touchstart') {
+            d3.event.preventDefault();
+            d3.event.stopPropagation();
+            return on_touch(d);
+
+        } else if (d3.event.type == 'touchend') {
+            d3.event.preventDefault();
+            d3.event.stopPropagation();
+            return false;
+        } else if (d3.event.type == "mouseover") {
+            return show_tooltip(d);
+        } else if (d3.event.type == "mousemove") {
+            return move_tooltip(d);
+        } else if (d3.event.type == "mouseout") {
+            return hide_tooltip(d);
+        }
+    }
+
     tooltip_show(d) {
         if (this.hidden) {
             return false;
@@ -217,7 +275,7 @@ class BaseChart {
                     <td>${REGION_NAME_MAPPING[regionTag(max_d.region)] ? that.labelFormatter(max_d.value) : 'No Data'}</td>
                 </tr>
                 <tr>
-                    <td>State Average</td>
+                    <td>${that.statewide_tt_label}</td>
                     <td>${statewide_d ? that.labelFormatter(statewide_d.value) : 'No Data'}</td>
                 </tr>
                 <tr class="roi-tooltip-active">

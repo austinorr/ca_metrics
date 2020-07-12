@@ -102,12 +102,12 @@ function toLabelMap(labels) {
     for (let label of labels) {
         let obj = {};
         obj.label_list = label.split(";");
-        obj.label_short = obj.label_list[0];
+        obj.label_short = obj.label_list[0].replace(/^\s+|\s+$/g, '');;
         if (obj.label_list.length == 2) {
-            obj.label_long = obj.label_list.slice(1).join('').trim();
+            obj.label_long = obj.label_list.slice(1).join('').replace(/^\s+|\s+$/g, '');
         } else if (obj.label_list.length == 3) {
-            obj.label_long = obj.label_list[1];
-            obj.column = obj.label_list.slice(2).join('').trim();
+            obj.label_long = obj.label_list[1].replace(/^\s+|\s+$/g, '');
+            obj.column = obj.label_list.slice(2).join('').replace(/^\s+|\s+$/g, '');
         }
         label_map[label] = obj;
     }
@@ -206,7 +206,7 @@ function insertLinebreaks(d) {
 //     });
 // }
 
-function wrap(text, width, direction = 1) { 
+function wrap(text, width, direction = 1) {
     text.each(function() {
         var text = d3.select(this),
             words = text.text().split(/\s+/).reverse(),
@@ -227,24 +227,24 @@ function wrap(text, width, direction = 1) {
         if (words.length == 1) {
             tspan = text.text(null).append("tspan");
             tspan.text(words[0])
-            .attr("text-anchor", anchor)
-            .attr("dominant-baseline", baseline)
-            .attr("x", x)
-            .attr("y", y)
-            .attr("dy", dy + "em");
+                .attr("text-anchor", anchor)
+                .attr("dominant-baseline", baseline)
+                .attr("x", x)
+                .attr("y", y)
+                .attr("dy", dy + "em");
 
         } else {
             tspan = text.text(null).append("tspan")
                 .attr("text-anchor", anchor)
-                        .attr("dominant-baseline", baseline)
-                        .attr("x", x)
-                        .attr("y", y)
-                        .attr("dy", dy + "em");
-                        // .attr("x", x).attr("y", y).attr("dy", dy + "em");
+                .attr("dominant-baseline", baseline)
+                .attr("x", x)
+                .attr("y", y)
+                .attr("dy", dy + "em");
+            // .attr("x", x).attr("y", y).attr("dy", dy + "em");
             while (word = words.pop()) {
                 line.push(word);
                 tspan.text(line.join(" "));
-                if (tspan.node().getComputedTextLength() > width) {
+                if (tspan.node().getComputedTextLength() > width && line.length > 1) {
                     line.pop();
                     tspan.text(line.join(" "));
                     line = [word];
@@ -270,7 +270,7 @@ function getParameterByName(name, url) {
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
-function is_visible(id, check_ahead=0) {
+function is_visible(id, check_ahead = 0) { // TODO : add check_behind=300
     let elem = d3.select("#" + id).node();
     let bounding = elem.getBoundingClientRect();
 
@@ -844,9 +844,10 @@ class BaseChart {
         this.container = d3.select("#" + container_id);
         this.url = this.container.attr("_viz_source");
         this.color = this.container.attr("_viz_color");
-        this.limit_to = parseInt(this.container.attr("_viz_limit_to"))
-        this.limit_by = this.container.attr("_viz_limit_by")
+        this.limit_to = parseInt(this.container.attr("_viz_limit"))
+        this.sort = this.container.attr("_viz_sort")
         this.title = JSON.parse(`"${this.container.attr("_viz_title")}"`);
+        this.statewide_tt_label = this.container.attr("_viz_statewide_tt_label") || "State Average";
         this.chart_uid = container_id + "-" + this.url;
         this.units = UNITS.filter(d => d == this.container.attr('_viz_units'));
         this.unitFormatter = getAxisTickLabelFormatter(this.units);
@@ -878,14 +879,15 @@ class BaseChart {
 
         let that = this;
         let div_icons = this.container.selectAll("[_viz_icon^=icon-]")
-        let icon_urls = []
+        let icon_url_list = []
         if (!div_icons.empty()) {
             div_icons.nodes().forEach(function(d) {
-                icon_urls.push(d.getAttribute('src'))
+                icon_url_list.push(d.getAttribute('src'))
                 that.container.selectAll("[_viz_icon^=icon-]").remove()
             })
         }
-        this.icon_urls = icon_urls;
+        this.icon_url_list = icon_url_list;
+        this.icon_urls = {};
 
         this.color_sequence = [
             "#C54241",
@@ -1011,6 +1013,62 @@ class BaseChart {
         }
     }
 
+    overviewPointerHandler(d, ele) {
+        var goto = this.breakdown.bind(this)
+        var show_tooltip = this.tooltip_show.bind(this)
+        var move_tooltip = this.tooltip_move.bind(this)
+        var hide_tooltip = this.tooltip_hide.bind(this)
+        var on_touch = this.on_touch.bind(this)
+
+        if (d3.event.type == 'touchstart') {
+            d3.event.preventDefault();
+            d3.event.stopPropagation();
+            this.selected_bar = d3.select(ele).attr('data_label');
+            this.breakdownTitleColor = d3.select(ele).attr('data_color');
+            return on_touch(d);
+
+        } else if (d3.event.type == 'touchend') {
+            d3.event.preventDefault();
+            d3.event.stopPropagation();
+
+        } else if (d3.event.type == 'click') {
+            hide_tooltip(d);
+            this.selected_bar = d3.select(ele).attr('data_label');
+            this.breakdownTitleColor = d3.select(ele).attr('data_color');
+            return goto();
+        } else if (d3.event.type == "mouseover") {
+            return show_tooltip(d);
+        } else if (d3.event.type == "mousemove") {
+            return move_tooltip(d);
+        } else if (d3.event.type == "mouseout") {
+            return hide_tooltip(d);
+        }
+    }
+
+    breakdownPointerHandler(d, ele) {
+        var show_tooltip = this.tooltip_show.bind(this)
+        var move_tooltip = this.tooltip_move.bind(this)
+        var hide_tooltip = this.tooltip_hide.bind(this)
+        var on_touch = this.on_touch.bind(this)
+
+        if (d3.event.type == 'touchstart') {
+            d3.event.preventDefault();
+            d3.event.stopPropagation();
+            return on_touch(d);
+
+        } else if (d3.event.type == 'touchend') {
+            d3.event.preventDefault();
+            d3.event.stopPropagation();
+            return false;
+        } else if (d3.event.type == "mouseover") {
+            return show_tooltip(d);
+        } else if (d3.event.type == "mousemove") {
+            return move_tooltip(d);
+        } else if (d3.event.type == "mouseout") {
+            return hide_tooltip(d);
+        }
+    }
+
     tooltip_show(d) {
         if (this.hidden) {
             return false;
@@ -1056,7 +1114,7 @@ class BaseChart {
                     <td>${REGION_NAME_MAPPING[regionTag(max_d.region)] ? that.labelFormatter(max_d.value) : 'No Data'}</td>
                 </tr>
                 <tr>
-                    <td>State Average</td>
+                    <td>${that.statewide_tt_label}</td>
                     <td>${statewide_d ? that.labelFormatter(statewide_d.value) : 'No Data'}</td>
                 </tr>
                 <tr class="roi-tooltip-active">
@@ -1214,24 +1272,39 @@ class RegionStatsBarChart extends BaseChart {
         }
     }
 
-    overview() {
-        this.state = 'overview';
+    loadOverviewData() {
         let that = this;
+        this.state = 'overview';
         this.data = this.data_tidy
             .filter(d => (d.region == REGION && d.demographic == 'All'));
-        
+
         this.checkData(this.data)
         this.data
             .forEach(
-                function (d) {
+                function(d) {
                     d.hasBreakdown = that.checkIfBreakdown(d);
                 }
             );
+        if (this.sort == 'ascending') {
+            this.data.sort(function(a, b) { return d3.ascending(a.value, b.value); });
+        } else if (this.sort == 'descending') {
+            this.data.sort(function(a, b) { return d3.descending(a.value, b.value); });
+        }
+        if (this.limit_to > 0) {
+            this.data = this.data.slice(0, this.limit_to)
+        } else {
+            this.data = this.data.slice(this.limit_to)
+        }
+    }
+
+    overview() {
+        this.loadOverviewData();
+        let that = this;
 
         let data = this.data;
 
-        if (this.labels.length == 1 && (this.title == "null" || this.title === null)) {
-            this.title = this.label_map[this.labels[0]].label_short;
+        if (data.length == 1 && (this.title == "null" || this.title === null)) {
+            this.title = this.label_map[data[0].label].label_short;
         } else if (this.title == "null" || this.title === null) {
             this.title = null;
         }
@@ -1244,9 +1317,8 @@ class RegionStatsBarChart extends BaseChart {
         };
         let width = Math.max(0, this.container_width - margin.left - margin.right);
         let bar_height = 50;
-        let height = Math.max(
-            bar_height, this.labels.length == 1 ? bar_height : this.labels.length * bar_height * .66
-        )
+        bar_height = data.length == 1 ? bar_height : bar_height * .66;
+        let height = bar_height * data.length;     
 
         let icon_group = this.svg.selectAll(".icon-g")
         let icons = this.svg.selectAll(".icon")
@@ -1270,7 +1342,7 @@ class RegionStatsBarChart extends BaseChart {
         let title_center = margin.left / 2;
         let title_text_anchor = 'middle';
         let title_text_dy = "1em";
-        let title_text_y = height / 2; 
+        let title_text_y = height / 2;
         let title_text_x = -title_center;
         let text_wrap_width = margin.left * 0.95;
         let text_alignment_baseline = 'bottom';
@@ -1305,7 +1377,7 @@ class RegionStatsBarChart extends BaseChart {
         let svg_stretch = 0;
         let constraint = 0;
 
-        let icon_width = this.icon_urls.length > 0 ? Math.min((bar_height / 2 + margin.top), margin.left / 2) : 1,
+        let icon_width = this.icon_url_list.length > 0 ? Math.min((bar_height / 2 + margin.top), margin.left / 2) : 1,
             icon_height = icon_width,
             icon_vert_translate = -icon_height,
             icon_y = height / 2;
@@ -1319,7 +1391,7 @@ class RegionStatsBarChart extends BaseChart {
 
         icons
             .style("pointer-events", "none")
-            .attr('xlink:href', that.icon_urls[0])
+            .attr('xlink:href', that.icon_url_list[0])
             .attr('x', -title_center)
             .attr('y', icon_y)
             .attr('width', icon_width)
@@ -1383,14 +1455,9 @@ class RegionStatsBarChart extends BaseChart {
 
         bar.exit().remove();
 
-        var goto = this.breakdown.bind(this)
-        var show_tooltip = this.tooltip_show.bind(this)
-        var move_tooltip = this.tooltip_move.bind(this)
-        var hide_tooltip = this.tooltip_hide.bind(this)
-        var on_touch = this.on_touch.bind(this)
-
         bar.enter().append("rect")
             .attr("data_label", d => d.label)
+            .attr("data_color", d => d3.color(that.color))
             .classed('overview', true)
             .classed('bar', true)
             .attr("x", function(d) { return 0; })
@@ -1399,30 +1466,7 @@ class RegionStatsBarChart extends BaseChart {
             .style("fill", d3.color(that.color))
             .merge(bar)
             .on('touchstart touchend click mouseover mousemove mouseout', function(d) {
-
-                if (d3.event.type == 'touchstart') {
-                    d3.event.preventDefault();
-                    d3.event.stopPropagation();
-                    that.selected_bar = d3.select(this).attr('data_label');
-                    that.breakdownTitleColor = d3.select(this).attr('fill');
-                    return on_touch(d);
-
-                } else if (d3.event.type == 'touchend') {
-                    d3.event.preventDefault();
-                    d3.event.stopPropagation();
-
-                } else if (d3.event.type == 'click') {
-                    hide_tooltip(d);
-                    that.selected_bar = d3.select(this).attr('data_label');
-                    that.breakdownTitleColor = d3.select(this).attr('fill');
-                    return goto();
-                } else if (d3.event.type == "mouseover") {
-                    return show_tooltip(d);
-                } else if (d3.event.type == "mousemove") {
-                    return move_tooltip(d);
-                } else if (d3.event.type == "mouseout") {
-                    return hide_tooltip(d);
-                }
+                that.overviewPointerHandler(d, this);
             })
 
             .interrupt()
@@ -1430,7 +1474,7 @@ class RegionStatsBarChart extends BaseChart {
             .ease(d3.easeExp)
             .attr("width", d => Math.max(0, x(d.value)))
             .delay(delay);
-        
+
         bars.selectAll('.bar').classed('has-breakdown', d => d.hasBreakdown)
 
         let value_labels = bars.selectAll(".value")
@@ -1440,8 +1484,10 @@ class RegionStatsBarChart extends BaseChart {
 
         value_labels.enter().append("text")
             .attr("class", "value")
-            .style("pointer-events", "none")
+            // .style("pointer-events", "none")
             .classed('overview', true)
+            .attr("data_label", d => d.label)
+            .attr("data_color", d => d3.color(that.color))
             .attr("fill", "white")
             .attr("opacity", 0)
             .attr("y", d => y(d.label) + y.bandwidth() / 2)
@@ -1449,10 +1495,28 @@ class RegionStatsBarChart extends BaseChart {
             .attr("text-anchor", "start")
             .attr("font-size", Math.min(18, y.bandwidth() * 0.95))
             .merge(value_labels)
+            .on('touchstart touchend click mouseover mousemove mouseout', function(d) {
+                if (d._no_tts) {
+                    return false;
+                }
+                that.overviewPointerHandler(d, this);
+            })
             .interrupt()
             .transition(t)
             .attr("opacity", 1)
-            .text(d => this.labelFormatter(d.value))
+            .text(function(d) {
+                let label = null;
+                if (d.value == 'null' || d.value == null || d.value == "undefined") {
+                    d._no_tts = true;
+                    d3.select(this).classed('data-unavailable', true)
+                    return "Reliable Data Not Available"
+
+                } else {
+                    return that.labelFormatter(d.value);
+                }
+
+
+            })
             .attr("text-anchor", "start")
             .attr("x", d => Math.max(0, x(d.value)) + 7)
             .attr("fill", d => "rgb(51, 51, 51)")
@@ -1481,7 +1545,7 @@ class RegionStatsBarChart extends BaseChart {
 
     breakdown() {
         let selected_bar = this.selected_bar,
-            that=this,
+            that = this,
             data = this.data_tidy.filter(d => d.region == REGION && d.label == selected_bar && d.demographic != 'All' && d.value != null),
             margin = { top: 30, right: 100, bottom: 10, left: 20 },
             width = this.container_width - margin.left - margin.right,
@@ -1611,25 +1675,7 @@ class RegionStatsBarChart extends BaseChart {
             .attr('fill', d => z(d.ix))
             .merge(bar)
             .on('touchstart touchend click mouseover mousemove mouseout', function(d) {
-
-                if (d3.event.type == 'touchstart') {
-                    d3.event.preventDefault();
-                    d3.event.stopPropagation();
-                    // that.selected_bar = d3.select(this).attr('data_label');
-                    return on_touch(d);
-
-                } else if (d3.event.type == 'touchend') {
-                    d3.event.preventDefault();
-                    d3.event.stopPropagation();
-                    return false;
-
-                } else if (d3.event.type == "mouseover") {
-                    return show_tooltip(d);
-                } else if (d3.event.type == "mousemove") {
-                    return move_tooltip(d);
-                } else if (d3.event.type == "mouseout") {
-                    return hide_tooltip(d);
-                }
+                that.breakdownPointerHandler(d, this);
             })
             .interrupt()
             .transition(t)
@@ -1645,8 +1691,6 @@ class RegionStatsBarChart extends BaseChart {
         value_labels.enter().append("text")
             .classed('value', true)
             .classed('breakdown', true)
-            .style("pointer-events", "none")
-            // .attr("fill", "white")
             .attr("fill", "rgb(51, 51, 51)")
             .attr("opacity", 0)
             .attr("y", d => y(d.demographic))
@@ -1654,6 +1698,9 @@ class RegionStatsBarChart extends BaseChart {
             .attr("text-anchor", "start")
             .attr("font-size", d => Math.max(14, Math.min(18, a * v(d) * 0.95)))
             .merge(value_labels)
+            .on('touchstart touchend click mouseover mousemove mouseout', function(d) {
+                that.breakdownPointerHandler(d, this);
+            })
             .interrupt()
             .transition(t)
             .attr("opacity", 1)
@@ -1708,6 +1755,7 @@ class RegionStatsBarChart extends BaseChart {
 class StackedBarChart extends RegionStatsBarChart {
     constructor(container_id) {
         super(container_id);
+        this.z = (this.color_cycle) || (i => ["#eee"][i]);
     }
 
     loadData() {
@@ -1789,6 +1837,9 @@ class StackedBarChart extends RegionStatsBarChart {
     drawLegend() {
         let that = this;
         let legend_entries = {}
+
+
+
         this.layers
             .forEach(function(d) {
                 if (d.column in legend_entries) {
@@ -1827,11 +1878,12 @@ class StackedBarChart extends RegionStatsBarChart {
             .enter()
             .append("g")
 
+
         legend_items.exit().remove();
 
         var rects = legend_items.append('rect');
 
-        this.legend_height_required = -1; 
+        this.legend_height_required = -1;
 
         rects.merge(rects)
             .classed('legend-patch', true)
@@ -1840,15 +1892,23 @@ class StackedBarChart extends RegionStatsBarChart {
             .attr("transform", function(d, i) {
                 let xoff = that.x(d.column);
                 let yoff = (
-                    (legend_entries[d.column].indexOf(d.label) * 
+                    (legend_entries[d.column].indexOf(d.label) *
                         itemHeight) + that.height + (2 * padding + size)
-                    );
+                );
                 if (yoff > that.legend_height_required) {
                     that.legend_height_required = yoff;
                 }
                 return "translate(" + xoff + "," + yoff + ")";
             })
-            .attr("fill", function(d, i) { return that.z(i); });
+            .attr("fill", function(d, i) { return that.z(i); })
+            .attr("data_label", (d, i) => d.key)
+            .attr("data_color", function(d, i) { return that.z(i); })
+            .on('touchstart touchend click mouseover mousemove mouseout', function(d) {
+                that.overviewPointerHandler(d, this);
+            });
+        rects.classed('has-breakdown', d => d.hasBreakdown);
+
+
         that.legend_height_required += padding
 
         var text = legend_items.append('text');
@@ -1860,12 +1920,17 @@ class StackedBarChart extends RegionStatsBarChart {
             .attr("transform", function(d, i) {
                 let xoff = that.x(d.column);
                 let yoff = (
-                    (legend_entries[d.column].indexOf(d.label) * 
+                    (legend_entries[d.column].indexOf(d.label) *
                         itemHeight) + that.height + (2 * padding + size)
-                    );
+                );
                 return "translate(" + xoff + "," + yoff + ")";
             })
-            .text(d => d.label_short);
+            .text(d => d.label_short)
+            .attr("data_label", (d, i) => d.key)
+            .attr("data_color", function(d, i) { return that.z(i); })
+            .on('touchstart touchend click mouseover mousemove mouseout', function(d) {
+                that.overviewPointerHandler(d, this);
+            });
 
     }
 
@@ -1928,7 +1993,7 @@ class StackedBarChart extends RegionStatsBarChart {
         this.drawLegend()
         this.container.select('svg')
             .attr("height", Math.max(that.height, that.legend_height_required) + that.margin.top + that.margin.bottom)
-        
+
         var show_tooltip = this.tooltip_show.bind(this)
         var move_tooltip = this.tooltip_move.bind(this)
         var hide_tooltip = this.tooltip_hide.bind(this)
@@ -1946,32 +2011,10 @@ class StackedBarChart extends RegionStatsBarChart {
                 // .classed('has-breakdown', d=>that.checkIfBreakdown(d.label))
                 .attr('fill', (d, i) => (z(i)))
                 .attr("data_label", (d, i) => d.key)
+                .attr("data_color", (d, i) => (z(i)))
+
                 .on('touchstart touchend click mouseover mousemove mouseout', function(d) {
-
-                    if (d3.event.type == 'touchstart') {
-                        d3.event.preventDefault();
-                        d3.event.stopPropagation();
-                        that.selected_bar = d3.select(this).attr('data_label');
-                        that.breakdownTitleColor = d3.select(this).attr('fill');
-                        return on_touch(d);
-
-                    } else if (d3.event.type == 'touchend') {
-                        d3.event.preventDefault();
-                        d3.event.stopPropagation();
-                        return false;
-
-                    } else if (d3.event.type == 'click') {
-                        hide_tooltip(d);
-                        that.selected_bar = d3.select(this).attr('data_label');
-                        that.breakdownTitleColor = d3.select(this).attr('fill');
-                        return goto();
-                    } else if (d3.event.type == "mouseover") {
-                        return show_tooltip(d);
-                    } else if (d3.event.type == "mousemove") {
-                        return move_tooltip(d);
-                    } else if (d3.event.type == "mouseout") {
-                        return hide_tooltip(d);
-                    }
+                    that.overviewPointerHandler(d, this);
                 })
 
         } else {
@@ -2172,28 +2215,52 @@ class BubbleChart extends RegionStatsBarChart {
             that.labels = toLabels(data);
             that.label_map = toLabelMap(that.labels);
             that.data_tidy = that.toTidy(data, that.labels);
+            if (that.icon_url_list.length>0) {
+                that.labels.map(function(e, i) {
+                    that.icon_urls[e] = that.icon_url_list[i];
+                });
+            }
             that.draw_overview();
 
         });
     }
 
-    overview() {
+    loadOverviewData() {
         this.state = 'overview';
         let that = this;
         this.data = this.data_tidy.filter(d => (d.region == REGION) && (d.demographic == 'All'));
         this.checkData(this.data)
         this.data
             .forEach(
-                function (d) {
+                function(d) {
                     d.hasBreakdown = that.checkIfBreakdown(d);
                 }
             );
-        let data = this.data;
-    
-        let margin = { top: 25, right: 20, bottom: 25, left: 20 };
-        let width = this.container_width - margin.left - margin.right;
+        if (this.sort == 'ascending') {
+            this.data.sort(function(a, b) { return d3.ascending(a.value, b.value); });
 
-        let max_bubble_dia = (width / data.length) * 0.98;
+        } else if (this.sort == 'descending') {
+            this.data.sort(function(a, b) { return d3.descending(a.value, b.value); });
+        }
+        if (this.limit_to > 0) {
+            this.data = this.data.slice(0, this.limit_to)
+        } else {
+            this.data = this.data.slice(this.limit_to)
+        }
+    }
+
+    overview() {
+
+        this.loadOverviewData();
+        let that = this;
+
+        let data = this.data;
+
+        let margin = { top: 10, right: 20, bottom: 10, left: 20 };
+        let width = this.container_width - margin.left - margin.right;
+        let max_height = 350;
+
+        let max_bubble_dia = Math.min(max_height, (width / data.length) * 0.98);
         let height = max_bubble_dia * 1.05;
         let max_bubble_area = Math.PI * Math.pow(max_bubble_dia / 2, 2);
         let min_bubble_area = Math.PI * Math.pow(10, 2); // 10 px radius
@@ -2234,49 +2301,20 @@ class BubbleChart extends RegionStatsBarChart {
 
         bubble.exit().remove();
 
-        var show_tooltip = this.tooltip_show.bind(this)
-        var move_tooltip = this.tooltip_move.bind(this)
-        var hide_tooltip = this.tooltip_hide.bind(this)
-        var on_touch = this.on_touch.bind(this)
-        var goto = this.breakdown.bind(this);
-
         bubble.enter().append("circle")
-            .attr("data_label", d => d.label)
 
             .classed('overview', true)
             .classed('bubble', true)
-            
+
             .attr("cx", d => d.cx)
             .attr('cy', height - height / 2)
             .attr('r', 0)
             .attr('fill-opacity', 0.0)
             .merge(bubble)
+            .attr("data_label", d => d.label)
+            .attr("data_color", d => d3.color(that.color) || "steelblue")
             .on('touchstart touchend click mouseover mousemove mouseout', function(d) {
-
-                if (d3.event.type == 'touchstart') {
-                    d3.event.preventDefault();
-                    d3.event.stopPropagation();
-                    that.selected_bar = that.selected_bubble = d3.select(this).attr('data_label');
-                    that.breakdownTitleColor = d3.select(this).attr('fill');
-                    return on_touch(d);
-
-                } else if (d3.event.type == 'touchend') {
-                    d3.event.preventDefault();
-                    d3.event.stopPropagation();
-                    return false;
-
-                } else if (d3.event.type == 'click') {
-                    hide_tooltip(d);
-                    that.selected_bar = that.selected_bubble = d3.select(this).attr('data_label');
-                    that.breakdownTitleColor = d3.select(this).attr('fill');
-                    return goto();
-                } else if (d3.event.type == "mouseover") {
-                    return show_tooltip(d);
-                } else if (d3.event.type == "mousemove") {
-                    return move_tooltip(d);
-                } else if (d3.event.type == "mouseout") {
-                    return hide_tooltip(d);
-                }
+                that.overviewPointerHandler(d, this);
             })
             .interrupt()
             .transition(that.t)
@@ -2288,100 +2326,128 @@ class BubbleChart extends RegionStatsBarChart {
             .attr('fill-opacity', 1)
             .delay(that.delay);
 
-        bubbles.selectAll('.bubble').classed('has-breakdown', d=>d.hasBreakdown)
+        bubbles.selectAll('.bubble').classed('has-breakdown', d => d.hasBreakdown)
 
-        let icons = bubbles.selectAll('.icon')
-            .data(data)
+        
+        if (Object.keys(that.icon_urls).length > 0) {
+            let icons = bubbles.selectAll('.icon')
+                .data(data)
 
-        icons.exit().remove();
+            icons.exit().remove();
 
-        icons.enter()
-            .append("svg:image")
-            .classed('icon', true)
-            .classed('overview', true)
-            .style("pointer-events", "none")
-            .attr('xlink:href', (d, i) => that.icon_urls[i])
-            .attr('x', d => d.cx - d.scaler / 2)
-            .attr('y', d => (height - height / 2) - d.scaler / 2)
-            .attr('width', d => d.scaler)
-            .attr('height', d => d.scaler)
-            .merge(icons)
-            .interrupt()
-            .transition(that.t)
-            .ease(d3.easeExp)
-            .attr('x', d => d.cx - d.scaler / 2)
-            .attr('y', d => (height - height / 2) - d.scaler / 2)
-            .attr('width', d => d.scaler)
-            .attr('height', d => d.scaler)
-            .delay(that.delay)
+            icons.enter()
+                .append("svg:image")
+                .classed('icon', true)
+                .classed('overview', true)
+                .style("pointer-events", "none")
+                .attr('xlink:href', (d, i) => that.icon_urls[d.label])
+                .attr('x', d => d.cx - d.scaler / 2)
+                .attr('y', d => (height - height / 2) - d.scaler / 2)
+                .attr('width', d => d.scaler)
+                .attr('height', d => d.scaler)
+                .merge(icons)
+                .interrupt()
+                .transition(that.t)
+                .ease(d3.easeExp)
+                .attr('x', d => d.cx - d.scaler / 2)
+                .attr('y', d => (height - height / 2) - d.scaler / 2)
+                .attr('xlink:href', (d, i) => that.icon_urls[d.label])
+                .attr('width', d => d.scaler)
+                .attr('height', d => d.scaler)
+                .delay(that.delay)
 
+        } else {
+            let value_labels = bubbles.selectAll(".value")
+                .data(data);
 
+            value_labels.exit().remove();
 
+            value_labels.enter().append("text")
+                .attr("class", "value")
+                .classed('overview', true)
+                .style("pointer-events", "none")
+                .attr("fill", "white")
+                .attr("fill-opacity", 0)
+                .attr("x", d => that.x(that.label_map[d.label].label_short) + that.x.bandwidth() / 2)
+                .attr("y", height - height / 2)
+                .attr("dy", "0.35em") //vertical align middle
+                .attr("text-anchor", "middle")
+                .merge(value_labels)
+                .interrupt()
+                .transition(that.t)
+                .attr("fill-opacity", 1)
+                .attr("x", d => that.x(that.label_map[d.label].label_short) + that.x.bandwidth() / 2)
+                .attr('y', height - height / 2)
+                .attr("font-size", d => Math.min(0.45 * d.radius, 22))
+                .text(d => that.labelFormatter(d.value))
+                .delay(that.delay);
 
-        // let value_labels = bubbles.selectAll(".value")
-        //     .data(data);
-
-        // value_labels.exit().remove();
-
-        // value_labels.enter().append("text")
-        //     .attr("class", "value")
-        //     .classed('overview', true)
-        //     .attr("fill", "white")
-        //     .attr("fill-opacity", 0)
-        //     .attr("x", d => that.x(that.label_map[d.label].label_short) + that.x.bandwidth() / 2)
-        //     .attr("y", height - height / 2)
-        //     .attr("dy", "0.35em") //vertical align middle
-        //     .attr("text-anchor", "middle")
-        //     .merge(value_labels)
-        //     .interrupt()
-        //     .transition(this.t)
-        //     .attr("fill-opacity", 1)
-        //     .attr("x", d => that.x(that.label_map[d.label].label_short) + that.x.bandwidth() / 2)
-        //     .attr('y', height - height / 2)
-
-        //     .attr("font-size", d => Math.min(0.45 * d.radius, 18))
-        //     .text(d => this.labelFormatter(d.value))
-        //     .delay(this.delay);
-
+        }
+        
         let text_labels = bubbles.selectAll(".text-labels")
             .data(data);
 
         text_labels.exit().remove();
-        let max_text_height = -1
-
-        // TODO label wrapping is broken
 
         text_labels.enter().append("text")
             .classed("text-labels", true)
             .classed('overview', true)
+            .attr("data_label", d => d.label)
+            .attr("data_color", d => d3.color(that.color) || "steelblue")
             .attr("fill", " white")
             .attr("opacity", 0)
+            .attr("y", e => (height - height / 2) + e.radius + 25)
             .attr("x", d => that.x(that.label_map[d.label].label_short) + that.x.bandwidth() / 2)
             .attr("font-size", Math.min(18, 250 * 0.95))
-            .text(d => that.label_map[d.label].label_short)
-            .merge(text_labels)
-            .interrupt()
-            .transition(this.t)
-            .ease(d3.easeExp)
-            .attr("opacity", 1)
+            .attr('dominant-baseline', 'middle')
             .attr("text-anchor", "middle")
-            .attr("alignment-baseline", "top")
-            .attr('fill', d3.color(that.color || "rgb(51, 51, 51)"))
 
-            .attr("x", d => that.x(that.label_map[d.label].label_short) + that.x.bandwidth() / 2)
-            .attr("y", d => (height - height / 2) + d.radius + 25)
-            .attr('dy', "1.1em")
-            .delay(this.delay)
-            .each(insertLinebreaks)
             .each(function(d) {
+                d = d3.select(this)
+                    .text(e => that.label_map[e.label].label_short)
+                   
+                wrap(d, that.x.bandwidth() / 2);
+
+                d = d3.select(this).selectAll('text,tspan')
+                    .attr("y", e => (height - height / 2) + e.radius + 25)
+                    .attr("x", e => that.x(that.label_map[e.label].label_short) + that.x.bandwidth() / 2)
+            })
+
+            .merge(text_labels)
+            .on('touchstart touchend click mouseover mousemove mouseout', function(d) {
+                that.overviewPointerHandler(d, this);
+            })
+            .interrupt()
+            .transition(that.t)
+            .ease(d3.easeExp)
+
+            .attr("opacity", 1)
+            
+            .attr('fill', d3.color(that.color || "rgb(51, 51, 51)"))
+            .attr("y", e => (height - height / 2) + e.radius + 25)
+            .attr("x", d => that.x(that.label_map[d.label].label_short) + that.x.bandwidth() / 2)
+            
+            .delay(that.delay)
+            .each(function(d) {
+                d = d3.select(this)
+                    .text(e => that.label_map[e.label].label_short)
+                
+                wrap(d, that.x.bandwidth() / 2);
+            })
+            .selectAll('text,tspan')
+            .attr("y", e => (height - height / 2) + e.radius + 25)
+            .attr("x", e => that.x(that.label_map[e.label].label_short) + that.x.bandwidth() / 2)
+            
+        let max_text_height = -1
+        text_labels.each(
+            function(d) {
                 let _h = this.getBBox().height;
                 max_text_height = _h > max_text_height ? _h : max_text_height;
             })
-            .selectAll('text,tspan')
-            .attr("x", d => that.x(that.label_map[d.label].label_short) + that.x.bandwidth() / 2)
 
         // resize for label wraps.
-        this.container.select('svg').attr("height", height + margin.top + Math.max(margin.bottom, max_text_height * 1.15))
+        this.container.select('svg')
+            .attr("height", height + margin.top + Math.max(margin.bottom, max_text_height * 1.15))
     }
 }
 class RadialChart extends RegionStatsBarChart {
@@ -2414,6 +2480,7 @@ class RadialChart extends RegionStatsBarChart {
         let text_width = this.width / n;
         let itemWidth = size + padding + text_width + 5;
         let itemHeight = size + padding;
+        let data = this.pie;
 
         this.legend = this.svg.selectAll('.legend');
 
@@ -2431,9 +2498,15 @@ class RadialChart extends RegionStatsBarChart {
         }
 
         var legend_items = this.legend.selectAll('g')
-            .data(that.labels)
+            .data(data)
             .enter()
             .append("g")
+            .attr("data_label", d => d.data.label)
+            .attr("data_color", function(d, i) { return that.z(i); })
+            .on('touchstart touchend click mouseover mousemove mouseout', function(d) {
+                that.overviewPointerHandler(d.data, this)
+            })
+
 
         legend_items.exit().remove();
 
@@ -2448,6 +2521,7 @@ class RadialChart extends RegionStatsBarChart {
                 return "translate(" + xoff + "," + yoff + ")";
             })
             .attr("fill", function(d, i) { return that.z(i); });
+        rects.classed('has-breakdown', d => d.data.hasBreakdown);
 
         var text = legend_items.append('text');
         text.merge(text)
@@ -2460,7 +2534,7 @@ class RadialChart extends RegionStatsBarChart {
                 let yoff = ((Math.floor(i / n) * itemHeight) + that.height + (2 * padding + size));
                 return "translate(" + xoff + "," + yoff + ")";
             })
-            .text(d => that.label_map[d].label_short);
+            .text(d => that.label_map[d.data.label].label_short);
 
     }
 
@@ -2468,33 +2542,13 @@ class RadialChart extends RegionStatsBarChart {
         this.state = 'overview';
         let that = this;
         this.data = this.data_tidy.filter(d => d.region == REGION && (d.demographic == 'All'));
-        this.checkData(this.data)
+        this.checkData(that.data)
         this.data
             .forEach(
                 function(d) {
                     d.hasBreakdown = that.checkIfBreakdown(d);
                 }
             );
-
-        this.innerData = d3.nest()
-            .key(d => d.column)
-            .rollup(
-                function(totals) {
-                    return d3.sum(totals, d => d.value)
-                })
-            .entries(that.data)
-        this.innerData.forEach(function(d) { d.label = d.key })
-
-        if (!(that.labels.includes(that.innerData[0].label))) {
-            that.innerData.forEach(function(d) {
-                that.labels.push(d.label);
-                that.label_map[d.label] = {
-                    "label_short": d.label,
-                    "label_long": d.label,
-                };
-            })
-        }
-
 
         this.margin = { top: 2, right: 2, bottom: 80, left: 2 };
         this.width = this.container_width - this.margin.left - this.margin.right;
@@ -2505,26 +2559,17 @@ class RadialChart extends RegionStatsBarChart {
             .attr("height", this.height + this.margin.top + this.margin.bottom)
             .select("g")
             .attr("transform",
-                "translate(" + this.margin.left + "," + this.margin.top + ")");
-
-        let show_tooltip = this.tooltip_show.bind(this)
-        let move_tooltip = this.tooltip_move.bind(this)
-        let hide_tooltip = this.tooltip_hide.bind(this)
-        let goto = this.breakdown.bind(this);
-        var on_touch = this.on_touch.bind(this)
-
+                 "translate(" + this.margin.left + "," + this.margin.top + ")");
 
         this.z = i => [
-            "#C64241",
-            "#c66f2c",
-            "#834778",
-            "#C7A630",
-            "#878787",
-            "#8A9337",
-            "#36768B",
+            "#C64241", // red
+            "#36768B", // blue
+            "#C66F2C", // orange
+            "#8A9337", // green
+            "#834778", // purple
+            "#C7A630", // yellow
+            "#878787", // grey
         ][i]
-
-        this.drawLegend()
 
         let radius = Math.min(this.width, this.height) / 2;
 
@@ -2538,6 +2583,10 @@ class RadialChart extends RegionStatsBarChart {
         let pie = d3.pie()
             .sort(null)
             .value(function(d) { return d.value; })(that.data)
+
+        this.pie = pie;
+
+        this.drawLegend()
 
         this.svg.selectAll(".breakdown").remove();
         let piechart = this.svg.selectAll('.pie')
@@ -2560,34 +2609,11 @@ class RadialChart extends RegionStatsBarChart {
                     return that.z(i);
                 })
                 .attr("data_label", d => d.data.label)
-                .on('touchstart touchend click mouseover mousemove mouseout', function(ele) {
-                    let d = ele.data;
+                .attr("data_color", function(d, i) { return that.z(i); })
+                .on('touchstart touchend click mouseover mousemove mouseout', function(d) {
+                    that.overviewPointerHandler(d.data, this)
 
-                    if (d3.event.type == 'touchstart') {
-                        d3.event.preventDefault();
-                        d3.event.stopPropagation();
-                        that.selected_bar = d3.select(this).attr('data_label');
-                        that.breakdownTitleColor = d3.select(this).attr('fill');
-                        return on_touch(d);
-
-                    } else if (d3.event.type == 'touchend') {
-                        d3.event.preventDefault();
-                        d3.event.stopPropagation();
-
-                    } else if (d3.event.type == 'click') {
-                        hide_tooltip(d);
-                        that.selected_bar = d3.select(this).attr('data_label');
-                        that.breakdownTitleColor = d3.select(this).attr('fill');
-                        return goto();
-                    } else if (d3.event.type == "mouseover") {
-                        return show_tooltip(d);
-                    } else if (d3.event.type == "mousemove") {
-                        return move_tooltip(d);
-                    } else if (d3.event.type == "mouseout") {
-                        return hide_tooltip(d);
-                    }
                 })
-
         }
 
         piechart
@@ -2609,70 +2635,9 @@ class RadialChart extends RegionStatsBarChart {
                 return arc(i(t));
             };
         }
-
-        let innerArc = d3.arc()
-            .outerRadius(radius * .66 - 4 - 10)
-            .innerRadius(1.5)
-            .cornerRadius(0)
-            .padAngle(0.04)
-
-
-        let innerPie = d3.pie()
-            .sort(null)
-            .value(function(d) { return d.value; })(that.innerData)
-
-        let innerPiechart = this.svg.selectAll('.innerpie')
-        let innerPath = innerPiechart.selectAll('path')
-
-        if (innerPiechart.empty()) {
-            innerPiechart = this.svg
-                .append("g")
-                .classed('innerpie', true)
-                .classed('overview', true)
-                .attr("transform", "translate(" + that.width / 2 + "," + that.height / 2 + ")"); // Moving the center point
-
-            innerPath = innerPiechart.selectAll('path')
-                .data(innerPie)
-                .enter()
-                .append('path')
-                .attr('d', innerArc)
-                .attr('fill', function(d, i) {
-                    return that.z(i + pie.length);
-                })
-            // .attr("data_label", d => d.data.label)
-            // .on("click", function(d, i) {
-            //     that.selected_bar = d3.select(this).attr('data_label');
-            //     return goto();
-            // })
-            // .on("mouseover", d => show_tooltip(d.data))
-            // .on("mousemove", d => move_tooltip(d.data))
-            // .on("mouseout", d => hide_tooltip(d.data))
-
-        }
-
-        innerPiechart
-            .transition(that.t).duration(500)
-            .ease(d3.easeExp)
-            .attr("transform", "translate(" + that.width / 2 + "," + that.height / 2 + ")");
-
-        innerPath = innerPiechart.selectAll("path")
-            .data(innerPie); // Compute the new angles
-
-        innerPath.transition(that.t).ease(d3.easeExp).attrTween("d", innerArcTween); // Smo
-
-        function innerArcTween(a) {
-            var i = d3.interpolate(this._current, a);
-            this._current = i(0);
-            return function(t) {
-                return innerArc(i(t));
-            };
-        }
-
-
-
     }
 }
-var DEBUG = false;
+export var DEBUG = false;
 var qparam = regionTitleCase(getParameterByName('region'))
 var REGION = qparam ? qparam : ""
 var REGION_TAG = regionTag(REGION);

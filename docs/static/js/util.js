@@ -94,12 +94,12 @@ function toLabelMap(labels) {
     for (let label of labels) {
         let obj = {};
         obj.label_list = label.split(";");
-        obj.label_short = obj.label_list[0];
+        obj.label_short = obj.label_list[0].replace(/^\s+|\s+$/g, '');;
         if (obj.label_list.length == 2) {
-            obj.label_long = obj.label_list.slice(1).join('').trim();
+            obj.label_long = obj.label_list.slice(1).join('').replace(/^\s+|\s+$/g, '');
         } else if (obj.label_list.length == 3) {
-            obj.label_long = obj.label_list[1];
-            obj.column = obj.label_list.slice(2).join('').trim();
+            obj.label_long = obj.label_list[1].replace(/^\s+|\s+$/g, '');
+            obj.column = obj.label_list.slice(2).join('').replace(/^\s+|\s+$/g, '');
         }
         label_map[label] = obj;
     }
@@ -198,7 +198,7 @@ function insertLinebreaks(d) {
 //     });
 // }
 
-function wrap(text, width, direction = 1) { 
+function wrap(text, width, direction = 1) {
     text.each(function() {
         var text = d3.select(this),
             words = text.text().split(/\s+/).reverse(),
@@ -219,24 +219,24 @@ function wrap(text, width, direction = 1) {
         if (words.length == 1) {
             tspan = text.text(null).append("tspan");
             tspan.text(words[0])
-            .attr("text-anchor", anchor)
-            .attr("dominant-baseline", baseline)
-            .attr("x", x)
-            .attr("y", y)
-            .attr("dy", dy + "em");
+                .attr("text-anchor", anchor)
+                .attr("dominant-baseline", baseline)
+                .attr("x", x)
+                .attr("y", y)
+                .attr("dy", dy + "em");
 
         } else {
             tspan = text.text(null).append("tspan")
                 .attr("text-anchor", anchor)
-                        .attr("dominant-baseline", baseline)
-                        .attr("x", x)
-                        .attr("y", y)
-                        .attr("dy", dy + "em");
-                        // .attr("x", x).attr("y", y).attr("dy", dy + "em");
+                .attr("dominant-baseline", baseline)
+                .attr("x", x)
+                .attr("y", y)
+                .attr("dy", dy + "em");
+            // .attr("x", x).attr("y", y).attr("dy", dy + "em");
             while (word = words.pop()) {
                 line.push(word);
                 tspan.text(line.join(" "));
-                if (tspan.node().getComputedTextLength() > width) {
+                if (tspan.node().getComputedTextLength() > width && line.length > 1) {
                     line.pop();
                     tspan.text(line.join(" "));
                     line = [word];
@@ -262,7 +262,7 @@ function getParameterByName(name, url) {
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
-function is_visible(id, check_ahead=0) {
+function is_visible(id, check_ahead = 0) { // TODO : add check_behind=300
     let elem = d3.select("#" + id).node();
     let bounding = elem.getBoundingClientRect();
 
