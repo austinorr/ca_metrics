@@ -205,7 +205,7 @@ function wrap(text, width, direction = 1) {
             word,
             line = [],
             lineNumber = 0,
-            lineHeight = 1.2, // ems
+            lineHeight = 1.1, // ems
             x = text.attr("x"),
             y = text.attr("y"),
             dy = text.attr("dy") ? parseFloat(text.attr("dy")) : 0, //<-- null check

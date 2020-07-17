@@ -21,7 +21,6 @@ class RadialChart extends RegionStatsBarChart {
 
     drawLegend() {
         let that = this;
-        this.legend = this.svg.selectAll('.legend').remove()
         let n = 3
         let size = 11;
         let padding = 6;
@@ -29,7 +28,8 @@ class RadialChart extends RegionStatsBarChart {
         let itemWidth = size + padding + text_width + 5;
         let itemHeight = size + padding;
         let data = this.pie;
-
+        
+        this.svg.selectAll('.legend').remove()
         this.legend = this.svg.selectAll('.legend');
 
         if (this.legend.empty()) {
@@ -51,6 +51,7 @@ class RadialChart extends RegionStatsBarChart {
             .append("g")
             .attr("data_label", d => d.data.label)
             .attr("data_color", function(d, i) { return that.z(i); })
+            .classed('has-breakdown', d => d.data.hasBreakdown)
             .on('touchstart touchend click mouseover mousemove mouseout', function(d) {
                 that.overviewPointerHandler(d.data, this)
             })
@@ -69,7 +70,6 @@ class RadialChart extends RegionStatsBarChart {
                 return "translate(" + xoff + "," + yoff + ")";
             })
             .attr("fill", function(d, i) { return that.z(i); });
-        rects.classed('has-breakdown', d => d.data.hasBreakdown);
 
         var text = legend_items.append('text');
         text.merge(text)

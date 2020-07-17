@@ -1,6 +1,6 @@
 MAKEFLAGS += --silent
-.PHONY: ccombine help
-.DEFAULT_GOAL := help
+.PHONY: combine help
+.DEFAULT_GOAL := build
 
 define PRINT_HELP_PYSCRIPT
 import re, sys
@@ -29,3 +29,8 @@ combine: ## combine files
 	docs/static/js/init.js  \
 	> docs/static/build.js
 
+build: combine ## build package
+	npx webpack --mode production
+
+dev: combine ## build package
+	npx webpack --mode development

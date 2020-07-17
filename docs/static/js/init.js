@@ -22,6 +22,7 @@ export var REGION_COLORS = (typeof REGION_COLORS == 'undefined') || (REGION_COLO
 
 export var REGION_NAME_MAPPING = (typeof REGION_NAME_MAPPING == 'undefined') || (REGION_NAME_MAPPING == null) ? {
     "north-far-north": "North- -- -Far North", 
+    "statewide": "Statewide",
 } : REGION_NAME_MAPPING
 
 var COLOR_CYCLE = i => Object.values(REGION_COLORS)[i]
@@ -89,6 +90,7 @@ function resetCharts() {
 function onLoad() {
 
     selectTabContent(REGION_TAG)
+    toggleRegionAndStateSubheading(REGION_TAG)
 
     d3.select("._navbar").text(REGION).classed('region_label', true);
 
@@ -136,6 +138,17 @@ function selectTabContent(region_tag) {
     d3.selectAll(".roi-collapse-heading[class*=-color]").attr('class', "roi-collapse-heading")
     d3.selectAll(".roi-collapse-heading").classed(region_tag + '-color', true)
 }
+
+function toggleRegionAndStateSubheading(region_tag) {
+    d3.selectAll('.roi-subheading').classed('hidden', true);
+    if (region_tag == 'statewide') {
+        d3.selectAll('.roi-subheading.statewide-only-heading').classed('hidden', null);
+    } else {
+        d3.selectAll('.roi-subheading.region-only-heading').classed('hidden', null);
+    }
+
+}
+
 
 window.onresize = function() {
     clearTimeout(window.resizedFinished);
@@ -185,6 +198,29 @@ export function mapDataToggle(id) {
         REGION_MAP.choroplethColors(elem);
         d3.selectAll('._viz-map-selected').classed('_viz-map-selected', false)
         d3.select(elem).classed('_viz-map-selected', true)
+    }
+}
+
+export function setRegion(region_tag) {
+    REGION_TAG = region_tag;
+    REGION = regionTitleCase(REGION_TAG)
+    
+    REGION_MAP.clear_roi_tooltips();
+
+    if (REGION_MAP.redirect_url) {
+        window.location.href = REGION_MAP.redirect_url + `?region=${REGION_TAG}`;
+
+    } else {
+
+        window.history.pushState(
+            "", document.title,
+            window.location.href.split('?')[0] + `?region=${REGION_TAG}`
+        );
+        REGION_MAP.drawMap();
+        selectTabContent(REGION_TAG);
+        toggleRegionAndStateSubheading(REGION_TAG)
+        resetCharts();
+        updateVisibleCharts();
     }
 }
 

@@ -6,18 +6,28 @@
   "directories": {
     "doc": "docs"
   },
-  "dependencies": {},
+  "dependencies": {
+    "npm": "^6.14.6"
+  },
   "devDependencies": {
     "@babel/cli": "^7.10.1",
     "@babel/core": "^7.10.2",
     "@babel/preset-env": "^7.10.2",
     "babel-loader": "^8.1.0",
     "core-js": "^3.6.5",
+    "npm-watch": "^0.6.0",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11"
   },
+  "watch": {
+    "dev": {
+      "patterns": "docs/static/js",
+      "runOnChangeOnly": true
+    }
+  },
   "scripts": {
+    "watch": "npm-watch",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "make combine; webpack --mode development",
     "build": "make combine; webpack --mode production"

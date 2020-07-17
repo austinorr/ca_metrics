@@ -3,12 +3,15 @@ class BaseChart {
 
         this.container_id = container_id;
         this.container = d3.select("#" + container_id);
+
         this.url = this.container.attr("_viz_source");
         this.color = this.container.attr("_viz_color");
         this.limit_to = parseInt(this.container.attr("_viz_limit"))
         this.sort = this.container.attr("_viz_sort")
+        this.no_data_text = this.container.attr("_viz_no_data_text") || "Reliable Data Not Available";
         this.title = JSON.parse(`"${this.container.attr("_viz_title")}"`);
         this.statewide_tt_label = this.container.attr("_viz_statewide_tt_label") || "State Average";
+
         this.chart_uid = container_id + "-" + this.url;
         this.units = UNITS.filter(d => d == this.container.attr('_viz_units'));
         this.unitFormatter = getAxisTickLabelFormatter(this.units);
@@ -89,7 +92,7 @@ class BaseChart {
                     obj['group'] = d.group;
                     obj['subgroup'] = d.subgroup;
                     obj['column'] = that.label_map[label].column;
-                    if (!d.subgroup || d.group == d.subgroup) { // TODO this doesn't work, everything is .55 if subgroup is null
+                    if (!d.subgroup || d.group == d.subgroup) {
                         obj['width'] = 1; // x times normal
                         obj['demographic'] = d.group || "All";
                     } else {

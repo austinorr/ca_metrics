@@ -6,11 +6,11 @@ class BaseMap {
         this.url = this.container.attr("_viz_source");
         this.redirect_url = this.container.attr("_viz_redirect_url");
         this.chart_uid = container_id + "-" + this.url;
+        this.base_fill_opacity = 0.5; // parseFloat(this.container.attr("_viz_base_fill_opacity")) || 0.5;
         this.container_width = parseInt(d3.select("#" + this.container_id).style("width"))
         this.container_height = parseInt(d3.select("#" + this.container_id).style("height"))
         this.width = 600;
         this.height = 600;
-        this.pad = 20;
         this.svg = d3.select("#" + this.container_id)
             .append('svg')
             .attr('viewBox', "0 0" + " " + this.width + " " + this.height)
@@ -83,22 +83,22 @@ class RegionMap extends BaseMap {
 
     on_click(d) {
         let goto = this.selectRegion.bind(this);
-        let region_tag = regionTag(d.properties.region);
+        REGION_TAG = regionTag(d.properties.region);
         this.selected_region = d.properties.region;
 
         this.clear_roi_tooltips();
 
         if (this.redirect_url) {
-            window.location.href = this.redirect_url + `?region=${region_tag}`;
+            window.location.href = this.redirect_url + `?region=${REGION_TAG}`;
 
         } else {
-
             window.history.pushState(
                 "", document.title,
-                window.location.href.split('?')[0] + `?region=${region_tag}`
+                window.location.href.split('?')[0] + `?region=${REGION_TAG}`
             );
             goto();
-            selectTabContent(regionTag(REGION));
+            selectTabContent(REGION_TAG);;
+            toggleRegionAndStateSubheading(REGION_TAG)
             resetCharts();
             updateVisibleCharts();
         }
@@ -108,15 +108,28 @@ class RegionMap extends BaseMap {
         this.log('loading data')
 
         let that = this
-        var show_tooltip = this.tooltip_show.bind(this)
-        var move_tooltip = this.tooltip_move.bind(this)
-        var hide_tooltip = this.tooltip_hide.bind(this)
-        var on_touch = this.on_touch.bind(this)
-        var on_click = this.on_click.bind(this)
 
         d3.json(that.url, function(error, ca) {
             if (error) throw error;
-            that.feature_obj = topojson.feature(ca, ca.objects.data)
+            that.feature_obj = topojson.feature(ca, ca.objects.data);
+            that.drawMap();
+
+        });
+    }
+
+    drawMap() {
+        let that = this;
+        this.container.selectAll(".active-region").classed('active-region', false);
+        this.container.selectAll(".countySelected").remove();
+
+        if (this.container.selectAll('.counties').empty()) {
+            var show_tooltip = this.tooltip_show.bind(this)
+            var move_tooltip = this.tooltip_move.bind(this)
+            var hide_tooltip = this.tooltip_hide.bind(this)
+            var on_touch = this.on_touch.bind(this)
+            var on_click = this.on_click.bind(this)
+
+            that.pad = 20;
 
             that.projection.fitExtent([
                 [that.pad, that.pad],
@@ -167,14 +180,16 @@ class RegionMap extends BaseMap {
 
             REGION_NAME_MAPPING = Object.assign(defaultRegions, REGION_NAME_MAPPING)
 
-            if (!(REGION == "Statewide") && REGION != "") {
+        }
 
-                that.selected_region = REGION;
-                that.selectRegion();
-
-            }
-
-        });
+        if (!(REGION == "Statewide") && REGION != "") {
+            that.baseColors()
+            that.selected_region = REGION;
+            that.selectRegion();
+        } else {
+            that.container.selectAll(".counties path")
+                .style('fill-opacity', that.base_fill_opacity)
+        }
     }
 
     selectRegion() {
@@ -183,8 +198,12 @@ class RegionMap extends BaseMap {
             selected_region = d3.select("svg .counties.region_" + region_id),
             region_features = this.feature_obj.features.filter(d => d.properties.region_id == region_id);
 
-        d3.selectAll(".active-region").classed('active-region', false);
-        d3.selectAll(".countySelected").remove();
+        let that = this;
+
+        this.container.selectAll(".active-region").classed('active-region', false);
+        this.container.selectAll(".countySelected").remove();
+        this.container.selectAll(".counties path")
+            .style('fill-opacity', that.base_fill_opacity)
 
         selected_region.classed('active-region', true)
         REGION = region_features[0].properties.region;
@@ -226,18 +245,17 @@ class RegionMap extends BaseMap {
             .attr(
                 "transform",
                 "translate(" + (1 - scaler) * cx + ", " + (1 - scaler) * cy + ") scale(" + scaler + ")");
-        // }
     }
 
     baseColors() {
         let that = this;
         this.is_choropleth = false;
         this.svg.selectAll('.legend').remove();
-        d3.selectAll("#" + that.container_id + ' svg .counties path')
+        this.container.selectAll("#" + that.container_id + ' svg .counties path')
             .style('fill', d => that.colors[regionTag(d.properties.region)])
-            .style('fill-opacity', 0.5)
+            .style('fill-opacity', that.base_fill_opacity)
 
-        d3.selectAll("#" + that.container_id + ' svg .counties path.overlay')
+        this.container.selectAll("#" + that.container_id + ' svg .counties path.overlay')
             .style('fill-opacity', 1)
     }
 

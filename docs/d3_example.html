@@ -154,8 +154,10 @@
           <h4 class="stat-value">00%</h4>
           <h5>of of residents are employed</h5>
         </a>
+        <button class="btn btn-primary statewide-btn" onclick="dataviz.setRegion('statewide')">Statewide Data</button>
+        <h3 class="roi-subheading statewide-only-heading hidden">About Colleges in the State</h3>
+        <h3 class="roi-subheading region-only-heading hidden">About Colleges in this Region</h3>
       </div>
-      <div id="uid-button-1" class="_viz_map_data_toggle" _viz_units="percent" _viz_source="./data/employment.csv" onclick="dataviz.mapDataToggle(this.id)">Toggle Employment Choropleth</div>
     </div>
     <div class="_viz_bar_group">
       <div id="_viz_bar_bubble1" class="chart-wrapper-bar" _viz_units="percent" _viz_source="./data/deserts.csv" _viz_color="#c66f2c" _viz_sort="descending" _viz_limit=3></div>
@@ -166,7 +168,7 @@
         <img class="bar-icon hidden" src="https://dev.californiacompetes.org/assets/general-images/roi-employment-icon.svg" _viz_icon="icon-1">
         <img class="bar-icon hidden" src="https://dev.californiacompetes.org/assets/general-images/roi-employment-icon.svg" _viz_icon="icon-1">
       </div>
-      <div id="_viz_bar_container1" class="chart-wrapper-bar" _viz_units="percent" _viz_source="./data/employment2col.csv" _viz_color="steelblue" , _viz_title="Job Openings but this title test is fing long so hows this?">
+      <div id="_viz_bar_container1" class="chart-wrapper-bar" _viz_units="percent" _viz_source="./data/employment2col.csv" _viz_color="steelblue" _viz_title="Job Openings but this title test is fing long so hows this?" _viz_no_data_text="testing no data">
         <img class="bar-icon hidden" src="https://dev.californiacompetes.org/assets/general-images/roi-employment-icon.svg" _viz_icon="icon-1">
       </div>
       <div id="_viz_bar_container2" class="chart-wrapper-bar" _viz_units="percent" _viz_source="./data/employment2col.csv" _viz_color="steelblue">
@@ -192,9 +194,6 @@
       <div id="_viz_bubble_container3" class="chart-wrapper-bubble" _viz_units="percent" _viz_source="./data/deserts.csv" _viz_sort="ascending" _viz_limit=-3>
       </div>
       <div id="_viz_radial_container1" class="chart-wrapper-radial" _viz_units="count" _viz_source="./data/edu_radial.csv"></div>
-
-
-
     </div>
   </div>
 </body>
